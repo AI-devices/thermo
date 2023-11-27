@@ -36,7 +36,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   
   late int maxHoursForStat;
   final double scaleXOneHour = 300; //1 деление - 5 мин (300 сек)
-  late double scaleXManyHours; //зависит от настроек, вычисляется в _init()
+  late double scaleXManyHours; //зависит от настроек, вычисляется в _setAxisX()
   late double currentScaleX; //одно деление по оси X
   static const double _currentScaleY = 12.5; //одно деление по оси Y - 12.5 градусов
 
@@ -54,8 +54,16 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   }
 
   void _setAxisX() {
+    //если текущий активный график масштабирован до часов, которые только что изменили в настройках - надо перерисовать
+    if (currentScaleX != scaleXOneHour) {
+      coordinates = coordinates.map((e) {
+        var newX = double.parse(((e.x * maxHoursForStat) / Settings.maxHoursForStat).toStringAsFixed(5));
+        return newX > maxX ? FlSpot(maxX, e.y) : FlSpot(newX, e.y);
+      }).toList();
+    }
     maxHoursForStat = Settings.maxHoursForStat;
     scaleXManyHours = (maxHoursForStat * 60 * 60) / 12; //переводим часы в секунды и делим на 12,т.к.на этой ячейке по оси X указано последнее значение
+    if (currentScaleX != scaleXOneHour) currentScaleX = scaleXManyHours;
   }
 
   void drawStatistic() {
@@ -77,7 +85,6 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     setState(() {});
 
     if (_duration.inSeconds == 0) drawStatistic();
-    Settings.statisticsOn = true;
 
     _timer = Timer.periodic(Duration(seconds: _interval), (_) {
       if (ApiBluetooth.statusSensor == false) {
@@ -104,7 +111,6 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     if (reset) {
       _duration = const Duration();
       coordinates = [const FlSpot(0, 0)];
-      Settings.statisticsOn = false;
     }
     _timer?.cancel();
     setState(() {});
@@ -124,7 +130,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
         var newX = e.x * maxHoursForStat;
         return newX > maxX ? FlSpot(maxX, e.y) : FlSpot(newX, e.y);
       }).toList();
-  }
+    }
     setState(() {});
   }
 
@@ -132,7 +138,6 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   void dispose() {
     _timer?.cancel();
     _temperatureSubscription?.cancel();
-    Settings.statisticsOn = false;
     Settings.maxHoursForStatChanged = null;
     super.dispose();
   }

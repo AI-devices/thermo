@@ -5,8 +5,6 @@ abstract class Settings {
   static late int maxHoursForStat;
   static VoidCallback? maxHoursForStatChanged;
 
-  static bool statisticsOn = false; //включено ли построения графика в данный момент
-
   static bool vibrationIsSupported = false;
 
   static const nameDevice = 'temperature sensor';

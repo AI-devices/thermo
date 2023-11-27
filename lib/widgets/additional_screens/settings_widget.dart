@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:thermo/components/data_provider.dart';
-import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 
@@ -21,15 +20,9 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   }
 
   void onChangedEnd(double value) {
-    if (Settings.statisticsOn == true) {
-      Helper.alert(context: context, content: 'Данную настройку нельзя изменить при активном графике');
-      maxHoursForStat = Settings.maxHoursForStat.toDouble();
-      setState(() {});
-    } else {
-      _dataProvider.setMaxHoursForStat(value.round());
-      Settings.maxHoursForStat = value.round();
-      Settings.maxHoursForStatChanged?.call();
-    }
+    _dataProvider.setMaxHoursForStat(value.round());
+    Settings.maxHoursForStat = value.round();
+    Settings.maxHoursForStatChanged?.call();
   }
 
   @override

@@ -21,11 +21,14 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
   double diff = 0.0;
   Icon? diffIcon;
 
+  double positionFlaskDivider = 0.0; //0.16 это самый верх колбы в нашем случае, 0.0 - низ
+
   @override
   void initState() {
     super.initState();
     temperatureSubscription = ApiBluetooth.temperatureStream.listen((double temperature){
       currentTemperature = temperature;
+      _changePositionFlaskDivider();
       setState(() {});
     });
     statusSensorSubscription = ApiBluetooth.statusSensorStream.listen((bool statusSensor){
@@ -35,6 +38,11 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
       }
     });
     _checkDiffTemperature();
+  }
+
+  void _changePositionFlaskDivider() {
+    final max = currentTemperature! > 100 ? 100 : currentTemperature!;
+    positionFlaskDivider = (max < 0 ? 0 : max) / 625; //625 - нормализация температуры для виджета колбы
   }
 
   void _checkDiffTemperature() {
@@ -116,7 +124,13 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                     ],
                   )
                 ),
-                child: const SizedBox(),
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider),
+                  child: const Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Divider(color: Colors.black, thickness: 3)
+                  ),
+                ),
               ),
             ),
             Expanded(
