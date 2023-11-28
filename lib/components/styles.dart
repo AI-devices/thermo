@@ -45,15 +45,6 @@ abstract class AppStyle {
     }
   }
 
-  /*static Color getColorByTemp({required num? temperature}) {
-    if (temperature == null) return Colors.white;
-    if (temperature < 10) return Colors.blue.withOpacity(0.2);
-    if (temperature < 35) return Colors.green.withOpacity(0.2);
-    if (temperature < 50) return Colors.yellow.withOpacity(0.2);
-    if (temperature < 70) return Colors.orange.withOpacity(0.2);
-    return Colors.red.withOpacity(0.2);
-  }*/
-
   static Icon getIconBluetooth(bool? status) {
     switch (status) {
       case null :

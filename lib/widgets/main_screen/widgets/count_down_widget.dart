@@ -193,14 +193,14 @@ class __CountDownWidgetState extends State<CountDownWidget> {
                 controller: _controller,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-                //textStyle: TextStyle(fontSize: 12),
+                textStyle: const TextStyle(fontSize: 20),
                 ringColor: Colors.grey[300]!,
                 fillColor: Colors.green,
                 autoStart: false,
                 timeFormatterFunction: (defaultFormatterFunction, duration) {
                   if (duration.inSeconds == 0) {
-                    return "Start";
-                    //return "00:00:00";
+                    //return "Start";
+                    return "00:00:00";
                   } else {
                     return Function.apply(defaultFormatterFunction, [duration]);
                   }

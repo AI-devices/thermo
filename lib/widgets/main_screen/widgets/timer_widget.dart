@@ -35,13 +35,13 @@ class __TimerWidgetState extends State<TimerWidget> {
   Widget build(BuildContext context) {
     return Container(
       height: double.infinity,
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: AppStyle.decorMainCotnainers,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
-            flex: 1,
+            flex: 2,
             child: Center(child: buildTime())
           ),
           Flexible(
@@ -58,7 +58,18 @@ class __TimerWidgetState extends State<TimerWidget> {
     final hours = twoDigits(duration.inHours.remainder(60));
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return Text('$hours:$minutes:$seconds', style: const TextStyle(fontSize: 20));
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.04),
+      child: Container(
+        //width: double.infinity,
+        //height: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.green, width: 5)
+        ),
+        child: Center(child: Text('$hours:$minutes:$seconds', style: const TextStyle(fontSize: 20)))
+      ),
+    );
   }
 
   Widget buildButtons() {
