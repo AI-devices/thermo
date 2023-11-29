@@ -3,7 +3,7 @@ import 'package:thermo/components/styles.dart';
 import 'package:thermo/widgets/main_screen/widgets/count_down_widget.dart';
 import 'package:thermo/widgets/main_screen/widgets/control_points_widget.dart';
 import 'package:thermo/widgets/main_screen/widgets/monitoring_widget.dart';
-import 'package:thermo/widgets/main_screen/widgets/statistics_widget.dart';
+import 'package:thermo/widgets/main_screen/widgets/chart_widget.dart';
 import 'package:thermo/widgets/main_screen/widgets/timer_widget.dart';
 
 
@@ -21,7 +21,7 @@ class MainScreenWidget extends StatelessWidget {
           SizedBox(height: MediaQuery.of(context).size.height * 0.01),
           const _MonitoringWidgets(),
           SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-          const _StatisticsWidget(),
+          const _ChartWidget(),
           SizedBox(height: MediaQuery.of(context).size.height * 0.01),
           const _TimeWidgets(),
         ],
@@ -55,8 +55,8 @@ class _MonitoringWidgets extends StatelessWidget {
   }
 }
 
-class _StatisticsWidget extends StatelessWidget {
-  const _StatisticsWidget({Key? key}) : super(key: key);
+class _ChartWidget extends StatelessWidget {
+  const _ChartWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class _StatisticsWidget extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.36,
       width: double.infinity,
       decoration: AppStyle.decorMainCotnainers,
-      child: const StatisticsWidget(),
+      child: const ChartWidget(),
     );
   }
 }

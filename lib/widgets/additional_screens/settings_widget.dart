@@ -12,7 +12,7 @@ class SettingsWidget extends StatefulWidget {
 
 class _SettingsWidgetState extends State<SettingsWidget> {
   final _dataProvider = DataProvider();
-  double maxHoursForStat = Settings.maxHoursForStat.toDouble();
+  double maxHoursForStat = Settings.maxHoursForChart.toDouble();
 
   void onChangedHours(double value) {
       maxHoursForStat = value;
@@ -21,8 +21,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   void onChangedEnd(double value) {
     _dataProvider.setMaxHoursForStat(value.round());
-    Settings.maxHoursForStat = value.round();
-    Settings.maxHoursForStatChanged?.call();
+    Settings.maxHoursForChart = value.round();
+    Settings.maxHoursForChartChanged?.call();
   }
 
   @override

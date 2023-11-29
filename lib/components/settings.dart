@@ -1,9 +1,22 @@
 import 'dart:ui';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:thermo/components/data_provider.dart';
 
 abstract class Settings {
   static bool envDebug = false;
-  static late int maxHoursForStat;
-  static VoidCallback? maxHoursForStatChanged;
+  static late int maxHoursForChart;
+  static VoidCallback? maxHoursForChartChanged;
+  
+  static late List<FlSpot> coordinatesChart;
+  static setCoordinatesChart(List<FlSpot> coordinates) {
+    coordinatesChart = coordinates;
+    DataProvider().saveCoordinates();
+  }
+  static late double scaleAxisX;
+  static setScaleAxisX(double value) {
+    scaleAxisX = value;
+    DataProvider().saveAxisX();
+  }
 
   static bool vibrationIsSupported = false;
 

@@ -7,14 +7,14 @@ import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 
-class StatisticsWidget extends StatefulWidget {
-  const StatisticsWidget({super.key});
+class ChartWidget extends StatefulWidget {
+  const ChartWidget({super.key});
 
   @override
-  State<StatisticsWidget> createState() => _StatisticsWidgetState();
+  State<ChartWidget> createState() => _ChartWidgetState();
 }
 
-class _StatisticsWidgetState extends State<StatisticsWidget> {
+class _ChartWidgetState extends State<ChartWidget> {
   final List<Color> gradientColors = [
     Colors.blue,
     Colors.orange,
@@ -23,10 +23,10 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
   StreamSubscription<double>? _temperatureSubscription;
   double? _currentTemperature;
-  List<FlSpot> coordinates = [const FlSpot(0, 0)];
+  List<FlSpot> coordinates = Settings.coordinatesChart;
 
   Timer? _timer;
-  Duration _duration = const Duration();
+  late Duration _duration;
   final int _interval = Settings.envDebug ? 5 : 60; //в тестах обновляем через 5 сек, на проде - через минуту
 
   double maxY = 10;
@@ -43,30 +43,39 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   @override
   void initState() {
     super.initState();
-    currentScaleX = scaleXOneHour;
+    currentScaleX = Settings.scaleAxisX;
+    _duration = Duration(seconds: (coordinates.last.x * currentScaleX).toInt());
     _temperatureSubscription = ApiBluetooth.temperatureStream.listen((double temperature) => _currentTemperature = temperature);
-    _setAxisX();
+    _setAxisX(init: true);
 
-    Settings.maxHoursForStatChanged ??= () {
-      _setAxisX();
+    Settings.maxHoursForChartChanged ??= () {
+      _setAxisX(init: false);
       setState(() {});
     };
+
+    /*WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_duration.inSeconds != 0) Notifier.snackBar(notify: Notify.lastChartIsLoaded);
+    });*/
   }
 
-  void _setAxisX() {
-    //если текущий активный график масштабирован до часов, которые только что изменили в настройках - надо перерисовать
-    if (currentScaleX != scaleXOneHour) {
+  void _setAxisX({required bool init}) {
+    //если текущий график масштабирован до часов, которые только что изменили в настройках - надо перерисовать
+    if (init == false && currentScaleX != scaleXOneHour) {
       coordinates = coordinates.map((e) {
-        var newX = double.parse(((e.x * maxHoursForStat) / Settings.maxHoursForStat).toStringAsFixed(5));
+        var newX = double.parse(((e.x * maxHoursForStat) / Settings.maxHoursForChart).toStringAsFixed(5));
         return newX > maxX ? FlSpot(maxX, e.y) : FlSpot(newX, e.y);
       }).toList();
+      Settings.setCoordinatesChart(coordinates);
     }
-    maxHoursForStat = Settings.maxHoursForStat;
+    maxHoursForStat = Settings.maxHoursForChart;
     scaleXManyHours = (maxHoursForStat * 60 * 60) / 12; //переводим часы в секунды и делим на 12,т.к.на этой ячейке по оси X указано последнее значение
-    if (currentScaleX != scaleXOneHour) currentScaleX = scaleXManyHours;
+    if (currentScaleX != scaleXOneHour) {
+      currentScaleX = scaleXManyHours;
+      Settings.setScaleAxisX(scaleXManyHours);
+    }
   }
 
-  void drawStatistic() {
+  void drawChart() {
     x = double.parse((_duration.inSeconds / currentScaleX).toStringAsFixed(5));
     y = double.parse((_currentTemperature! / _currentScaleY).toStringAsFixed(5));
 
@@ -74,6 +83,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
     log(flSpot.props.toString());
     coordinates.add(flSpot);
+    Settings.setCoordinatesChart(coordinates);
     setState(() {});
   }
 
@@ -84,7 +94,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     }
     setState(() {});
 
-    if (_duration.inSeconds == 0) drawStatistic();
+    if (_duration.inSeconds == 0) drawChart();
 
     _timer = Timer.periodic(Duration(seconds: _interval), (_) {
       if (ApiBluetooth.statusSensor == false) {
@@ -103,7 +113,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
       }
 
       _duration = Duration(seconds: _duration.inSeconds + _interval);
-      drawStatistic();
+      drawChart();
     });
   }
 
@@ -111,6 +121,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     if (reset) {
       _duration = const Duration();
       coordinates = [const FlSpot(0, 0)];
+      Settings.setCoordinatesChart(coordinates);
     }
     _timer?.cancel();
     setState(() {});
@@ -119,6 +130,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   void _changeScaleX() {
     if (currentScaleX == scaleXOneHour) {
       currentScaleX = scaleXManyHours;
+      Settings.setScaleAxisX(scaleXManyHours);
       coordinates = coordinates.map((e) => FlSpot(double.parse((e.x / maxHoursForStat).toStringAsFixed(5)), e.y)).toList();
     } else {
       if (coordinates.last.x * maxHoursForStat > maxX) {
@@ -126,11 +138,13 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
         return;
       }
       currentScaleX = scaleXOneHour;
+      Settings.setScaleAxisX(scaleXOneHour);
       coordinates = coordinates.map((e) {
         var newX = e.x * maxHoursForStat;
         return newX > maxX ? FlSpot(maxX, e.y) : FlSpot(newX, e.y);
       }).toList();
     }
+    Settings.setCoordinatesChart(coordinates);
     setState(() {});
   }
 
@@ -138,7 +152,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   void dispose() {
     _timer?.cancel();
     _temperatureSubscription?.cancel();
-    Settings.maxHoursForStatChanged = null;
+    Settings.maxHoursForChartChanged = null;
     super.dispose();
   }
 

@@ -58,18 +58,7 @@ class __TimerWidgetState extends State<TimerWidget> {
     final hours = twoDigits(duration.inHours.remainder(60));
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.04),
-      child: Container(
-        //width: double.infinity,
-        //height: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.green, width: 5)
-        ),
-        child: Center(child: Text('$hours:$minutes:$seconds', style: const TextStyle(fontSize: 20)))
-      ),
-    );
+    return Center(child: Text('$hours:$minutes:$seconds', style: const TextStyle(fontSize: 20)));
   }
 
   Widget buildButtons() {

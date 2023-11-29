@@ -9,8 +9,11 @@ final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  final dataProvider = DataProvider();
+
   Settings.envDebug = foundation.kReleaseMode ? false : true;
-  Settings.maxHoursForStat = await DataProvider().getMaxHoursForStat();
+  Settings.maxHoursForChart = await dataProvider.getMaxHoursForStat();
+  await dataProvider.loadingChart();
   
   runApp(const MyApp());
 }

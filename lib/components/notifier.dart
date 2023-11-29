@@ -10,6 +10,7 @@ enum Notify {
   sensorNotFound,
   sensorConnected,
   sensorDissconnected,
+  lastChartIsLoaded,
 }
 
 abstract class Notifier {
@@ -40,10 +41,15 @@ abstract class Notifier {
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
           text: 'Подключение к термодатчику установлено');
         break;
-        case Notify.sensorDissconnected :
-      Helper.viewSnackBar(context: navigatorKey.currentState!.context,
+      case Notify.sensorDissconnected :
+        Helper.viewSnackBar(context: navigatorKey.currentState!.context,
           text: 'Потеряно соединение с термодатчиком',
           icon: const Icon(Icons.thermostat, color: Colors.red));
+        break;
+      case Notify.lastChartIsLoaded:
+        Helper.viewSnackBar(context: navigatorKey.currentState!.context,
+          text: 'Загружен предыдущий график',
+          icon: const Icon(Icons.show_chart, color: Colors.green));
         break;
     }
   }
