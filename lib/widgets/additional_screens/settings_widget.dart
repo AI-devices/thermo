@@ -1,7 +1,11 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/data_provider.dart';
+import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
+import 'package:thermo/widgets/assets.dart';
+import 'package:vibration/vibration.dart';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key? key}) : super(key: key);
@@ -12,6 +16,7 @@ class SettingsWidget extends StatefulWidget {
 
 class _SettingsWidgetState extends State<SettingsWidget> {
   final _dataProvider = DataProvider();
+  final _player = AudioPlayer();
   double maxHoursForStat = Settings.maxHoursForChart.toDouble();
 
   void onChangedHours(double value) {
@@ -19,10 +24,32 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       setState(() {});
   }
 
-  void onChangedEnd(double value) {
+  void onChangedHoursEnd(double value) {
     _dataProvider.setMaxHoursForStat(value.round());
     Settings.maxHoursForChart = value.round();
     Settings.maxHoursForChartChanged?.call();
+  }
+
+  void changeAlarmWhenTempDrops() {
+    switch (Settings.alarmWhenTempDrops) {
+      case Settings.typeRing :
+        if (Settings.vibrationIsSupported) {
+          Settings.alarmWhenTempDrops = Settings.typeVibration;
+          Vibration.vibrate();
+        } else {
+          Settings.alarmWhenTempDrops = Settings.typeNone;
+        }
+        break;
+      case Settings.typeVibration :
+        Settings.alarmWhenTempDrops = Settings.typeNone;
+        break;
+      case Settings.typeNone :
+        Settings.alarmWhenTempDrops = Settings.typeRing;
+        _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 3));
+        break;
+    }
+    _dataProvider.setAlarmWhenTempDrops();
+    setState(() {});
   }
 
   @override
@@ -38,6 +65,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                   flex: 6,
                   child: Text('Максимальный масштаб статистики (${maxHoursForStat.round()} ч.)')
                 ),
+                const SizedBox(width: 10),
                 Flexible(
                   flex: 5,
                   child: Column(
@@ -56,7 +84,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                           divisions: 9,
                           label: maxHoursForStat.round().toString(),
                           onChanged: onChangedHours,
-                          onChangeEnd: onChangedEnd,
+                          onChangeEnd: onChangedHoursEnd,
                         ),
                       ),
                       const Padding(
@@ -74,6 +102,23 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ],
                   ),
                 ),
+              ],
+            ),
+            const Divider(color: Colors.black),
+            Row(
+              children: [
+                const Flexible(
+                  flex: 6,
+                  child: Text('Сигнал при падении температуры в течение 5 сек.')
+                ),
+                const SizedBox(width: 10),
+                Flexible(
+                  flex: 5,
+                  child: InkResponse(
+                    onTap: changeAlarmWhenTempDrops,
+                    child: Center(child: Notifier.getNotifyIcon(type: Settings.alarmWhenTempDrops, size: 30, color: AppStyle.barColor))
+                  )
+                )
               ],
             ),
             const Divider(color: Colors.black),

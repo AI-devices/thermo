@@ -10,7 +10,6 @@ enum Notify {
   sensorNotFound,
   sensorConnected,
   sensorDissconnected,
-  lastChartIsLoaded,
 }
 
 abstract class Notifier {
@@ -46,23 +45,18 @@ abstract class Notifier {
           text: 'Потеряно соединение с термодатчиком',
           icon: const Icon(Icons.thermostat, color: Colors.red));
         break;
-      case Notify.lastChartIsLoaded:
-        Helper.viewSnackBar(context: navigatorKey.currentState!.context,
-          text: 'Загружен предыдущий график',
-          icon: const Icon(Icons.show_chart, color: Colors.green));
-        break;
     }
   }
 
-  static Icon getNotifyIcon({required String type}) {
+  static Icon getNotifyIcon({required String type, double? size, Color? color}) {
     switch (type) {
       case Settings.typeRing :
-        return const Icon(Icons.phonelink_ring);
+        return Icon(Icons.phonelink_ring, size: size ?? 24, color: color ?? Colors.black);
       case Settings.typeVibration :
-        return const Icon(Icons.vibration);
+        return Icon(Icons.vibration, size: size ?? 24, color: color ?? Colors.black);
       case Settings.typeNone :
       default :
-        return const Icon(Icons.clear);
+        return Icon(Icons.clear, size: size ?? 24, color: color ?? Colors.black);
     }
   }
 }

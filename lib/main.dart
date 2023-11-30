@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thermo/components/data_provider.dart';
+import 'package:thermo/components/monitoring.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/widgets/my_app.dart';
 import 'package:flutter/foundation.dart' as foundation;
@@ -10,10 +11,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final dataProvider = DataProvider();
+  Monitoring();
 
   Settings.envDebug = foundation.kReleaseMode ? false : true;
   Settings.maxHoursForChart = await dataProvider.getMaxHoursForStat();
   await dataProvider.loadingChart();
+  Settings.alarmWhenTempDrops = await dataProvider.getAlarmWhenTempDrops();
   
   runApp(const MyApp());
 }

@@ -18,6 +18,8 @@ abstract class Settings {
     DataProvider().saveAxisX();
   }
 
+  static late String alarmWhenTempDrops;
+
   static bool vibrationIsSupported = false;
 
   static const nameDevice = 'temperature sensor';

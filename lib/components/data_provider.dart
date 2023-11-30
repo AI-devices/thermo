@@ -9,6 +9,7 @@ abstract class _Keys {
   static const maxHoursForStat = 'max_hours_for_stat';
   static const coordinatesChart = 'coordinates_chart';
   static const scaleAxisX = 'scale_axis_x';
+  static const alarmWhenTempDrops = 'alarm_when_temp_drops';
 }
 
 class DataProvider {
@@ -65,5 +66,12 @@ class DataProvider {
   Future<void> saveCoordinates() async {
     final coordinates = Settings.coordinatesChart.map((e) => {'x' : e.x, 'y' : e.y}).toList();
     await (await _sharedPreferences).setString(_Keys.coordinatesChart, json.encode(coordinates));
+  }
+
+  Future<String> getAlarmWhenTempDrops() async {
+    return (await _sharedPreferences).getString(_Keys.alarmWhenTempDrops) ?? Settings.typeNone;
+  }
+  Future<void> setAlarmWhenTempDrops() async {
+    await (await _sharedPreferences).setString(_Keys.alarmWhenTempDrops, Settings.alarmWhenTempDrops);
   }
 }
