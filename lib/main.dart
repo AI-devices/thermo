@@ -16,7 +16,8 @@ void main() async {
   Settings.envDebug = foundation.kReleaseMode ? false : true;
   Settings.maxHoursForChart = await dataProvider.getMaxHoursForStat();
   await dataProvider.loadingChart();
-  Settings.alarmWhenTempDrops = await dataProvider.getAlarmWhenTempDrops();
+  Settings.notifyWhenTempDrops = await dataProvider.getNotifyWhenTempDrops();
+  Settings.notifyWhenTimerEnds = await dataProvider.getNotifyWhenTimerEnds();
   
   runApp(const MyApp());
 }

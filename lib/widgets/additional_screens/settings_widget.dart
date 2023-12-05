@@ -1,11 +1,8 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
-import 'package:thermo/widgets/assets.dart';
-import 'package:vibration/vibration.dart';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key? key}) : super(key: key);
@@ -16,7 +13,6 @@ class SettingsWidget extends StatefulWidget {
 
 class _SettingsWidgetState extends State<SettingsWidget> {
   final _dataProvider = DataProvider();
-  final _player = AudioPlayer();
   double maxHoursForStat = Settings.maxHoursForChart.toDouble();
 
   void onChangedHours(double value) {
@@ -30,25 +26,15 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     Settings.maxHoursForChartChanged?.call();
   }
 
-  void changeAlarmWhenTempDrops() {
-    switch (Settings.alarmWhenTempDrops) {
-      case Settings.typeRing :
-        if (Settings.vibrationIsSupported) {
-          Settings.alarmWhenTempDrops = Settings.typeVibration;
-          Vibration.vibrate();
-        } else {
-          Settings.alarmWhenTempDrops = Settings.typeNone;
-        }
-        break;
-      case Settings.typeVibration :
-        Settings.alarmWhenTempDrops = Settings.typeNone;
-        break;
-      case Settings.typeNone :
-        Settings.alarmWhenTempDrops = Settings.typeRing;
-        _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 3));
-        break;
-    }
-    _dataProvider.setAlarmWhenTempDrops();
+  void changeNotifyWhenTempDrops() {
+    Settings.notifyWhenTempDrops = Settings.changeTypeNotify(Settings.notifyWhenTempDrops);
+    _dataProvider.setNotifyWhenTempDrops();
+    setState(() {});
+  }
+
+  void changeNotifyWhenTimerEnds() {
+    Settings.notifyWhenTimerEnds = Settings.changeTypeNotify(Settings.notifyWhenTimerEnds);
+    _dataProvider.setNotifyWhenTimerEnds();
     setState(() {});
   }
 
@@ -59,71 +45,103 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            Row(
-              children: [
-                Flexible(
-                  flex: 6,
-                  child: Text('Максимальный масштаб статистики (${maxHoursForStat.round()} ч.)')
-                ),
-                const SizedBox(width: 10),
-                Flexible(
-                  flex: 5,
-                  child: Column(
-                    children: [
-                      SliderTheme(
-                        data: const SliderThemeData(
-                          showValueIndicator: ShowValueIndicator.always,
-                          thumbColor: AppStyle.barColor,
-                          activeTrackColor: AppStyle.barColor,
-                        ),
-                        child: Slider(
-                          inactiveColor: Colors.grey.shade400,
-                          value: maxHoursForStat,
-                          min: 2,
-                          max: 9,
-                          divisions: 9,
-                          label: maxHoursForStat.round().toString(),
-                          onChanged: onChangedHours,
-                          onChangeEnd: onChangedHoursEnd,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 22.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-                          children: [
-                            Text('2',
-                              style: TextStyle(fontSize: 13, color: Colors.grey)),
-                            Text('9',
-                              style: TextStyle(fontSize: 13, color: Colors.grey)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            _maxHoursForStat(),
             const Divider(color: Colors.black),
-            Row(
-              children: [
-                const Flexible(
-                  flex: 6,
-                  child: Text('Сигнал при падении температуры в течение 5 сек.')
-                ),
-                const SizedBox(width: 10),
-                Flexible(
-                  flex: 5,
-                  child: InkResponse(
-                    onTap: changeAlarmWhenTempDrops,
-                    child: Center(child: Notifier.getNotifyIcon(type: Settings.alarmWhenTempDrops, size: 30, color: AppStyle.barColor))
-                  )
-                )
-              ],
-            ),
+            _notifyWhenTempDrops(),
+            const Divider(color: Colors.black),
+            _notifyWhenTimerEnds(),
             const Divider(color: Colors.black),
           ],
         ),
+      ),
+    );
+  }
+
+  Row _maxHoursForStat() {
+    return Row(
+            children: [
+              Flexible(
+                flex: 6,
+                child: Text('Максимальный масштаб статистики (${maxHoursForStat.round()} ч.)')
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                flex: 5,
+                child: Column(
+                  children: [
+                    SliderTheme(
+                      data: const SliderThemeData(
+                        showValueIndicator: ShowValueIndicator.always,
+                        thumbColor: AppStyle.barColor,
+                        activeTrackColor: AppStyle.barColor,
+                      ),
+                      child: Slider(
+                        inactiveColor: Colors.grey.shade400,
+                        value: maxHoursForStat,
+                        min: 2,
+                        max: 9,
+                        divisions: 9,
+                        label: maxHoursForStat.round().toString(),
+                        onChanged: onChangedHours,
+                        onChangeEnd: onChangedHoursEnd,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 22.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                        children: [
+                          Text('2',
+                            style: TextStyle(fontSize: 13, color: Colors.grey)),
+                          Text('9',
+                            style: TextStyle(fontSize: 13, color: Colors.grey)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+  }
+
+  Row _notifyWhenTempDrops() {
+    return Row(
+      children: [
+        const Flexible(
+          flex: 6,
+          child: Text('Сигнал при падении температуры в течение 5 сек.')
+        ),
+        const SizedBox(width: 10),
+        Flexible(
+          flex: 5,
+          child: InkResponse(
+            onTap: changeNotifyWhenTempDrops,
+            child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTempDrops, size: 30, color: AppStyle.barColor))
+          )
+        )
+      ],
+    );
+  }
+
+  Padding _notifyWhenTimerEnds() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          const Flexible(
+            flex: 6,
+            child: Text('Сигнал при завершении таймера')
+          ),
+          const SizedBox(width: 10),
+          Flexible(
+            flex: 5,
+            child: InkResponse(
+              onTap: changeNotifyWhenTimerEnds,
+              child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds, size: 30, color: AppStyle.barColor))
+            )
+          )
+        ],
       ),
     );
   }

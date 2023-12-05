@@ -18,10 +18,10 @@ class Monitoring {
   }
 
   Monitoring._() {
-    temperatureSubscription = ApiBluetooth.temperatureStream.listen((double temperature) => _alarmWhenTempDrops(temperature));
+    temperatureSubscription = ApiBluetooth.temperatureStream.listen((double temperature) => _notifyWhenTempDrops(temperature));
   }
 
-  _alarmWhenTempDrops(double temperature) {
+  _notifyWhenTempDrops(double temperature) {
     if (temperature > _lastTemp) {
       _countTempDrops = 0;
     } else {
@@ -30,8 +30,8 @@ class Monitoring {
     _lastTemp = temperature;
     if (_countTempDrops == 5) {
       _countTempDrops = 0;
-      if (Settings.alarmWhenTempDrops == Settings.typeVibration) Vibration.vibrate(duration: 2000);
-      if (Settings.alarmWhenTempDrops == Settings.typeRing) {
+      if (Settings.notifyWhenTempDrops == Settings.typeVibration) Vibration.vibrate(duration: 2000);
+      if (Settings.notifyWhenTempDrops == Settings.typeRing) {
         _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 0));
       }
     }

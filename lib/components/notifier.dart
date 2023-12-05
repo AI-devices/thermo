@@ -10,10 +10,11 @@ enum Notify {
   sensorNotFound,
   sensorConnected,
   sensorDissconnected,
+  checkpointReached,
 }
 
 abstract class Notifier {
-  static void snackBar({required Notify notify}) {
+  static void snackBar({required Notify notify, String? text}) {
     switch (notify) {
       case Notify.bluetoothIsNotSupported :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
@@ -44,6 +45,11 @@ abstract class Notifier {
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
           text: 'Потеряно соединение с термодатчиком',
           icon: const Icon(Icons.thermostat, color: Colors.red));
+        break;
+      case Notify.checkpointReached :
+        Helper.viewSnackBar(context: navigatorKey.currentState!.context,
+          text: text ?? 'Пройдена контрольная точка',
+          icon: const Icon(Icons.control_point, color: Colors.green));
         break;
     }
   }

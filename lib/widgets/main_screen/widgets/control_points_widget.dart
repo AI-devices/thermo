@@ -56,6 +56,9 @@ class _ViewModel extends ChangeNotifier {
         notifiedPoints[key] = true;
         if (point['notify'] == Settings.typeVibration) Vibration.vibrate(duration: 2000);
         if (point['notify'] == Settings.typeRing) _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 0));
+        if (point['notify'] != Settings.typeNone) {
+          Notifier.snackBar(notify: Notify.checkpointReached, text: 'Контрольная точка в ${temperature.round()}${Helper.celsius} пройдена');
+        }
       }
     }
     _previousTemperature = temperature;
@@ -72,23 +75,7 @@ class _ViewModel extends ChangeNotifier {
   }
 
   void changeNotify(int indexPoint) async {
-    switch (controlPoints[indexPoint]['notify']) {
-      case Settings.typeRing :
-        if (Settings.vibrationIsSupported) {
-          controlPoints[indexPoint]['notify'] = Settings.typeVibration;
-          Vibration.vibrate();
-        } else {
-          controlPoints[indexPoint]['notify'] = Settings.typeNone;
-        }
-        break;
-      case Settings.typeVibration :
-        controlPoints[indexPoint]['notify'] = Settings.typeNone;
-        break;
-      case Settings.typeNone :
-        controlPoints[indexPoint]['notify'] = Settings.typeRing;
-        _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 3)); //всего 4 сек длится, ограничиваем
-        break;
-    }
+    controlPoints[indexPoint]['notify'] = Settings.changeTypeNotify(controlPoints[indexPoint]['notify']);
     _dataProvider.setControlPoints(controlPoints);
     updateControlPoints = !updateControlPoints;
     notifyListeners();

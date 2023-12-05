@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
+import 'package:thermo/widgets/assets.dart';
 import 'package:vibration/vibration.dart';
 
 class CountDownWidget extends StatefulWidget {
@@ -17,6 +20,7 @@ class CountDownWidget extends StatefulWidget {
 
 class __CountDownWidgetState extends State<CountDownWidget> {
   final _dataProvider = DataProvider();
+  final _player = AudioPlayer();
   List<dynamic> lastTimers = [];
   bool _isRunning = false;
   bool _isPause = false;
@@ -112,7 +116,10 @@ class __CountDownWidgetState extends State<CountDownWidget> {
       _durationNotify -= 1;
       if (_durationNotify <= 0) {
         _timer?.cancel();
-        Vibration.vibrate(duration: 2000);
+        if (Settings.notifyWhenTimerEnds == Settings.typeVibration) Vibration.vibrate(duration: 2000);
+        if (Settings.notifyWhenTimerEnds == Settings.typeRing) {
+          _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 0));
+        }
       }
     });
   }

@@ -9,7 +9,8 @@ abstract class _Keys {
   static const maxHoursForStat = 'max_hours_for_stat';
   static const coordinatesChart = 'coordinates_chart';
   static const scaleAxisX = 'scale_axis_x';
-  static const alarmWhenTempDrops = 'alarm_when_temp_drops';
+  static const notifyWhenTempDrops = 'notify_when_temp_drops';
+  static const notifyWhenTimerEnds = 'notify_when_timer_ends';
 }
 
 class DataProvider {
@@ -68,10 +69,16 @@ class DataProvider {
     await (await _sharedPreferences).setString(_Keys.coordinatesChart, json.encode(coordinates));
   }
 
-  Future<String> getAlarmWhenTempDrops() async {
-    return (await _sharedPreferences).getString(_Keys.alarmWhenTempDrops) ?? Settings.typeNone;
+  Future<String> getNotifyWhenTempDrops() async {
+    return (await _sharedPreferences).getString(_Keys.notifyWhenTempDrops) ?? Settings.typeNone;
   }
-  Future<void> setAlarmWhenTempDrops() async {
-    await (await _sharedPreferences).setString(_Keys.alarmWhenTempDrops, Settings.alarmWhenTempDrops);
+  Future<void> setNotifyWhenTempDrops() async {
+    await (await _sharedPreferences).setString(_Keys.notifyWhenTempDrops, Settings.notifyWhenTempDrops);
+  }
+  Future<String> getNotifyWhenTimerEnds() async {
+    return (await _sharedPreferences).getString(_Keys.notifyWhenTimerEnds) ?? Settings.typeRing;
+  }
+  Future<void> setNotifyWhenTimerEnds() async {
+    await (await _sharedPreferences).setString(_Keys.notifyWhenTimerEnds, Settings.notifyWhenTimerEnds);
   }
 }
