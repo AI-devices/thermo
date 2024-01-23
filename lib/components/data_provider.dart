@@ -21,10 +21,10 @@ class DataProvider {
     final pointsEncoded = (await _sharedPreferences).getString(_Keys.controlPoints);
     if (pointsEncoded == null) {
       return [
-        { 'value' : 25, 'notify' : Settings.typeRing },
-        { 'value' : 50, 'notify' : Settings.typeRing },
-        { 'value' : 75, 'notify' : Settings.typeRing },
-        { 'value' : 100, 'notify' : Settings.typeRing },
+        { 'value' : 25.0, 'notify' : Settings.typeRing },
+        { 'value' : 50.0, 'notify' : Settings.typeRing },
+        { 'value' : 75.0, 'notify' : Settings.typeRing },
+        { 'value' : 99.0, 'notify' : Settings.typeRing },
       ];
     }
     List<dynamic> points = json.decode(pointsEncoded);

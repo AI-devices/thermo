@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:thermo/components/api_bluetooth.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
@@ -57,7 +57,7 @@ class _ViewModel extends ChangeNotifier {
         if (point['notify'] == Settings.typeVibration) Vibration.vibrate(duration: 2000);
         if (point['notify'] == Settings.typeRing) _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 0));
         if (point['notify'] != Settings.typeNone) {
-          Notifier.snackBar(notify: Notify.checkpointReached, text: 'Контрольная точка в ${temperature.round()}${Helper.celsius} пройдена');
+          Notifier.snackBar(notify: Notify.checkpointReached, text: 'Контрольная точка в ${point['value']}${Helper.celsius} пройдена');
         }
       }
     }
@@ -93,11 +93,11 @@ class _ViewModel extends ChangeNotifier {
               children: [
                 const Text('Укажите температуру контрольной точки'),
                 TextFormField(
-                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
-                  decoration: const InputDecoration(hintText: "100 ${Helper.celsius}"),
+                  inputFormatters: [MaskTextInputFormatter(mask: '##.#', filter: { '#': RegExp(r'[0-9]') })],
+                  decoration: const InputDecoration(hintText: "50.0 ${Helper.celsius}"),
                   initialValue: controlPoints[indexPoint]['value'].toString(),
                   autofocus: true,
-                  maxLength: 3,
+                  maxLength: 4,
                   keyboardType: TextInputType.number,
                   onFieldSubmitted: (value) {
                     _changeTemp(indexPoint, value);
@@ -117,7 +117,7 @@ class _ViewModel extends ChangeNotifier {
 
   void _changeTemp(int indexPoint, String value) {
     if (value == '') return;
-    controlPoints[indexPoint]['value'] = int.parse(value);
+    controlPoints[indexPoint]['value'] = double.parse(value);
     _dataProvider.setControlPoints(controlPoints);
     notifiedPoints[indexPoint] = false;
     updateControlPoints = !updateControlPoints;
