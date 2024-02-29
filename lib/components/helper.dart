@@ -3,11 +3,14 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 
 abstract class Helper {
 
   static const String celsius = ' \u2103';
+  static const String minus = ' \u2212';
+  static const String plus = ' \u002b';
 
   static final loader = Center(child: Platform.isAndroid
       ? const CircularProgressIndicator(color: AppStyle.barColor)
@@ -69,7 +72,8 @@ abstract class Helper {
   //парсит данные по температуре полученные от датчика
   static double parseTemperature(List<int> data) {
     //print(Uint8List.fromList(data).buffer.asInt16List());
-    return (Uint8List.fromList(data).buffer.asByteData().getUint16(0, Endian.little)) / 100;
+    double temperature = (Uint8List.fromList(data).buffer.asByteData().getUint16(0, Endian.little)) / 100;
+    return temperature + Settings.calibrationSensor;
   }
 
   static int getDurationInSeconds(String time) {

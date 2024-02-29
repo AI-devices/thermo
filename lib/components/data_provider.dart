@@ -11,6 +11,7 @@ abstract class _Keys {
   static const scaleAxisX = 'scale_axis_x';
   static const notifyWhenTempDrops = 'notify_when_temp_drops';
   static const notifyWhenTimerEnds = 'notify_when_timer_ends';
+  static const calibrationSensor = 'calibration_sensor';
 }
 
 class DataProvider {
@@ -80,5 +81,12 @@ class DataProvider {
   }
   Future<void> setNotifyWhenTimerEnds() async {
     await (await _sharedPreferences).setString(_Keys.notifyWhenTimerEnds, Settings.notifyWhenTimerEnds);
+  }
+
+  Future<double> getCalibrationSensor() async {
+    return (await _sharedPreferences).getDouble(_Keys.calibrationSensor) ?? 0.0;
+  }
+  Future<void> setCalibrationSensor() async {
+    (await _sharedPreferences).setDouble(_Keys.calibrationSensor, Settings.calibrationSensor);
   }
 }

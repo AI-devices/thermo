@@ -27,6 +27,8 @@ abstract class Settings {
   static late String notifyWhenTempDrops;
   static late String notifyWhenTimerEnds;
 
+  static late double calibrationSensor;
+
   static bool vibrationIsSupported = false;
 
   static const nameDevice = 'temperature sensor';

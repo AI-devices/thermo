@@ -18,6 +18,7 @@ void main() async {
   await dataProvider.loadingChart();
   Settings.notifyWhenTempDrops = await dataProvider.getNotifyWhenTempDrops();
   Settings.notifyWhenTimerEnds = await dataProvider.getNotifyWhenTimerEnds();
+  Settings.calibrationSensor = await dataProvider.getCalibrationSensor();
   
   runApp(const MyApp());
 }

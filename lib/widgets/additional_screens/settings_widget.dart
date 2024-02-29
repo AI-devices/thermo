@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thermo/components/data_provider.dart';
+import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
@@ -38,6 +39,24 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     setState(() {});
   }
 
+  void changeCalibrationSensor({required String action}) {
+    if (action == 'sub') {
+      if (Settings.calibrationSensor <= -5.0) {
+        Helper.alert(context: context, content: 'Достигнуто минимальное значение калибровки');
+        return;
+      }
+      Settings.calibrationSensor = double.parse((Settings.calibrationSensor - 0.1).toStringAsFixed(1));
+    } else {
+      if (Settings.calibrationSensor >= 5.0) {
+        Helper.alert(context: context, content: 'Достигнуто максимальное значение калибровки');
+        return;
+      }
+      Settings.calibrationSensor = double.parse((Settings.calibrationSensor + 0.1).toStringAsFixed(1));
+    }
+    _dataProvider.setCalibrationSensor();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +69,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             _notifyWhenTempDrops(),
             const Divider(color: Colors.black),
             _notifyWhenTimerEnds(),
+            const Divider(color: Colors.black),
+            _calibrationSensor(),
             const Divider(color: Colors.black),
           ],
         ),
@@ -141,6 +162,53 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds, size: 30, color: AppStyle.barColor))
             )
           )
+        ],
+      ),
+    );
+  }
+
+  Padding _calibrationSensor() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Flexible(
+            fit: FlexFit.tight,
+            flex: 4,
+            child: Row(
+              children: [
+                const Text('Калибровка датчика'),
+                IconButton(
+                  onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
+                  icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
+                )
+              ],
+            )
+          ),
+          const SizedBox(width: 15),
+          Flexible(
+            flex: 1,
+            child: InkResponse(
+              onTap: () => changeCalibrationSensor(action: 'sub'),
+              child: const Text(Helper.minus, style: TextStyle(fontSize: 30))
+            )
+          ),
+          Flexible(
+            flex: 1,
+            fit: FlexFit.tight,
+            child: Text(Settings.calibrationSensor.toString(), textAlign: TextAlign.right, style: const TextStyle(fontSize: 18))
+          ),
+          Flexible(
+            flex: 1,
+            fit: FlexFit.tight,
+            child: Align(
+              alignment: Alignment.center,
+              child: InkResponse(
+                onTap: () => changeCalibrationSensor(action: 'add'),
+                child: const Text(Helper.plus, style: TextStyle(fontSize: 30))
+              ),
+            )
+          ),
         ],
       ),
     );
