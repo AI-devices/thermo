@@ -36,10 +36,6 @@ class ApiBluetooth {
     
     FlutterBluePlus.adapterState.listen((state) async {
       log(state.toString(), name: 'Bluetooth status');
-      if (Platform.isAndroid && ApiBluetooth._offerBluetoothOn == false) {
-        ApiBluetooth._offerBluetoothOn = true;
-        FlutterBluePlus.turnOn();
-      }
 
       if (state == BluetoothAdapterState.turningOff) {
         statusBluetooth = false;
@@ -61,6 +57,15 @@ class ApiBluetooth {
           _listenConnect();
         }
       } 
+
+      if (Platform.isAndroid && ApiBluetooth._offerBluetoothOn == false) {
+        ApiBluetooth._offerBluetoothOn = true;
+        try {
+          await FlutterBluePlus.turnOn();
+        } catch (error) {
+          log(error.toString(), name: 'FlutterBluePlus.turnOn()');
+        }
+      }
     });
   }
 
