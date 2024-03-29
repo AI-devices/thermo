@@ -4,6 +4,7 @@ import 'package:thermo/widgets/main_screen/widgets/count_down_widget.dart';
 import 'package:thermo/widgets/main_screen/widgets/control_points_widget.dart';
 import 'package:thermo/widgets/main_screen/widgets/monitoring_widget.dart';
 import 'package:thermo/widgets/main_screen/widgets/chart_widget.dart';
+import 'package:thermo/widgets/main_screen/widgets/percent_spirit_widget.dart';
 import 'package:thermo/widgets/main_screen/widgets/timer_widget.dart';
 
 
@@ -17,9 +18,10 @@ class MainScreenWidget extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 22.0),
         children: [
-          //? все виджеты здесь используют доступную высоту дисплея на 84%
           SizedBox(height: MediaQuery.of(context).size.height * 0.01),
           const _MonitoringWidgets(),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+          const PercentSpiritWidget(),
           SizedBox(height: MediaQuery.of(context).size.height * 0.01),
           const _ChartWidget(),
           SizedBox(height: MediaQuery.of(context).size.height * 0.01),

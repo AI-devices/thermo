@@ -12,6 +12,7 @@ abstract class _Keys {
   static const notifyWhenTempDrops = 'notify_when_temp_drops';
   static const notifyWhenTimerEnds = 'notify_when_timer_ends';
   static const calibrationSensor = 'calibration_sensor';
+  static const hidePercentSpiritWidget = 'hide_percent_spirit_widget';
 }
 
 class DataProvider {
@@ -88,5 +89,12 @@ class DataProvider {
   }
   Future<void> setCalibrationSensor() async {
     (await _sharedPreferences).setDouble(_Keys.calibrationSensor, Settings.calibrationSensor);
+  }
+
+  Future<bool> getHidePercentSpiritWidget() async {
+    return (await _sharedPreferences).getBool(_Keys.hidePercentSpiritWidget) ?? false;
+  }
+  Future<void> setHidePercentSpiritWidget() async {
+    (await _sharedPreferences).setBool(_Keys.hidePercentSpiritWidget, Settings.hidePercentSpiritWidget);
   }
 }

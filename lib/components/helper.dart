@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 
+extension Ex on double {
+  double toPrecision(int n) => double.parse(toStringAsFixed(n));
+}
+
 abstract class Helper {
 
   static const String celsius = ' \u2103';

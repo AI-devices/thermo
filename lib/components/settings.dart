@@ -26,8 +26,9 @@ abstract class Settings {
 
   static late String notifyWhenTempDrops;
   static late String notifyWhenTimerEnds;
-
   static late double calibrationSensor;
+  static late bool hidePercentSpiritWidget;
+  static VoidCallback? hidePercentSpiritWidgetChanged;
 
   static bool vibrationIsSupported = false;
 

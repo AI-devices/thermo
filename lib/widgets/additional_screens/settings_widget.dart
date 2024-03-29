@@ -57,6 +57,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     setState(() {});
   }
 
+  void changeVisibilityPercentSpiritWidget() {
+    Settings.hidePercentSpiritWidget = !Settings.hidePercentSpiritWidget;
+    Settings.hidePercentSpiritWidgetChanged?.call();
+    _dataProvider.setHidePercentSpiritWidget();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,6 +78,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             _notifyWhenTimerEnds(),
             const Divider(color: Colors.black),
             _calibrationSensor(),
+            const Divider(color: Colors.black),
+            _percentSpirit(),
             const Divider(color: Colors.black),
           ],
         ),
@@ -209,6 +218,41 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               ),
             )
           ),
+        ],
+      ),
+    );
+  }
+
+  Padding _percentSpirit() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          const Flexible(
+            flex: 6,
+            child: Text('Cкрыть автоматический расчет спиртуозности')
+          ),
+          Flexible(
+            flex: 1,
+            child: IconButton(
+              onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.'),
+              icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
+            ),
+          ),
+          const SizedBox(width: 10),
+          Flexible(
+            flex: 5,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 25),
+                child: Switch(
+                  //activeColor: AppStyle.barColor,
+                  value: Settings.hidePercentSpiritWidget,
+                  onChanged: (_) => changeVisibilityPercentSpiritWidget(),
+                ),
+              ),
+            )
+          )
         ],
       ),
     );

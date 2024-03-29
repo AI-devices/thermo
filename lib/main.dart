@@ -19,6 +19,7 @@ void main() async {
   Settings.notifyWhenTempDrops = await dataProvider.getNotifyWhenTempDrops();
   Settings.notifyWhenTimerEnds = await dataProvider.getNotifyWhenTimerEnds();
   Settings.calibrationSensor = await dataProvider.getCalibrationSensor();
+  Settings.hidePercentSpiritWidget = await dataProvider.getHidePercentSpiritWidget();
   
   runApp(const MyApp());
 }
