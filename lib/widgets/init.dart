@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth.dart';
 import 'package:thermo/components/api_vibration.dart';
 import 'package:thermo/components/styles.dart';
+import 'package:thermo/observers/observer_battery_charge.dart';
 import 'package:thermo/widgets/additional_screens/faq_widget.dart';
 import 'package:thermo/widgets/additional_screens/settings_widget.dart';
 import 'package:thermo/widgets/main_screen/main_widget.dart';
@@ -21,7 +22,6 @@ class _InitWidgetState extends State<InitWidget> {
 
   bool? bluetoothOn;
   bool? sensorOn;
-  int? batteryCharge;
 
   StreamSubscription<bool>? statusSensorSubscription;
 
@@ -36,35 +36,16 @@ class _InitWidgetState extends State<InitWidget> {
   @override
   void initState() {
     _init();
-    _timerCheckBatteryCharge();
+    ObserverBatteryCharge.changeBatteryCharge ??= () { setState(() {}); };
     super.initState();
   }
 
   @override
   void dispose() {
     ApiBluetooth.bluetoothStatusChanged = null;
+    ObserverBatteryCharge.changeBatteryCharge = null;
     statusSensorSubscription?.cancel();
     super.dispose();
-  }
-
-  void _timerCheckBatteryCharge() {
-    Timer.periodic(const Duration(minutes: 1), (_) async {
-      await _checkBatteryCharge();
-    });
-  }
-
-  Future<void> _checkBatteryCharge() async {
-    if (sensorOn == false) {
-      if (batteryCharge == null) return;
-      batteryCharge = null;
-      setState(() {});
-      return;
-    }
-    final currentCharge = await ApiBluetooth.getBatteryCharge();
-    if (currentCharge != batteryCharge) {
-      batteryCharge = currentCharge;
-      setState(() {});
-    }
   }
 
   Future<bool> _init() async {
@@ -78,7 +59,7 @@ class _InitWidgetState extends State<InitWidget> {
         if (sensorOn == statusSensor) return;
         sensorOn = statusSensor;
         setState(() {});
-        Future.delayed(const Duration(seconds: 1), () => _checkBatteryCharge());
+        Future.delayed(const Duration(seconds: 1), () => ObserverBatteryCharge());
       });
     }
     await ApiVibration.isSupported();
@@ -105,10 +86,10 @@ class _InitWidgetState extends State<InitWidget> {
             AppStyle.getIconSensor(sensorOn),
             const SizedBox(width: 20),
             Visibility(
-              visible: batteryCharge != null,
-              child: Center(child: Text('$batteryCharge%', style: const TextStyle(color: Colors.white, fontSize: 13)))
+              visible: ObserverBatteryCharge.charge != null,
+              child: Center(child: Text('${ObserverBatteryCharge.charge}%', style: const TextStyle(color: Colors.white, fontSize: 13)))
             ),
-            AppStyle.getIconBattery(batteryCharge),  
+            AppStyle.getIconBattery(ObserverBatteryCharge.charge),  
             const SizedBox(width: 10),
           ]
         ),
