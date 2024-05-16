@@ -20,6 +20,7 @@ void main() async {
   Settings.notifyWhenTimerEnds = await dataProvider.getNotifyWhenTimerEnds();
   Settings.calibrationSensor = await dataProvider.getCalibrationSensor();
   Settings.hidePercentSpiritWidget = await dataProvider.getHidePercentSpiritWidget();
+  Settings.alarmLowBatteryCharge = await dataProvider.getAlarmLowBatteryCharge();
   
   runApp(const MyApp());
 }

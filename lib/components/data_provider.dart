@@ -13,6 +13,7 @@ abstract class _Keys {
   static const notifyWhenTimerEnds = 'notify_when_timer_ends';
   static const calibrationSensor = 'calibration_sensor';
   static const hidePercentSpiritWidget = 'hide_percent_spirit_widget';
+  static const alarmLowBatteryCharge = 'alarm_low_battery_charge';
 }
 
 class DataProvider {
@@ -96,5 +97,12 @@ class DataProvider {
   }
   Future<void> setHidePercentSpiritWidget() async {
     (await _sharedPreferences).setBool(_Keys.hidePercentSpiritWidget, Settings.hidePercentSpiritWidget);
+  }
+
+  Future<bool> getAlarmLowBatteryCharge() async {
+    return (await _sharedPreferences).getBool(_Keys.alarmLowBatteryCharge) ?? false;
+  }
+  Future<void> setAlarmLowBatteryCharge() async {
+    (await _sharedPreferences).setBool(_Keys.alarmLowBatteryCharge, Settings.alarmLowBatteryCharge);
   }
 }

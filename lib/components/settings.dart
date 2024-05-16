@@ -29,6 +29,7 @@ abstract class Settings {
   static late double calibrationSensor;
   static late bool hidePercentSpiritWidget;
   static VoidCallback? hidePercentSpiritWidgetChanged;
+  static late bool alarmLowBatteryCharge;
 
   static bool vibrationIsSupported = false;
 

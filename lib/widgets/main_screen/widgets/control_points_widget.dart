@@ -10,6 +10,7 @@ import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:provider/provider.dart';
+import 'package:thermo/main.dart';
 import 'package:thermo/widgets/assets.dart';
 import 'package:vibration/vibration.dart';
 
@@ -54,11 +55,9 @@ class _ViewModel extends ChangeNotifier {
       if (reached == true) {
         needUpdateWidget = true;
         notifiedPoints[key] = true;
-        if (point['notify'] == Settings.typeVibration) Vibration.vibrate(duration: 2000);
-        if (point['notify'] == Settings.typeRing) _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 0));
-        if (point['notify'] != Settings.typeNone) {
-          Notifier.snackBar(notify: Notify.checkpointReached, text: 'Контрольная точка в ${point['value']}${Helper.celsius} пройдена');
-        }
+        if (point['notify'] == Settings.typeNone) continue;
+        //Notifier.snackBar(notify: Notify.checkpointReached, text: 'Контрольная точка в ${point['value']}${Helper.celsius} пройдена');
+        _alert(point: point);
       }
     }
     _previousTemperature = temperature;
@@ -66,6 +65,41 @@ class _ViewModel extends ChangeNotifier {
       updateControlPoints = !updateControlPoints;
       notifyListeners();
     }
+  }
+
+  Future<void> _alert({required dynamic point}) async {
+    if (Navigator.of(navigatorKey.currentState!.context).canPop()) {
+      Navigator.of(navigatorKey.currentState!.context).pop();
+      if (point['notify'] == Settings.typeRing) await _player.stop();
+    }
+
+    if (point['notify'] == Settings.typeVibration) Vibration.vibrate(duration: 5000);
+    if (point['notify'] == Settings.typeRing) _player.play(AssetSource('../${AppAssets.alarmAudioLong}'));
+
+    // ignore: use_build_context_synchronously
+    showDialog<dynamic>(
+      context: navigatorKey.currentState!.context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: AlertDialog(
+            title: const Text('Уведомление'),
+            content: Text('Контрольная точка в ${point['value']}${Helper.celsius} пройдена'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10) 
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _player.stop();
+                }, 
+                child: const Text('OK'))
+            ],
+          )
+        );
+      },
+    );
   }
 
   @override

@@ -64,6 +64,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     setState(() {});
   }
 
+  void changeNotifyAlarmLowBatteryCharge() {
+    Settings.alarmLowBatteryCharge = !Settings.alarmLowBatteryCharge;
+    _dataProvider.setAlarmLowBatteryCharge();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,6 +86,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             _calibrationSensor(),
             const Divider(color: Colors.black),
             _percentSpirit(),
+            const Divider(color: Colors.black),
+            _alarmLowBatteryCharge(),
             const Divider(color: Colors.black),
           ],
         ),
@@ -249,6 +257,33 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                   //activeColor: AppStyle.barColor,
                   value: Settings.hidePercentSpiritWidget,
                   onChanged: (_) => changeVisibilityPercentSpiritWidget(),
+                ),
+              ),
+            )
+          )
+        ],
+      ),
+    );
+  }
+
+  Padding _alarmLowBatteryCharge() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          const Flexible(
+            flex: 6,
+            child: Text('Предупреждение при заряде датчика 20% и ниже')
+          ),
+          const SizedBox(width: 10),
+          Flexible(
+            flex: 5,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 15),
+                child: Switch(
+                  value: Settings.alarmLowBatteryCharge,
+                  onChanged: (_) => changeNotifyAlarmLowBatteryCharge(),
                 ),
               ),
             )
