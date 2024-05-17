@@ -99,10 +99,13 @@ class DataProvider {
     (await _sharedPreferences).setBool(_Keys.hidePercentSpiritWidget, Settings.hidePercentSpiritWidget);
   }
 
-  Future<bool> getAlarmLowBatteryCharge() async {
-    return (await _sharedPreferences).getBool(_Keys.alarmLowBatteryCharge) ?? false;
+  Future<Map<String, dynamic>> getAlarmLowBatteryCharge() async {
+
+    final data = (await _sharedPreferences).getString(_Keys.alarmLowBatteryCharge);
+    if (data == null) return { 'on' : false, 'percent_charge' : '20' };
+    return json.decode(data);
   }
   Future<void> setAlarmLowBatteryCharge() async {
-    (await _sharedPreferences).setBool(_Keys.alarmLowBatteryCharge, Settings.alarmLowBatteryCharge);
+    (await _sharedPreferences).setString(_Keys.alarmLowBatteryCharge, json.encode(Settings.alarmLowBatteryCharge));
   }
 }

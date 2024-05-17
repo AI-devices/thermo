@@ -40,13 +40,13 @@ class ObserverBatteryCharge {
     charge = currentCharge;
     changeBatteryCharge?.call();
     if (charge != null) {
-      if (charge! <= 20) _alert();
-      if (charge! > 20 && _alertLowBatteryCharge == true) _alertLowBatteryCharge = false;
+      if (charge! < int.parse(Settings.alarmLowBatteryCharge['percent_charge'])) _alert();
+      if (charge! >= int.parse(Settings.alarmLowBatteryCharge['percent_charge']) && _alertLowBatteryCharge == true) _alertLowBatteryCharge = false;
     }
   }
 
   void _alert() {
-    if (Settings.alarmLowBatteryCharge == false) return;
+    if ((Settings.alarmLowBatteryCharge['on'] as bool) == false) return;
     if (_alertLowBatteryCharge == true) return;
     _alertLowBatteryCharge = true;
 
@@ -59,7 +59,7 @@ class ObserverBatteryCharge {
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: AlertDialog(
             title: const Text('Предупреждение'),
-            content: Text('Низкий заряд батареи ($charge %)'),
+            content: Text('Низкий заряд батареи ($charge%)'),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10) 
             ),

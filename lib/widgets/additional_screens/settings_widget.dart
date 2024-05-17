@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/notifier.dart';
@@ -64,8 +66,49 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     setState(() {});
   }
 
-  void changeNotifyAlarmLowBatteryCharge() {
-    Settings.alarmLowBatteryCharge = !Settings.alarmLowBatteryCharge;
+  changeNotifyAlarmLowBatteryCharge(bool value) {
+    if (value == false) {
+      _setAlarmLowBatteryCharge(on: value);
+    } else {
+      return showDialog<dynamic>(
+        context: context,
+        builder: (BuildContext context) {
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+            child: AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Укажите процент заряда датчика для уведомления'),
+                  TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(2)
+                    ],
+                    decoration: const InputDecoration(hintText: "20 %"),
+                    initialValue: Settings.alarmLowBatteryCharge['percent_charge'],
+                    autofocus: true,
+                    keyboardType: TextInputType.number,
+                    onFieldSubmitted: (value) {
+                      Navigator.of(context).pop();
+                      if (value != '') _setAlarmLowBatteryCharge(on: true, percentBatteryCharge: value);
+                    },
+                  )
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10) 
+              ),
+            )
+          );
+        },
+      );
+    }
+  }
+
+  _setAlarmLowBatteryCharge({required bool on, String? percentBatteryCharge}) {
+    Settings.alarmLowBatteryCharge['on'] = on;
+    if (percentBatteryCharge != null) Settings.alarmLowBatteryCharge['percent_charge'] = percentBatteryCharge;
     _dataProvider.setAlarmLowBatteryCharge();
     setState(() {});
   }
@@ -271,9 +314,9 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          const Flexible(
+          Flexible(
             flex: 6,
-            child: Text('Предупреждение при заряде датчика 20% и ниже')
+            child: Text('Предупреждение при низком заряде датчика (<${Settings.alarmLowBatteryCharge['percent_charge']}%)')
           ),
           const SizedBox(width: 10),
           Flexible(
@@ -282,8 +325,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               child: Padding(
                 padding: const EdgeInsets.only(right: 15),
                 child: Switch(
-                  value: Settings.alarmLowBatteryCharge,
-                  onChanged: (_) => changeNotifyAlarmLowBatteryCharge(),
+                  value: Settings.alarmLowBatteryCharge['on'] as bool,
+                  onChanged: (value) => changeNotifyAlarmLowBatteryCharge(value),
                 ),
               ),
             )
