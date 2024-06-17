@@ -6,6 +6,7 @@ import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key? key}) : super(key: key);
@@ -113,6 +114,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     setState(() {});
   }
 
+  void changeWakelock(bool value) {
+    Settings.wakelock = value;
+    _dataProvider.setWakelock();
+    value == true ? WakelockPlus.enable() : WakelockPlus.disable();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,6 +139,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             _percentSpirit(),
             const Divider(color: Colors.black),
             _alarmLowBatteryCharge(),
+            const Divider(color: Colors.black),
+            _wakelock(),
             const Divider(color: Colors.black),
           ],
         ),
@@ -327,6 +337,33 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 child: Switch(
                   value: Settings.alarmLowBatteryCharge['on'] as bool,
                   onChanged: (value) => changeNotifyAlarmLowBatteryCharge(value),
+                ),
+              ),
+            )
+          )
+        ],
+      ),
+    );
+  }
+
+  Padding _wakelock() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          const Flexible(
+            flex: 7,
+            child: Text('Не давать засыпать телефону')
+          ),
+          const SizedBox(width: 10),
+          Flexible(
+            flex: 5,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 15),
+                child: Switch(
+                  value: Settings.wakelock,
+                  onChanged: (value) => changeWakelock(value),
                 ),
               ),
             )

@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:thermo/widgets/assets.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class MonitoringWidget extends StatefulWidget {
   const MonitoringWidget({super.key});
@@ -32,6 +34,11 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
       setState(() {});
     });
     statusSensorSubscription = ApiBluetooth.statusSensorStream.listen((bool statusSensor){
+      if (Settings.wakelock) statusSensor == false ? WakelockPlus.disable() : WakelockPlus.enable();
+      if (statusSensor == true) {
+        WakelockPlus.enable();
+        WakelockPlus.enable();
+      }
       if (statusSensor == false) {
         currentTemperature = null;
         setState(() {});

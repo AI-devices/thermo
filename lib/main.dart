@@ -21,6 +21,7 @@ void main() async {
   Settings.calibrationSensor = await dataProvider.getCalibrationSensor();
   Settings.hidePercentSpiritWidget = await dataProvider.getHidePercentSpiritWidget();
   Settings.alarmLowBatteryCharge = await dataProvider.getAlarmLowBatteryCharge();
+  Settings.wakelock = await dataProvider.getWakelock();
   
   runApp(const MyApp());
 }

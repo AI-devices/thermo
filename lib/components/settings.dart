@@ -30,6 +30,7 @@ abstract class Settings {
   static late bool hidePercentSpiritWidget;
   static VoidCallback? hidePercentSpiritWidgetChanged;
   static late Map<String, dynamic> alarmLowBatteryCharge;
+  static late bool wakelock;
 
   static bool vibrationIsSupported = false;
 
