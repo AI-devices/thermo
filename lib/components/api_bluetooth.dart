@@ -28,6 +28,7 @@ class ApiBluetooth {
   }
 
   ApiBluetooth._() {
+    FlutterBluePlus.setLogLevel(LogLevel.error, color: true);
     _init();
   }
 
@@ -100,7 +101,8 @@ class ApiBluetooth {
     FlutterBluePlus.scanResults.listen(
       (results) async {
         for (ScanResult r in results) {
-          if (r.device.platformName.toLowerCase() == Settings.nameDevice) {
+          if (r.device.platformName.startsWith(Settings.prefixDevice)) {
+          //if (r.device.platformName.toLowerCase() == Settings.nameDevice) {
             FlutterBluePlus.stopScan();
             log(r.toString(), name: 'sensor found');
             _device = BluetoothDevice(remoteId: r.device.remoteId);
