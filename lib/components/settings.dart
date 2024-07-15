@@ -34,8 +34,6 @@ abstract class Settings {
 
   static bool vibrationIsSupported = false;
 
-  //static const nameDevice = 'temperature sensor';
-  static const prefixDevice = 'ThermoD';
   static const uuidServiceTemperature = '0000181a-0000-1000-8000-00805f9b34fb';
   static const uuidCharacteristicTemperature = '00002a6e-0000-1000-8000-00805f9b34fb';
   static const uuidServiceBattery = '0000180f-0000-1000-8000-00805f9b34fb';

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:thermo/components/api_bluetooth.dart';
+import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
 import 'package:thermo/widgets/assets.dart';

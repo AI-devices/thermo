@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:thermo/components/api_bluetooth.dart';
+import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/api_vibration.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:thermo/observers/observer_battery_charge.dart';

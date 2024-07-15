@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:thermo/components/api_bluetooth.dart';
+import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/widgets/assets.dart';
 import 'package:vibration/vibration.dart';
