@@ -26,6 +26,7 @@ mixin ApiBluetoothV1 {
         if (ApiBluetooth.statusSensor == false) {
           ApiBluetooth.statusSensor = true;
           ApiBluetooth.controllerStatusSensor.add(true);
+          (this as ApiBluetooth).prevAlarmSensorDissconnectedClose();
           Notifier.snackBar(notify: Notify.sensorConnected);
         }
       }
@@ -76,6 +77,7 @@ mixin ApiBluetoothV1 {
       }
       ApiBluetooth.statusSensor = false;
       ApiBluetooth.controllerStatusSensor.add(false);
+      (this as ApiBluetooth).alarmSensorDissconnected();
     }
   }
 

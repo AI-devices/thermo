@@ -25,12 +25,14 @@ abstract class Settings {
   }
 
   static late String notifyWhenTempDrops;
+  static VoidCallback? notifyWhenTempDropsChanged;
   static late String notifyWhenTimerEnds;
   static late double calibrationSensor;
   static late bool hidePercentSpiritWidget;
   static VoidCallback? hidePercentSpiritWidgetChanged;
   static late Map<String, dynamic> alarmLowBatteryCharge;
   static late bool wakelock;
+  static late bool alarmSensorDissconnected;
 
   static bool vibrationIsSupported = false;
 

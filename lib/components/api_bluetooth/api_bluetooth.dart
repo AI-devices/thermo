@@ -1,11 +1,16 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import 'dart:ui';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth_v1.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth_v2.dart';
 import 'package:thermo/components/notifier.dart';
+import 'package:thermo/components/settings.dart';
+import 'package:thermo/main.dart';
+import 'package:thermo/widgets/assets.dart';
 
 enum ApiBluetoothVersion {
   unknown,
@@ -15,6 +20,8 @@ enum ApiBluetoothVersion {
 
 class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
   static ApiBluetooth? _instance;
+
+  final _player = AudioPlayer();
 
   static late ApiBluetoothVersion version;
   
@@ -145,5 +152,44 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
     if (isSupported) return true;
     Notifier.snackBar(notify: Notify.bluetoothIsNotSupported);
     return false;
+  }
+
+  void alarmSensorDissconnected() {
+    if (Settings.alarmSensorDissconnected == false) return;
+    prevAlarmSensorDissconnectedClose();
+
+    _player.play(AssetSource('../${AppAssets.alarmAudioLong}'));
+
+    showDialog<dynamic>(
+      context: navigatorKey.currentState!.context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: AlertDialog(
+            title: const Text('Предупреждение'),
+            content: const Text('Потеряно соединение с термодатчиком'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10) 
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _player.stop();
+                }, 
+                child: const Text('OK'))
+            ],
+          )
+        );
+      },
+    );
+  }
+
+  void prevAlarmSensorDissconnectedClose() {
+    if (Settings.alarmSensorDissconnected == false) return;
+    if (Navigator.of(navigatorKey.currentState!.context).canPop()) {
+      Navigator.of(navigatorKey.currentState!.context).pop();
+      _player.stop();
+    }
   }
 }

@@ -22,6 +22,7 @@ mixin ApiBluetoothV2 {
     if (ApiBluetooth.statusSensor == false) {
       ApiBluetooth.statusSensor = true;
       ApiBluetooth.controllerStatusSensor.add(true);
+      (this as ApiBluetooth).prevAlarmSensorDissconnectedClose();
       Notifier.snackBar(notify: Notify.sensorConnected);
     }
 
@@ -38,26 +39,9 @@ mixin ApiBluetoothV2 {
     batteryCharge = dataInBytes[5];
   }
 
-  //если 15 сек при сканировании датчик не определяется, то считаем, что произошел разрыв
-  /*void listenConnectV2() async {
-    if (_timer != null) _timer!.cancel();
-
-    await FlutterBluePlus.startScan();
-
-    _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
-      print('=======11111========');
-      print(DateTime.now().difference(lastKnownDatetime).inSeconds);
-      if (DateTime.now().difference(lastKnownDatetime).inSeconds > 15) {
-        timer.cancel();
-        (this as ApiBluetooth).dissconnect();
-      }
-
-      read(r);
-    });
-  }*/
-
   void dissconnectToSensorV2() {
     ApiBluetooth.statusSensor = false;
     ApiBluetooth.controllerStatusSensor.add(false);
+    (this as ApiBluetooth).alarmSensorDissconnected();
   }
 }

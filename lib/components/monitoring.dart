@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/settings.dart';
+import 'package:thermo/main.dart';
 import 'package:thermo/widgets/assets.dart';
 import 'package:vibration/vibration.dart';
 
@@ -9,6 +13,7 @@ class Monitoring {
   static Monitoring? _instance;
   StreamSubscription<double>? temperatureSubscription;
   final _player = AudioPlayer();
+  final _dataProvider = DataProvider();
 
   int _countTempDrops = 0;
   double _lastTemp= 0;
@@ -34,6 +39,44 @@ class Monitoring {
       if (Settings.notifyWhenTempDrops == Settings.typeRing) {
         _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 0));
       }
+      if (Settings.notifyWhenTempDrops == Settings.typeNone) return;
+      if (Navigator.of(navigatorKey.currentState!.context).canPop()) Navigator.of(navigatorKey.currentState!.context).pop();
+      
+      showDialog<dynamic>(
+        context: navigatorKey.currentState!.context,
+        builder: (BuildContext context) {
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+            child: AlertDialog(
+              title: const Text('Уведомление'),
+              content: const Text('Температура падает'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10) 
+              ),
+              actions: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Settings.notifyWhenTempDrops = Settings.typeNone;
+                        _dataProvider.setNotifyWhenTempDrops();
+                        Settings.notifyWhenTempDropsChanged?.call();
+                        Navigator.of(context).pop();
+                      }, 
+                      child: const Text('Не следить')
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Продолжить')
+                    )
+                  ],
+                )
+              ],
+            )
+          );
+        },
+      );
     }
   }
 }

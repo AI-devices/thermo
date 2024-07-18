@@ -15,6 +15,7 @@ abstract class _Keys {
   static const hidePercentSpiritWidget = 'hide_percent_spirit_widget';
   static const alarmLowBatteryCharge = 'alarm_low_battery_charge';
   static const wakelock = 'wakelock';
+  static const alarmSensorDissconnected = 'alarm_sensor_dissconnected';
 }
 
 class DataProvider {
@@ -115,5 +116,12 @@ class DataProvider {
   }
   Future<void> setWakelock() async {
     (await _sharedPreferences).setBool(_Keys.wakelock, Settings.wakelock);
+  }
+
+  Future<bool> getAlarmSensorDissconnected() async {
+    return (await _sharedPreferences).getBool(_Keys.alarmSensorDissconnected) ?? true;
+  }
+  Future<void> setAlarmSensorDissconnected() async {
+    (await _sharedPreferences).setBool(_Keys.alarmSensorDissconnected, Settings.alarmSensorDissconnected);
   }
 }

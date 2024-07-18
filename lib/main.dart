@@ -22,6 +22,7 @@ void main() async {
   Settings.hidePercentSpiritWidget = await dataProvider.getHidePercentSpiritWidget();
   Settings.alarmLowBatteryCharge = await dataProvider.getAlarmLowBatteryCharge();
   Settings.wakelock = await dataProvider.getWakelock();
+  Settings.alarmSensorDissconnected = await dataProvider.getAlarmSensorDissconnected();
   
   runApp(const MyApp());
 }

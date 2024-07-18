@@ -19,6 +19,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   final _dataProvider = DataProvider();
   double maxHoursForStat = Settings.maxHoursForChart.toDouble();
 
+  @override
+  void initState() {
+    super.initState();
+    Settings.notifyWhenTempDropsChanged ??= () => setState(() {});
+  }
+
   void onChangedHours(double value) {
       maxHoursForStat = value;
       setState(() {});
@@ -121,6 +127,12 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     setState(() {});
   }
 
+  void changeAlarmSensorDissconnected() {
+    Settings.alarmSensorDissconnected = !Settings.alarmSensorDissconnected;
+    _dataProvider.setAlarmSensorDissconnected();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,6 +153,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             _alarmLowBatteryCharge(),
             const Divider(color: Colors.black),
             _wakelock(),
+            const Divider(color: Colors.black),
+            _alarmSensorDissconnected(),
             const Divider(color: Colors.black),
           ],
         ),
@@ -337,6 +351,33 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 child: Switch(
                   value: Settings.alarmLowBatteryCharge['on'] as bool,
                   onChanged: (value) => changeNotifyAlarmLowBatteryCharge(value),
+                ),
+              ),
+            )
+          )
+        ],
+      ),
+    );
+  }
+
+  Padding _alarmSensorDissconnected() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          const Flexible(
+            flex: 6,
+            child: Text('Предупреждение при потере сигнала от датчика')
+          ),
+          const SizedBox(width: 10),
+          Flexible(
+            flex: 5,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 15),
+                child: Switch(
+                  value: Settings.alarmSensorDissconnected,
+                  onChanged: (_) => changeAlarmSensorDissconnected(),
                 ),
               ),
             )
