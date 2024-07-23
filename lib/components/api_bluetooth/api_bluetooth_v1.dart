@@ -11,7 +11,16 @@ mixin ApiBluetoothV1 {
   static BluetoothDevice? _device; 
   static BluetoothCharacteristic? _characteristicBattery;
 
-  Future<void> listenConnect({required DeviceIdentifier deviceId}) async {
+  void readDataV1(ScanResult r) {
+    if (ApiBluetooth.version == ApiBluetoothVersion.version2) return;
+    ApiBluetooth.version = ApiBluetoothVersion.version1;
+    FlutterBluePlus.stopScan();
+    log(r.toString(), name: ApiBluetooth.version.toString());
+
+    _listenConnect(deviceId: r.device.remoteId);
+  }
+
+  Future<void> _listenConnect({required DeviceIdentifier deviceId}) async {
     _device = BluetoothDevice(remoteId: deviceId);
     await _connectToSensor();
 

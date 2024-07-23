@@ -103,34 +103,10 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
     FlutterBluePlus.scanResults.listen(
       (results) async {
         for (ScanResult r in results) {
-          
-          //? version1
-          if (r.device.platformName.toLowerCase() == ApiBluetoothV1.nameDevice) {
-            if (version == ApiBluetoothVersion.version2) continue;
-            version = ApiBluetoothVersion.version1;
-            FlutterBluePlus.stopScan();
-            log(r.toString(), name: version.toString());
-            listenConnect(deviceId: r.device.remoteId);
-          }
-
-          //? version2
-          if (r.device.platformName.startsWith(ApiBluetoothV2.prefixDevice)) {
-            if (version == ApiBluetoothVersion.version1) continue;
-
-            if (isOldData(r.timeStamp)) {
-              if (statusSensor == true) dissconnect();
-              continue;
-            }
-
-            if (version != ApiBluetoothVersion.version2) {
-              version = ApiBluetoothVersion.version2;
-              log(r.toString(), name: version.toString());
-            }
-            read(r);
-          }
+          if (r.device.platformName.toLowerCase() == ApiBluetoothV1.nameDevice) readDataV1(r);
+          if (r.device.platformName.startsWith(ApiBluetoothV2.prefixDevice)) readDataV2(r);
         }
       },
-      //onError(e) => print(e);
     );
   }
 
@@ -138,7 +114,6 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
     if (version == ApiBluetoothVersion.version1) dissconnectToSensorV1();
     if (version == ApiBluetoothVersion.version2) dissconnectToSensorV2();
     version = ApiBluetoothVersion.unknown;
-    
   }
 
   static Future<int?> getBatteryCharge() async {

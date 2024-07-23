@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
@@ -8,12 +9,21 @@ mixin ApiBluetoothV2 {
   static int? batteryCharge;
   static DateTime lastHandledDatetime = DateTime(1970, 1, 1);
 
-  bool isOldData(DateTime timeStamp) {
-    return DateTime.now().difference(timeStamp).inSeconds > 15;
-  }
+  void readDataV2(ScanResult r) {
+    if (ApiBluetooth.version == ApiBluetoothVersion.version1) return;
 
-  void read(ScanResult r) {
-    if (r.timeStamp.difference(lastHandledDatetime).inSeconds < 3) return; //очень много дублирующих ивентов поступает в одно и то же время. отсекаем
+    //если условие выполняется - считаем, что соединение с датчиком потеряно
+    if (DateTime.now().difference(r.timeStamp).inSeconds > 15) {
+      if (ApiBluetooth.statusSensor == true) (this as ApiBluetooth).dissconnect();
+      return;
+    }
+
+    if (ApiBluetooth.version == ApiBluetoothVersion.unknown) {
+      ApiBluetooth.version = ApiBluetoothVersion.version2;
+      log(r.toString(), name: ApiBluetooth.version.toString());
+    }
+
+    if (r.timeStamp.difference(lastHandledDatetime).inSeconds <= 1) return; //считываем данные раз в секунду, тут сыпится очень много дублей
     lastHandledDatetime = r.timeStamp;
 
     List<int>? dataInBytes = r.advertisementData.serviceData[r.advertisementData.serviceData.keys.first];
