@@ -53,7 +53,7 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
 
       if (state == BluetoothAdapterState.turningOff) {
         statusBluetooth = false;
-        await dissconnect();
+        await dissconnect(); //! на 13 ОС Андроид, стрим по состоянию датчика не отлавливает дисконнект в случае отключения bluetooth
       }
 
       if (state == BluetoothAdapterState.off) {
@@ -111,6 +111,7 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
   }
 
   Future<void> dissconnect() async {
+    if (statusSensor == false) return;
     if (version == ApiBluetoothVersion.version1) dissconnectToSensorV1();
     if (version == ApiBluetoothVersion.version2) dissconnectToSensorV2();
     version = ApiBluetoothVersion.unknown;
@@ -131,11 +132,11 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
 
   void alarmSensorDissconnected() {
     if (Settings.alarmSensorDissconnected == false) return;
-    prevAlarmSensorDissconnectedClose();
-
-    _player.play(AssetSource('../${AppAssets.alarmAudioLong}'));
+    if (Navigator.of(navigatorKey.currentState!.context).canPop()) return;
+    if (_player.state != PlayerState.playing) _player.play(AssetSource('../${AppAssets.alarmAudioLong}'));
 
     showDialog<dynamic>(
+      barrierDismissible: false,
       context: navigatorKey.currentState!.context,
       builder: (BuildContext context) {
         return BackdropFilter(

@@ -79,6 +79,7 @@ class _ViewModel extends ChangeNotifier {
     // ignore: use_build_context_synchronously
     showDialog<dynamic>(
       context: navigatorKey.currentState!.context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),

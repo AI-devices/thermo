@@ -17,7 +17,11 @@ mixin ApiBluetoothV1 {
     FlutterBluePlus.stopScan();
     log(r.toString(), name: ApiBluetooth.version.toString());
 
-    _listenConnect(deviceId: r.device.remoteId);
+    if (_device == null) {
+      _listenConnect(deviceId: r.device.remoteId);
+    } else {
+      _connectToSensor();
+    }
   }
 
   Future<void> _listenConnect({required DeviceIdentifier deviceId}) async {
@@ -79,7 +83,6 @@ mixin ApiBluetoothV1 {
   Future<void> dissconnectToSensorV1() async {
     if (_device != null && ApiBluetooth.statusSensor == true) {
       try {
-        //! на 13 ОС Андроид, стрим по состоянию датчика не отлавливает дисконнект в случае отключения bluetooth
         await _device!.disconnect();
       } catch (e) {
         log(e.toString(), name: 'device.disconnect()');
