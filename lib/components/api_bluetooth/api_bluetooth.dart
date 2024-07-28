@@ -10,11 +10,13 @@ import 'package:thermo/components/api_bluetooth/api_bluetooth_v2.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
+import 'package:thermo/observers/app_lifecycle_observer.dart';
 import 'package:thermo/widgets/assets.dart';
 
 enum ApiBluetoothVersion {
   unknown,
-  version1,
+  version1oldSensor,
+  version1newSensor,
   version2,
 }
 
@@ -23,7 +25,7 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
 
   final _player = AudioPlayer();
 
-  static late ApiBluetoothVersion version;
+  static ApiBluetoothVersion version = ApiBluetoothVersion.unknown;
   
   static bool _offerBluetoothOn = false;
 
@@ -36,7 +38,6 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
   static Stream<bool> get statusSensorStream => controllerStatusSensor.stream;
 
   factory ApiBluetooth() {
-    version = ApiBluetoothVersion.unknown;
     return _instance ??= ApiBluetooth._();
   }
 
@@ -103,8 +104,14 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
     FlutterBluePlus.scanResults.listen(
       (results) async {
         for (ScanResult r in results) {
-          if (r.device.platformName.toLowerCase() == ApiBluetoothV1.nameDevice) readDataV1(r);
-          if (r.device.platformName.startsWith(ApiBluetoothV2.prefixDevice)) readDataV2(r);
+          if (r.device.platformName.toLowerCase() == Settings.nameDeviceOldSensor) readDataV1(r);
+          if (r.device.platformName.startsWith(Settings.prefixDeviceNewSensor)) {
+            if (version == ApiBluetoothVersion.version2 || AppLifecycleObserver.state == AppLifecycleState.paused) {
+              readDataV2(r);
+            } else {
+              readDataV1(r);
+            }
+          }
         }
       },
     );
@@ -112,13 +119,27 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
 
   Future<void> dissconnect() async {
     if (statusSensor == false) return;
-    if (version == ApiBluetoothVersion.version1) dissconnectToSensorV1();
+    if (version == ApiBluetoothVersion.version1oldSensor || version == ApiBluetoothVersion.version1newSensor) dissconnectToSensorV1();
     if (version == ApiBluetoothVersion.version2) dissconnectToSensorV2();
     version = ApiBluetoothVersion.unknown;
   }
 
+  Future<void> switchVersion({required ApiBluetoothVersion toVersion}) async {
+    if (statusSensor == false) return;
+    if (version == ApiBluetoothVersion.unknown || version == ApiBluetoothVersion.version1oldSensor) return;
+    if (version == toVersion) return; //если версия и так уже та, что нужна - ничего не делаем
+    if (toVersion == ApiBluetoothVersion.version1newSensor) {
+      switchOnV1();
+      switchOffV2();
+    }
+    if (toVersion == ApiBluetoothVersion.version2) {
+      switchOnV2();
+      switchOffV1();
+    }
+  }
+
   static Future<int?> getBatteryCharge() async {
-    if (version == ApiBluetoothVersion.version1) return ApiBluetoothV1.getBatteryCharge();
+    if (version == ApiBluetoothVersion.version1oldSensor || version == ApiBluetoothVersion.version1newSensor) return ApiBluetoothV1.getBatteryCharge();
     if (version == ApiBluetoothVersion.version2) return ApiBluetoothV2.batteryCharge;
     return null;
   }

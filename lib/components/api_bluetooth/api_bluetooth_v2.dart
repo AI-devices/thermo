@@ -5,12 +5,11 @@ import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/notifier.dart';
 
 mixin ApiBluetoothV2 {
-  static const prefixDevice = 'ThermoD';
   static int? batteryCharge;
   static DateTime lastHandledDatetime = DateTime(1970, 1, 1);
 
   void readDataV2(ScanResult r) {
-    if (ApiBluetooth.version == ApiBluetoothVersion.version1) return;
+    if (ApiBluetooth.version == ApiBluetoothVersion.version1oldSensor || ApiBluetooth.version == ApiBluetoothVersion.version1newSensor) return;
 
     //если условие выполняется - считаем, что соединение с датчиком потеряно
     if (DateTime.now().difference(r.timeStamp).inSeconds > 15) {
@@ -53,5 +52,13 @@ mixin ApiBluetoothV2 {
     ApiBluetooth.statusSensor = false;
     ApiBluetooth.controllerStatusSensor.add(false);
     (this as ApiBluetooth).alarmSensorDissconnected();
+  }
+
+  void switchOffV2() {}
+
+  void switchOnV2() {
+    ApiBluetooth.version = ApiBluetoothVersion.version2;
+    log('switch to ${ApiBluetooth.version}');
+    FlutterBluePlus.startScan();
   }
 }

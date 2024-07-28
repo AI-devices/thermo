@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/api_vibration.dart';
 import 'package:thermo/components/styles.dart';
+import 'package:thermo/observers/app_lifecycle_observer.dart';
 import 'package:thermo/observers/observer_battery_charge.dart';
 import 'package:thermo/widgets/additional_screens/faq_widget.dart';
 import 'package:thermo/widgets/additional_screens/settings_widget.dart';
@@ -18,6 +19,8 @@ class InitWidget extends StatefulWidget {
 }
 
 class _InitWidgetState extends State<InitWidget> {
+  final AppLifecycleObserver _lifecycleObserver = AppLifecycleObserver();
+  
   int _selectedTab = 0;
 
   bool? bluetoothOn;
@@ -35,9 +38,10 @@ class _InitWidgetState extends State<InitWidget> {
 
   @override
   void initState() {
+    super.initState();
     _init();
     ObserverBatteryCharge.changeBatteryCharge ??= () { setState(() {}); };
-    super.initState();
+    _lifecycleObserver.addLifecycleObserver();
   }
 
   @override
@@ -45,6 +49,7 @@ class _InitWidgetState extends State<InitWidget> {
     ApiBluetooth.bluetoothStatusChanged = null;
     ObserverBatteryCharge.changeBatteryCharge = null;
     statusSensorSubscription?.cancel();
+    _lifecycleObserver.removeLifecycleObserver();
     super.dispose();
   }
 

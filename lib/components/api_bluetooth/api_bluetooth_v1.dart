@@ -6,14 +6,15 @@ import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 
 mixin ApiBluetoothV1 {
-  static const nameDevice = 'temperature sensor';
-
   static BluetoothDevice? _device; 
   static BluetoothCharacteristic? _characteristicBattery;
 
   void readDataV1(ScanResult r) {
     if (ApiBluetooth.version == ApiBluetoothVersion.version2) return;
-    ApiBluetooth.version = ApiBluetoothVersion.version1;
+
+    if (r.device.platformName.toLowerCase() == Settings.nameDeviceOldSensor) ApiBluetooth.version = ApiBluetoothVersion.version1oldSensor;
+    if (r.device.platformName.startsWith(Settings.prefixDeviceNewSensor)) ApiBluetooth.version = ApiBluetoothVersion.version1newSensor;
+    
     FlutterBluePlus.stopScan();
     log(r.toString(), name: ApiBluetooth.version.toString());
 
@@ -30,7 +31,7 @@ mixin ApiBluetoothV1 {
 
     _device!.connectionState.listen((BluetoothConnectionState state) async {
       log(state.toString(), name: 'Sensor status');
-      if (state == BluetoothConnectionState.disconnected) {
+      if (state == BluetoothConnectionState.disconnected && ApiBluetooth.version != ApiBluetoothVersion.version2) {
         await dissconnectToSensorV1();
         await _connectToSensor();
       }
@@ -68,6 +69,7 @@ mixin ApiBluetoothV1 {
   }
 
   Future<void> _connectToSensor() async {
+    if (ApiBluetooth.version == ApiBluetoothVersion.version2) return;
     try {
       await _device!.connect();
       _read();
@@ -77,6 +79,18 @@ mixin ApiBluetoothV1 {
        * PlatformException(connect, device.connectGatt returned null, null, null) - если bluetooth отключился
        */
       log(e.toString(), name: 'device.connect()');
+    }
+  }
+
+  static Future<int?> getBatteryCharge() async {
+    if (_characteristicBattery == null) return null;
+    try {
+      List<int> chargeBattery = await _characteristicBattery!.read();
+      log(chargeBattery.toString(), name: 'chargeBattery');
+      return chargeBattery[0];
+    } catch (e) {
+      log(e.toString(), name: 'getBatteryCharge()');
+      return null;
     }
   }
 
@@ -93,15 +107,16 @@ mixin ApiBluetoothV1 {
     }
   }
 
-  static Future<int?> getBatteryCharge() async {
-    if (_characteristicBattery == null) return null;
-    try {
-      List<int> chargeBattery = await _characteristicBattery!.read();
-      log(chargeBattery.toString(), name: 'chargeBattery');
-      return chargeBattery[0];
-    } catch (e) {
-      log(e.toString(), name: 'getBatteryCharge()');
-      return null;
+  Future<void> switchOffV1() async {
+    if (_device != null && ApiBluetooth.statusSensor == true) {
+      try {
+        await _device!.disconnect();
+      } catch (_) {}
     }
+  }
+
+  void switchOnV1() {
+    ApiBluetooth.version = ApiBluetoothVersion.version1newSensor;
+    log('switch to ${ApiBluetooth.version}');
   }
 }
