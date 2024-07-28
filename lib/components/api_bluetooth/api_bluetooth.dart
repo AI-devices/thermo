@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:thermo/components/api_bluetooth/api_bluetooth_v2.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
-import 'package:thermo/observers/app_lifecycle_observer.dart';
 import 'package:thermo/widgets/assets.dart';
 
 enum ApiBluetoothVersion {
@@ -26,12 +24,9 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
   final _player = AudioPlayer();
 
   static ApiBluetoothVersion version = ApiBluetoothVersion.unknown;
-  
-  static bool _offerBluetoothOn = false;
 
   static bool statusSensor = false;
   static bool statusBluetooth = false;
-  static VoidCallback? bluetoothStatusChanged;
   static final controllerTemperature = StreamController<double>.broadcast();
   static Stream<double> get temperatureStream => controllerTemperature.stream;
   static final controllerStatusSensor = StreamController<bool>.broadcast();
@@ -43,45 +38,9 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
 
   ApiBluetooth._() {
     FlutterBluePlus.setLogLevel(LogLevel.error, color: true);
-    _init();
   }
 
-  Future<void> _init() async {
-    _scanDevices();
-    
-    FlutterBluePlus.adapterState.listen((state) async {
-      log(state.toString(), name: 'Bluetooth status');
-
-      if (state == BluetoothAdapterState.turningOff) {
-        statusBluetooth = false;
-        await dissconnect(); //! на 13 ОС Андроид, стрим по состоянию датчика не отлавливает дисконнект в случае отключения bluetooth
-      }
-
-      if (state == BluetoothAdapterState.off) {
-        version = ApiBluetoothVersion.unknown;
-        if (statusBluetooth != false) statusBluetooth = false;
-        bluetoothStatusChanged?.call();
-        Notifier.snackBar(notify: Notify.bluetoothDissconected);
-      }
-
-      if (state == BluetoothAdapterState.on) {
-        statusBluetooth = true;
-        bluetoothStatusChanged?.call();
-        await _startScan();
-      } 
-
-      if (Platform.isAndroid && ApiBluetooth._offerBluetoothOn == false) {
-        ApiBluetooth._offerBluetoothOn = true;
-        try {
-          await FlutterBluePlus.turnOn();
-        } catch (error) {
-          log(error.toString(), name: 'FlutterBluePlus.turnOn()');
-        }
-      }
-    });
-  }
-
-  Future<void> _startScan() async {
+  Future<void> startScan() async {
     try {
       await FlutterBluePlus.startScan();
 
@@ -98,23 +57,6 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
         Notifier.snackBar(notify: Notify.locationIsRequred);
       }
     }
-  }
-
-  Future<void> _scanDevices() async {
-    FlutterBluePlus.scanResults.listen(
-      (results) async {
-        for (ScanResult r in results) {
-          if (r.device.platformName.toLowerCase() == Settings.nameDeviceOldSensor) readDataV1(r);
-          if (r.device.platformName.startsWith(Settings.prefixDeviceNewSensor)) {
-            if (version == ApiBluetoothVersion.version2 || AppLifecycleObserver.state == AppLifecycleState.paused) {
-              readDataV2(r);
-            } else {
-              readDataV1(r);
-            }
-          }
-        }
-      },
-    );
   }
 
   Future<void> dissconnect() async {

@@ -72,7 +72,7 @@ mixin ApiBluetoothV1 {
     if (ApiBluetooth.version == ApiBluetoothVersion.version2) return;
     try {
       await _device!.connect();
-      _read();
+      await _read();
     } catch (e) {
       /**
        * FlutterBluePlusException: connect: (code: 133) ANDROID_SPECIFIC_ERROR - если датчик выключен
