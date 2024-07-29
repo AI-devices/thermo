@@ -44,7 +44,7 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
     try {
       await FlutterBluePlus.startScan();
 
-      Future.delayed(const Duration(seconds: 2), () { //во future завернул, чтобы сперва сканирование отработало
+      Future.delayed(const Duration(seconds: 3), () { //во future завернул, чтобы сперва сканирование отработало
         if (version == ApiBluetoothVersion.unknown) {
           Notifier.snackBar(notify: Notify.sensorNotFound);
           controllerStatusSensor.add(false);

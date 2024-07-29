@@ -14,7 +14,11 @@ class ObserverAppLifecycle extends WidgetsBindingObserver {
     log(name: 'AppLifecycleObserver', state.toString());
     switch (state) {
       case AppLifecycleState.paused:
-        _apiBluetooth.switchVersion(toVersion: ApiBluetoothVersion.version2); //в фоне переключаем на 2 версию
+        Future.delayed(const Duration(seconds: 10), () { //делаем лаг в 10 сек, чтобы не переключать лишний раз, если ненадолго свернули приложение
+          if (ObserverAppLifecycle.state == AppLifecycleState.paused) {
+            _apiBluetooth.switchVersion(toVersion: ApiBluetoothVersion.version2); //в фоне переключаем на 2 версию
+          }
+        });
         break;
       case AppLifecycleState.resumed:
         _apiBluetooth.switchVersion(toVersion: ApiBluetoothVersion.version1newSensor); //возвращаем 1 версию, если приложение снова стало активно
