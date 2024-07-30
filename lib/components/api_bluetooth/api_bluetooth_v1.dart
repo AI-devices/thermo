@@ -6,6 +6,13 @@ import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 
 mixin ApiBluetoothV1 {
+  static const Map<int, String> connectionErrorCodesIgnore = {
+    133 : 'ANDROID_SPECIFIC_ERROR', //цикличная ошибка, срабатывает, когда пытаемся подключиться к выключенному датчику
+  };
+  static const Map<int, String> connectionErrorCodesHandled = {
+    0   : 'SUCCESS', //срабатывает один раз при выключении датчика и отключения bluetooth
+  };
+
   static BluetoothDevice? _device; 
   static BluetoothCharacteristic? _characteristicBattery;
 
@@ -32,17 +39,14 @@ mixin ApiBluetoothV1 {
     _device!.connectionState.listen((BluetoothConnectionState state) async {
       log(state.toString(), name: 'Sensor status');
       if (state == BluetoothConnectionState.disconnected && ApiBluetooth.version != ApiBluetoothVersion.version2) {
-        await dissconnectToSensorV1();
+        log("error code: ${_device!.disconnectReason?.code} | error desc: ${_device!.disconnectReason?.description}");
+        
+        await dissconnectToSensorV1(notifyIgnore: connectionErrorCodesIgnore.keys.contains(_device!.disconnectReason?.code));
         await _connectToSensor();
       }
 
       if (state == BluetoothConnectionState.connected && ApiBluetooth.statusBluetooth == true) {
-        if (ApiBluetooth.statusSensor == false) {
-          ApiBluetooth.statusSensor = true;
-          ApiBluetooth.controllerStatusSensor.add(true);
-          (this as ApiBluetooth).prevAlarmSensorDissconnectedClose();
-          Notifier.snackBar(notify: Notify.sensorConnected);
-        }
+        await _read();
       }
     });
   }
@@ -60,9 +64,14 @@ mixin ApiBluetoothV1 {
 
     try {
       await characteristicTemperature.setNotifyValue(true);
-      characteristicTemperature.onValueReceived.listen((event) {
+      //! перенес именно сюда, т.к. на новых датчиках бывает большой лаг между тем как подключились к датчику и считали первую температуру с него
+      //! по крайней мере при первом подключении
+      connectNotify();
+
+      final subscription = characteristicTemperature.onValueReceived.listen((event) {
         ApiBluetooth.controllerTemperature.add(Helper.parseTemperature(event));
       });
+      _device!.cancelWhenDisconnected(subscription);
     } catch (err) {
       log(err.toString(), name: 'onValueReceived Temperature');
     }
@@ -72,7 +81,6 @@ mixin ApiBluetoothV1 {
     if (ApiBluetooth.version == ApiBluetoothVersion.version2) return;
     try {
       await _device!.connect();
-      await _read();
     } catch (e) {
       /**
        * FlutterBluePlusException: connect: (code: 133) ANDROID_SPECIFIC_ERROR - если датчик выключен
@@ -94,14 +102,17 @@ mixin ApiBluetoothV1 {
     }
   }
 
-  Future<void> dissconnectToSensorV1() async {
+  Future<void> dissconnectToSensorV1({bool notifyIgnore = false}) async {
     if (_device != null && ApiBluetooth.statusSensor == true) {
       try {
         await _device!.disconnect();
       } catch (e) {
         log(e.toString(), name: 'device.disconnect()');
       }
+
       ApiBluetooth.statusSensor = false;
+
+      if (notifyIgnore) return;
       ApiBluetooth.controllerStatusSensor.add(false);
       (this as ApiBluetooth).alarmSensorDissconnected();
     }
@@ -118,5 +129,14 @@ mixin ApiBluetoothV1 {
   void switchOnV1() {
     ApiBluetooth.version = ApiBluetoothVersion.version1newSensor;
     log('switch to ${ApiBluetooth.version}');
+  }
+
+  void connectNotify() {
+    if (ApiBluetooth.statusSensor == false) {
+      ApiBluetooth.statusSensor = true;
+      ApiBluetooth.controllerStatusSensor.add(true);
+      (this as ApiBluetooth).prevAlarmSensorDissconnectedClose();
+      Notifier.snackBar(notify: Notify.sensorConnected);
+    }
   }
 }
