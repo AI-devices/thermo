@@ -24,17 +24,16 @@ mixin ApiBluetoothV1 {
     
     FlutterBluePlus.stopScan();
     log(r.toString(), name: ApiBluetooth.version.toString());
-
-    if (_device == null) {
-      _listenConnect(deviceId: r.device.remoteId);
-    } else {
-      _connectToSensor();
-    }
+    _listenConnect(deviceId: r.device.remoteId);
   }
 
   Future<void> _listenConnect({required DeviceIdentifier deviceId}) async {
-    _device = BluetoothDevice(remoteId: deviceId);
+    bool needListenConnectionState = _device == null;
+
+    _device = BluetoothDevice(remoteId: deviceId); //даже, если _device уже есть, лучше обновить, допустим, после разрыва bluetooth
     await _connectToSensor();
+
+    if (needListenConnectionState == false) return; //значит уже этот стрим запущен - выходим
 
     _device!.connectionState.listen((BluetoothConnectionState state) async {
       log(state.toString(), name: 'Sensor status');
@@ -110,9 +109,8 @@ mixin ApiBluetoothV1 {
         log(e.toString(), name: 'device.disconnect()');
       }
 
-      ApiBluetooth.statusSensor = false;
-
       if (notifyIgnore) return;
+      ApiBluetooth.statusSensor = false; //если раньше проверки notifyIgnore поставить, то график отловит статус и прервется
       ApiBluetooth.controllerStatusSensor.add(false);
       (this as ApiBluetooth).alarmSensorDissconnected();
     }
