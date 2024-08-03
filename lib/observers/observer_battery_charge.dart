@@ -32,14 +32,12 @@ class ObserverBatteryCharge {
     
     final currentCharge = await ApiBluetooth.getBatteryCharge();
     log(currentCharge.toString(), name: 'chargeBattery');
-    if (currentCharge == charge) return;
+    if (currentCharge == charge || currentCharge == null) return;
 
     charge = currentCharge;
     changeBatteryCharge?.call();
-    if (charge != null) {
-      if (charge! < int.parse(Settings.alarmLowBatteryCharge['percent_charge'])) _alert();
-      if (charge! >= int.parse(Settings.alarmLowBatteryCharge['percent_charge']) && _alertLowBatteryCharge == true) _alertLowBatteryCharge = false;
-    }
+    if (charge! < int.parse(Settings.alarmLowBatteryCharge['percent_charge'])) _alert();
+    if (charge! >= int.parse(Settings.alarmLowBatteryCharge['percent_charge']) && _alertLowBatteryCharge == true) _alertLowBatteryCharge = false;
   }
 
   void _alert() {
