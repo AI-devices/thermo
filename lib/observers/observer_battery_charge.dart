@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -27,14 +28,10 @@ class ObserverBatteryCharge {
   }
 
   Future<void> _checkBatteryCharge() async {
-    if (ApiBluetooth.statusSensor == false) {
-      if (charge == null) return;
-      charge = null;
-      changeBatteryCharge?.call();
-      return;
-    }
+    if (ApiBluetooth.statusSensor == false) return;
     
     final currentCharge = await ApiBluetooth.getBatteryCharge();
+    log(currentCharge.toString(), name: 'chargeBattery');
     if (currentCharge == charge) return;
 
     charge = currentCharge;

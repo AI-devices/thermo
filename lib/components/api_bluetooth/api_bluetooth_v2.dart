@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
-import 'package:thermo/components/notifier.dart';
 
 mixin ApiBluetoothV2 {
   static int? batteryCharge;
@@ -32,7 +31,7 @@ mixin ApiBluetoothV2 {
       ApiBluetooth.statusSensor = true;
       ApiBluetooth.controllerStatusSensor.add(true);
       (this as ApiBluetooth).prevAlarmSensorDissconnectedClose();
-      Notifier.snackBar(notify: Notify.sensorConnected);
+      //Notifier.snackBar(notify: Notify.sensorConnected);
     }
 
     /**

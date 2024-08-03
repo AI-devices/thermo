@@ -8,7 +8,7 @@ enum Notify {
   bluetoothDissconected,
   locationIsRequred,
   sensorNotFound,
-  sensorConnected,
+  //sensorConnected,
   sensorDissconnected,
   checkpointReached,
 }
@@ -37,10 +37,10 @@ abstract class Notifier {
           text: 'Термодатчик не обнаружен. Убедитесь, что он включен',
           icon: const Icon(Icons.close, color: Colors.red));
         break;
-      case Notify.sensorConnected :
+      /*case Notify.sensorConnected :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
           text: 'Подключение к термодатчику установлено');
-        break;
+        break;*/
       case Notify.sensorDissconnected :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
           text: 'Потеряно соединение с термодатчиком',

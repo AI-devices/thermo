@@ -2,17 +2,15 @@ import 'dart:developer';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
-import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 
 mixin ApiBluetoothV1 {
-  static const Map<int, String> connectionErrorCodesIgnore = {
+  static const Map<int, String> connectionErrorCodes = {
+    0   : 'SUCCESS', //срабатывает один раз при выключении датчика и отключения bluetooth
     133 : 'ANDROID_SPECIFIC_ERROR', //цикличная ошибка, срабатывает, когда пытаемся подключиться к выключенному датчику
   };
-  static const Map<int, String> connectionErrorCodesHandled = {
-    0   : 'SUCCESS', //срабатывает один раз при выключении датчика и отключения bluetooth
-  };
 
+  static late BluetoothConnectionState _connectionState; 
   static BluetoothDevice? _device; 
   static BluetoothCharacteristic? _characteristicBattery;
 
@@ -36,11 +34,12 @@ mixin ApiBluetoothV1 {
     if (needListenConnectionState == false) return; //значит уже этот стрим запущен - выходим
 
     _device!.connectionState.listen((BluetoothConnectionState state) async {
+      _connectionState = state;
       log(state.toString(), name: 'Sensor status');
       if (state == BluetoothConnectionState.disconnected && ApiBluetooth.version != ApiBluetoothVersion.version2) {
         log("error code: ${_device!.disconnectReason?.code} | error desc: ${_device!.disconnectReason?.description}");
-        
-        await dissconnectToSensorV1(notifyIgnore: connectionErrorCodesIgnore.keys.contains(_device!.disconnectReason?.code));
+
+        dissconnectToSensorV1();
         await _connectToSensor();
       }
 
@@ -93,7 +92,6 @@ mixin ApiBluetoothV1 {
     if (_characteristicBattery == null) return null;
     try {
       List<int> chargeBattery = await _characteristicBattery!.read();
-      log(chargeBattery.toString(), name: 'chargeBattery');
       return chargeBattery[0];
     } catch (e) {
       log(e.toString(), name: 'getBatteryCharge()');
@@ -101,19 +99,25 @@ mixin ApiBluetoothV1 {
     }
   }
 
-  Future<void> dissconnectToSensorV1({bool notifyIgnore = false}) async {
-    if (_device != null && ApiBluetooth.statusSensor == true) {
-      try {
-        await _device!.disconnect();
-      } catch (e) {
-        log(e.toString(), name: 'device.disconnect()');
-      }
+  Future<void> dissconnectToSensorV1() async {
+    //! пауза 20 сек, т.к. при переключении версий иногда проскакивают дисконнекты. 10-15 сек может не хватать, если был отключен bluetooth
+    Future.delayed(const Duration(seconds: 20), () async {
+      if (_connectionState == BluetoothConnectionState.connected) return;
 
-      if (notifyIgnore) return;
-      ApiBluetooth.statusSensor = false; //если раньше проверки notifyIgnore поставить, то график отловит статус и прервется
-      ApiBluetooth.controllerStatusSensor.add(false);
-      (this as ApiBluetooth).alarmSensorDissconnected();
-    }
+      if (_device != null && ApiBluetooth.statusSensor == true) {
+        try {
+          await _device!.disconnect();
+        } catch (e) {
+          log(e.toString(), name: 'device.disconnect()');
+        }
+
+        ApiBluetooth.statusSensor = false;
+        ApiBluetooth.controllerStatusSensor.add(false);
+        (this as ApiBluetooth).alarmSensorDissconnected();
+      }
+    });
+
+    
   }
 
   Future<void> switchOffV1() async {
@@ -134,7 +138,7 @@ mixin ApiBluetoothV1 {
       ApiBluetooth.statusSensor = true;
       ApiBluetooth.controllerStatusSensor.add(true);
       (this as ApiBluetooth).prevAlarmSensorDissconnectedClose();
-      Notifier.snackBar(notify: Notify.sensorConnected);
+      //Notifier.snackBar(notify: Notify.sensorConnected);
     }
   }
 }
