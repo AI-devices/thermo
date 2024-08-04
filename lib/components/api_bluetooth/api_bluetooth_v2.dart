@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
@@ -10,11 +11,11 @@ mixin ApiBluetoothV2 {
   void readDataV2(ScanResult r) {
     if (ApiBluetooth.version == ApiBluetoothVersion.version1oldSensor || ApiBluetooth.version == ApiBluetoothVersion.version1newSensor) return;
 
-    //если условие выполняется - считаем, что соединение с датчиком потеряно
-    if (DateTime.now().difference(r.timeStamp).inSeconds > 15) {
+    //если условие выполняется - считаем, что соединение с датчиком потеряно. Условие перенесено в метод listenConnectV2()
+    /*if (DateTime.now().difference(r.timeStamp).inSeconds > 15) {
       if (ApiBluetooth.statusSensor == true) (this as ApiBluetooth).dissconnect();
       return;
-    }
+    }*/
 
     if (ApiBluetooth.version == ApiBluetoothVersion.unknown) {
       ApiBluetooth.version = ApiBluetoothVersion.version2;
@@ -59,5 +60,15 @@ mixin ApiBluetoothV2 {
     ApiBluetooth.version = ApiBluetoothVersion.version2;
     log('switch to ${ApiBluetooth.version}');
     FlutterBluePlus.startScan();
+  }
+
+  void listenConnectV2() async {
+    Timer.periodic(const Duration(seconds: 2), (Timer timer) async {
+      if (ApiBluetooth.statusSensor == false) return;
+      if (ApiBluetooth.version != ApiBluetoothVersion.version2) return;
+      
+      await Future.delayed(const Duration(seconds: 2)); //лаг, чтобы не попасть в момент переключения на 2 версию
+      if (DateTime.now().difference(lastHandledDatetime).inSeconds > 15) (this as ApiBluetooth).dissconnect();
+    });
   }
 }

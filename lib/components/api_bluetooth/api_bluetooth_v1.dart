@@ -38,8 +38,7 @@ mixin ApiBluetoothV1 {
       log(state.toString(), name: 'Sensor status');
       if (state == BluetoothConnectionState.disconnected && ApiBluetooth.version != ApiBluetoothVersion.version2) {
         log("error code: ${_device!.disconnectReason?.code} | error desc: ${_device!.disconnectReason?.description}");
-
-        dissconnectToSensorV1();
+        if (_device!.disconnectReason?.code != 133) dissconnectToSensorV1();
         await _connectToSensor();
       }
 
@@ -100,7 +99,7 @@ mixin ApiBluetoothV1 {
   }
 
   Future<void> dissconnectToSensorV1() async {
-    //! пауза 20 сек, т.к. при переключении версий иногда проскакивают дисконнекты. 10-15 сек может не хватать, если был отключен bluetooth
+    //! пауза 20 сек, т.к. при переключении версий иногда проскакивают дисконнекты. 10-15 сек может не хватать, 20 вроде всегда хватает
     Future.delayed(const Duration(seconds: 20), () async {
       if (_connectionState == BluetoothConnectionState.connected) return;
 
@@ -116,8 +115,6 @@ mixin ApiBluetoothV1 {
         (this as ApiBluetooth).alarmSensorDissconnected();
       }
     });
-
-    
   }
 
   Future<void> switchOffV1() async {
