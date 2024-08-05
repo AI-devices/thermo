@@ -24,6 +24,7 @@ class _InitWidgetState extends State<InitWidget> {
   final ObserverAppLifecycle _lifecycleObserver = ObserverAppLifecycle();
   
   int _selectedTab = 0;
+  bool _tabChangedBySwipe = false;
 
   bool? bluetoothOn;
   bool? sensorOn;
@@ -85,51 +86,67 @@ class _InitWidgetState extends State<InitWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.045),
-        child: AppBar(
-          backgroundColor: AppStyle.barColor,
-          actions: [
-            AppStyle.getIconBluetooth(bluetoothOn),
-            const SizedBox(width: 20),
-            AppStyle.getIconSensor(sensorOn),
-            const SizedBox(width: 20),
-            Visibility(
-              visible: ObserverBatteryCharge.charge != null,
-              child: Center(child: Text('${ObserverBatteryCharge.charge}%', style: const TextStyle(color: Colors.white, fontSize: 13)))
-            ),
-            AppStyle.getIconBattery(ObserverBatteryCharge.charge),  
-            const SizedBox(width: 10),
-          ]
+    return GestureDetector(
+      onPanUpdate: (details) {
+        if (details.delta.dy.abs() > 5) return; //исключить случайный свайп при скроллинге
+        if (_tabChangedBySwipe) return; //чтобы не проскакивало сразу с 1 вкладки на 3 и наоборот
+
+        if (details.delta.dx > 3 && _selectedTab > 0) {
+          onSelectTab(_selectedTab - 1);
+          _tabChangedBySwipe = true;
+        }
+        if (details.delta.dx < -3 && _selectedTab < 2) {
+          onSelectTab(_selectedTab + 1);
+          _tabChangedBySwipe = true;
+        }
+      },
+      onPanEnd: (details) => _tabChangedBySwipe = false, //сброс флага
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.045),
+          child: AppBar(
+            backgroundColor: AppStyle.barColor,
+            actions: [
+              AppStyle.getIconBluetooth(bluetoothOn),
+              const SizedBox(width: 20),
+              AppStyle.getIconSensor(sensorOn),
+              const SizedBox(width: 20),
+              Visibility(
+                visible: ObserverBatteryCharge.charge != null,
+                child: Center(child: Text('${ObserverBatteryCharge.charge}%', style: const TextStyle(color: Colors.white, fontSize: 13)))
+              ),
+              AppStyle.getIconBattery(ObserverBatteryCharge.charge),  
+              const SizedBox(width: 10),
+            ]
+          ),
         ),
-      ),
-      body: IndexedStack(
-        index: _selectedTab,
-        children: const [
-          MainScreenWidget(),
-          SettingsWidget(),
-          FaqWidget(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        //iconSize: 24,
-        currentIndex: _selectedTab,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.question_mark),
-            label: '',
-          ),
-        ],
-        onTap: onSelectTab,
+        body: IndexedStack(
+          index: _selectedTab,
+          children: const [
+            MainScreenWidget(),
+            SettingsWidget(),
+            FaqWidget(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          //iconSize: 24,
+          currentIndex: _selectedTab,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.question_mark),
+              label: '',
+            ),
+          ],
+          onTap: onSelectTab,
+        ),
       ),
     );
   }

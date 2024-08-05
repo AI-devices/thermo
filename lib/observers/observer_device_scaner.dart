@@ -20,7 +20,8 @@ class ObserverDeviceScaner {
           if (r.device.platformName.toLowerCase() == Settings.nameDeviceOldSensor) _apiBluetooth.readDataV1(r);
           if (r.device.platformName.startsWith(Settings.prefixDeviceNewSensor)) {
             if (ApiBluetooth.version == ApiBluetoothVersion.version2 || ObserverAppLifecycle.state == AppLifecycleState.paused) {
-              _apiBluetooth.readDataV2(r);
+              //_apiBluetooth.readDataV2(r);
+              _apiBluetooth.readDataV1(r);
             } else {
               _apiBluetooth.readDataV1(r);
             }

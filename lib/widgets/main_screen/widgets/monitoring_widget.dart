@@ -29,6 +29,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
   void initState() {
     super.initState();
     temperatureSubscription = ApiBluetooth.temperatureStream.listen((double temperature){
+      //print(temperature);
       currentTemperature = temperature;
       _changePositionFlaskDivider();
       setState(() {});

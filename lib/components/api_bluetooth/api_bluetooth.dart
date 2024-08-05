@@ -38,7 +38,7 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
 
   ApiBluetooth._() {
     FlutterBluePlus.setLogLevel(LogLevel.error, color: true);
-    listenConnectV2(); //сразу запускаем таймер, т.к. бывают кейсы, когда до запуска его может не дойти, то по факту отработает разрыв по 2 версии
+    //listenConnectV2(); //сразу запускаем таймер, т.к. бывают кейсы, когда до запуска его может не дойти, то по факту отработает разрыв по 2 версии
   }
 
   Future<void> startScan() async {
