@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/settings.dart';
 
 mixin ApiBluetoothV2 {
   static int? batteryCharge;
@@ -20,6 +21,7 @@ mixin ApiBluetoothV2 {
     if (ApiBluetooth.version == ApiBluetoothVersion.unknown) {
       ApiBluetooth.version = ApiBluetoothVersion.version2;
       log(r.toString(), name: ApiBluetooth.version.toString());
+      if (!Settings.remoteIds.contains(r.device.remoteId.toString())) Settings.remoteIds.add(r.device.remoteId.toString());
     }
 
     if (r.timeStamp.difference(lastHandledDatetime).inSeconds <= 1) return; //считываем данные раз в секунду, тут сыпится очень много дублей
@@ -59,16 +61,18 @@ mixin ApiBluetoothV2 {
   void switchOnV2() {
     ApiBluetooth.version = ApiBluetoothVersion.version2;
     log('switch to ${ApiBluetooth.version}');
-    FlutterBluePlus.startScan();
+    FlutterBluePlus.startScan(withRemoteIds: Settings.remoteIds);
   }
 
   void listenConnectV2() async {
-    Timer.periodic(const Duration(seconds: 2), (Timer timer) async {
+    Timer.periodic(const Duration(seconds: 30), (Timer timer) async {
       if (ApiBluetooth.statusSensor == false) return;
       if (ApiBluetooth.version != ApiBluetoothVersion.version2) return;
       
-      await Future.delayed(const Duration(seconds: 2)); //лаг, чтобы не попасть в момент переключения на 2 версию
-      if (DateTime.now().difference(lastHandledDatetime).inSeconds > 15) (this as ApiBluetooth).dissconnect();
+      await Future.delayed(const Duration(seconds: 25)); //25 сек успеть получить первую температуру по 2 версии при переключении с 1 версии
+      if (DateTime.now().difference(lastHandledDatetime).inSeconds > 60) { //бывают большие перерывы между считываниями адвертайзов
+        (this as ApiBluetooth).dissconnect();
+      }
     });
   }
 }

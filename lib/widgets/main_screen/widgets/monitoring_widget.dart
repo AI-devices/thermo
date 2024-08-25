@@ -29,7 +29,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
   void initState() {
     super.initState();
     temperatureSubscription = ApiBluetooth.temperatureStream.listen((double temperature){
-      //print(temperature);
+      //print('${ApiBluetooth.version} | temp: $temperature');
       currentTemperature = temperature;
       _changePositionFlaskDivider();
       setState(() {});
@@ -37,7 +37,6 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
     statusSensorSubscription = ApiBluetooth.statusSensorStream.listen((bool statusSensor){
       if (Settings.wakelock) statusSensor == false ? WakelockPlus.disable() : WakelockPlus.enable();
       if (statusSensor == true) {
-        WakelockPlus.enable();
         WakelockPlus.enable();
       }
       if (statusSensor == false) {

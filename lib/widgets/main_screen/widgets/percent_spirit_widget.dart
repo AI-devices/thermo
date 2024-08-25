@@ -49,7 +49,7 @@ class _PercentSpiritWidgetState extends State<PercentSpiritWidget> {
       visible: Settings.hidePercentSpiritWidget == false,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        height: MediaQuery.of(context).size.height * 0.09,
+        height: MediaQuery.of(context).size.height * 0.1,
         width: double.infinity,
         decoration: AppStyle.decorMainCotnainers,
         child: Column(

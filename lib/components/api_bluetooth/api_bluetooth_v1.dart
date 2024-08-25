@@ -22,6 +22,7 @@ mixin ApiBluetoothV1 {
     
     FlutterBluePlus.stopScan();
     log(r.toString(), name: ApiBluetooth.version.toString());
+    if (!Settings.remoteIds.contains(r.device.remoteId.toString())) Settings.remoteIds.add(r.device.remoteId.toString());
     _listenConnect(deviceId: r.device.remoteId);
   }
 

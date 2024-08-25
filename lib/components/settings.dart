@@ -38,11 +38,12 @@ abstract class Settings {
 
   static const nameDeviceOldSensor = 'temperature sensor';
   static const prefixDeviceNewSensor = 'ThermoD';
-
-  static const uuidServiceTemperature = '0000181a-0000-1000-8000-00805f9b34fb';
-  static const uuidCharacteristicTemperature = '00002a6e-0000-1000-8000-00805f9b34fb';
-  static const uuidServiceBattery = '0000180f-0000-1000-8000-00805f9b34fb';
-  static const uuidCharacteristicBattery = '00002a19-0000-1000-8000-00805f9b34fb';
+  
+  static List<String> remoteIds = [];
+  static const uuidServiceTemperature = '181a';
+  static const uuidCharacteristicTemperature = '2a6e';
+  static const uuidServiceBattery = '180f';
+  static const uuidCharacteristicBattery = '2a19';
 
   static const typeRing = 'ring';
   static const typeVibration = 'vibration';

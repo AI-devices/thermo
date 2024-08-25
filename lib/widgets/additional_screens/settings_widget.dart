@@ -261,7 +261,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             flex: 4,
             child: Row(
               children: [
-                const Text('Калибровка датчика'),
+                const Expanded(child: Text('Калибровка датчика')),
                 IconButton(
                   onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
                   icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))

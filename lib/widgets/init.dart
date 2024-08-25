@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
-import 'package:thermo/components/api_vibration.dart';
+import 'package:thermo/components/permissions.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:thermo/observers/observer_app_lifecycle.dart';
 import 'package:thermo/observers/observer_battery_charge.dart';
@@ -57,11 +57,10 @@ class _InitWidgetState extends State<InitWidget> {
   }
 
   Future<bool> _init() async {
-    if (await ApiBluetooth.isSupported() == false) {
+    if (await DevicePermissions.checkPermissions() == false) {
       bluetoothOn = false;
       setState(() {});
     } else {
-
       ObserverDeviceScaner();
       ObserverBluetoothScaner();
 
@@ -73,7 +72,6 @@ class _InitWidgetState extends State<InitWidget> {
         Future.delayed(const Duration(seconds: 1), () => ObserverBatteryCharge());
       });
     }
-    await ApiVibration.isSupported();
 
     return true;
   }

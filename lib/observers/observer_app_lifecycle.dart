@@ -1,17 +1,17 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-//import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 
 class ObserverAppLifecycle extends WidgetsBindingObserver {
 
   static AppLifecycleState? state;
-  //final ApiBluetooth _apiBluetooth = ApiBluetooth();
+  final ApiBluetooth _apiBluetooth = ApiBluetooth();
   
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     ObserverAppLifecycle.state = state;
     log(name: 'AppLifecycleObserver', state.toString());
-    /*switch (state) {
+    switch (state) {
       case AppLifecycleState.paused:
         Future.delayed(const Duration(seconds: 10), () { //делаем лаг в 10 сек, чтобы не переключать лишний раз, если ненадолго свернули приложение
           if (ObserverAppLifecycle.state == AppLifecycleState.paused) {
@@ -26,7 +26,7 @@ class ObserverAppLifecycle extends WidgetsBindingObserver {
       case AppLifecycleState.inactive:
       case AppLifecycleState.hidden:
         break;
-    }*/
+    }
 
     super.didChangeAppLifecycleState(state);
   }
