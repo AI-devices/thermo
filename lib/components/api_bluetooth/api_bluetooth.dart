@@ -38,7 +38,9 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
 
   ApiBluetooth._() {
     FlutterBluePlus.setLogLevel(LogLevel.error, color: true);
-    listenConnectV2(); //сразу запускаем таймер, т.к. бывают кейсы, когда до запуска его может не дойти, но по факту отработает разрыв по 2 версии
+    if (!Settings.useOnlyV1) {
+      listenConnectV2(); //сразу запускаем таймер, т.к. бывают кейсы, когда до запуска его может не дойти, но по факту отработает разрыв по 2 версии
+    }
   }
 
   Future<void> startScan() async {
@@ -55,7 +57,7 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
       //т.к. запрос локации стал не обязателен с ОС >=12, то делать через проверку прав смысла немного 
       log(error.toString(), name: 'startScan FAIL');
       if (error.toString().contains('requires android.permission.ACCESS_FINE_LOCATION')) {
-        Notifier.snackBar(notify: Notify.locationIsRequred);
+        //Notifier.snackBar(notify: Notify.locationIsRequred);
       }
     }
   }

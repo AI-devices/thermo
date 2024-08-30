@@ -18,12 +18,7 @@ abstract class DevicePermissions {
     _vibration();
 
     //final ignoreBatteryPermission = await DevicePermissions._getPermission(Permission.ignoreBatteryOptimizations);
-
-    if (await ApiBluetooth.isSupported() == false) {
-      // ignore: use_build_context_synchronously
-      Helper.alert(context: navigatorKey.currentState!.context, content: 'Bluetooth не поддерживается устройством', title: 'Ошибка');
-      return false;
-    }
+    if (await ApiBluetooth.isSupported() == false) return false;
 
     return double.parse(androidInfo.version.release) < 12 ? _location() : _bluetooth();
   }

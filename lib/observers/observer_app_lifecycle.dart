@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/settings.dart';
 
 class ObserverAppLifecycle extends WidgetsBindingObserver {
 
@@ -9,6 +10,7 @@ class ObserverAppLifecycle extends WidgetsBindingObserver {
   
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (Settings.useOnlyV1) return;
     ObserverAppLifecycle.state = state;
     log(name: 'AppLifecycleObserver', state.toString());
     switch (state) {

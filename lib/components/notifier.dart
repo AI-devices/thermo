@@ -6,7 +6,7 @@ import 'package:thermo/main.dart';
 enum Notify {
   bluetoothIsNotSupported,
   bluetoothDissconected,
-  locationIsRequred,
+  //locationIsRequred,
   sensorNotFound,
   //sensorConnected,
   sensorDissconnected,
@@ -26,12 +26,12 @@ abstract class Notifier {
           text: 'Нет соединения с Bluetooth',
           icon: const Icon(Icons.bluetooth_disabled, color: Colors.red));
         break;
-      case Notify.locationIsRequred :
+      /*case Notify.locationIsRequred :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
-          text: 'Разрешение к метоположению устройства не получено. Подключиться к датчику невозможно',
+          text: 'Разрешение к местоположению устройства не получено. Подключиться к датчику невозможно',
           icon: const Icon(Icons.close, color: Colors.red),
           duration: 6);
-        break;
+        break;*/
       case Notify.sensorNotFound :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
           text: 'Термодатчик не обнаружен. Убедитесь, что он включен',

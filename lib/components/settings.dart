@@ -1,13 +1,17 @@
+import 'dart:developer';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/widgets/assets.dart';
 import 'package:vibration/vibration.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 abstract class Settings {
   static final _player = AudioPlayer();
   static final _dataProvider = DataProvider();
+
+  static const useOnlyV1 = bool.fromEnvironment('use_only_v1', defaultValue: false);
   
   static bool envDebug = false;
   static late int maxHoursForChart;
@@ -64,5 +68,19 @@ abstract class Settings {
         _player.play(AssetSource('../${AppAssets.alarmAudio}'), position: const Duration(seconds: 3)); //всего 4 сек длится, ограничиваем
         return typeRing;
     }
+  }
+
+  static Future<void> init() async {
+    log(useOnlyV1.toString(), name: 'use_only_v1');
+    envDebug = foundation.kReleaseMode ? false : true;
+    maxHoursForChart = await _dataProvider.getMaxHoursForStat();
+    await _dataProvider.loadingChart();
+    notifyWhenTempDrops = await _dataProvider.getNotifyWhenTempDrops();
+    notifyWhenTimerEnds = await _dataProvider.getNotifyWhenTimerEnds();
+    calibrationSensor = await _dataProvider.getCalibrationSensor();
+    hidePercentSpiritWidget = await _dataProvider.getHidePercentSpiritWidget();
+    alarmLowBatteryCharge = await _dataProvider.getAlarmLowBatteryCharge();
+    wakelock = await _dataProvider.getWakelock();
+    alarmSensorDissconnected = await _dataProvider.getAlarmSensorDissconnected();
   }
 }
