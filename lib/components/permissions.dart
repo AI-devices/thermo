@@ -15,6 +15,7 @@ abstract class DevicePermissions {
     AndroidDeviceInfo androidInfo = await _deviceInfo.androidInfo;
     log(androidInfo.version.release, name: 'version OS');
 
+    _notification();
     _vibration();
 
     //final ignoreBatteryPermission = await DevicePermissions._getPermission(Permission.ignoreBatteryOptimizations);
@@ -48,6 +49,11 @@ abstract class DevicePermissions {
       return false;
     }
     return true;
+  }
+
+  static Future<void> _notification() async {
+    Settings.notificationIsEnabled = (await DevicePermissions._getPermission(Permission.notification)).isGranted;
+    log(Settings.notificationIsEnabled.toString(), name: 'notificationIsEnabled');
   }
 
   static Future<void> _vibration() async {

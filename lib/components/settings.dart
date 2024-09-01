@@ -38,6 +38,9 @@ abstract class Settings {
   static late bool wakelock;
   static late bool alarmSensorDissconnected;
 
+  static late bool allowLocalNotifications;
+  static late bool notificationIsEnabled;
+
   static bool vibrationIsSupported = false;
 
   static const nameDeviceOldSensor = 'temperature sensor';
@@ -82,5 +85,6 @@ abstract class Settings {
     alarmLowBatteryCharge = await _dataProvider.getAlarmLowBatteryCharge();
     wakelock = await _dataProvider.getWakelock();
     alarmSensorDissconnected = await _dataProvider.getAlarmSensorDissconnected();
+    allowLocalNotifications = await _dataProvider.getAllowLocalNotifications();
   }
 }

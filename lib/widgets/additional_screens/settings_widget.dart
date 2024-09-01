@@ -1,8 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/local_notification.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
@@ -133,6 +135,25 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     setState(() {});
   }
 
+  void changeLocalNotifications(bool value) async {
+    if (value == true && Settings.notificationIsEnabled == false) {
+      return Helper.confirm(
+        context: context, 
+        content: 'У приложения нет доступа к отправке уведомлений. Вы можете дать разрешение в настройках. Хотите это сделать?', 
+        cancelAction: () => Navigator.of(context).pop(), 
+        confirmAction: () {
+          Navigator.of(context).pop();
+          openAppSettings();
+          Helper.alert(context: context, content: 'После включения уведомлений нужно будет перезапустить приложение и включить еще раз настройку');
+        }, 
+      );
+    }
+    Settings.allowLocalNotifications = value;
+    if (Settings.allowLocalNotifications == false) await LocalNotification.cancelNotifications();
+    _dataProvider.setAllowLocalNotifications();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,6 +176,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             _wakelock(),
             const Divider(color: Colors.black),
             _alarmSensorDissconnected(),
+            const Divider(color: Colors.black),
+            _localNotifications(),
             const Divider(color: Colors.black),
           ],
         ),
@@ -405,6 +428,33 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 child: Switch(
                   value: Settings.wakelock,
                   onChanged: (value) => changeWakelock(value),
+                ),
+              ),
+            )
+          )
+        ],
+      ),
+    );
+  }
+
+  Padding _localNotifications() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          const Flexible(
+            flex: 6,
+            child: Text('Отображение температуры в фоновом режиме приложения')
+          ),
+          const SizedBox(width: 10),
+          Flexible(
+            flex: 5,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: Switch(
+                  value: Settings.allowLocalNotifications,
+                  onChanged: (value) => changeLocalNotifications(value),
                 ),
               ),
             )

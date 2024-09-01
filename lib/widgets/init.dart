@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/local_notification.dart';
 import 'package:thermo/components/permissions.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:thermo/observers/observer_app_lifecycle.dart';
@@ -63,6 +64,7 @@ class _InitWidgetState extends State<InitWidget> {
     } else {
       ObserverDeviceScaner();
       ObserverBluetoothScaner();
+      LocalNotification();
 
       ObserverBluetoothScaner.bluetoothStatusChanged ??= _bluetoothStatusChanged;
       statusSensorSubscription = ApiBluetooth.statusSensorStream.listen((bool statusSensor){

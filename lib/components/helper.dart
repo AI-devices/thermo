@@ -73,6 +73,47 @@ abstract class Helper {
     );
   }
 
+  static Future<dynamic> confirm ({
+    required BuildContext context,
+    required String content,
+    required VoidCallback cancelAction,
+    required VoidCallback confirmAction,
+    String? cancelText,
+    String? confirmText,
+    String? title,
+  }) async {
+    return showDialog<dynamic>(
+      context: context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: AlertDialog(
+            title: Text(title ?? 'Предупреждение'),
+            content: Text(content),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10) 
+            ),
+            actions: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                    onPressed: cancelAction, 
+                    child: Text(cancelText ?? 'Нет')
+                  ),
+                  TextButton(
+                    onPressed: confirmAction, 
+                    child: Text(confirmText ?? 'Да')
+                  )
+                ],
+              )
+            ],
+          )
+        );
+      },
+    );
+  }
+
   //парсит данные по температуре полученные от датчика
   static double parseTemperature(List<int> data) {
     //print(Uint8List.fromList(data).buffer.asInt16List());

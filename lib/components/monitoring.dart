@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/data_provider.dart';
+import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
 import 'package:thermo/widgets/assets.dart';
@@ -41,41 +41,20 @@ class Monitoring {
       }
       if (Settings.notifyWhenTempDrops == Settings.typeNone) return;
       if (Navigator.of(navigatorKey.currentState!.context).canPop()) Navigator.of(navigatorKey.currentState!.context).pop();
-      
-      showDialog<dynamic>(
-        context: navigatorKey.currentState!.context,
-        builder: (BuildContext context) {
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-            child: AlertDialog(
-              title: const Text('Уведомление'),
-              content: const Text('Температура падает'),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10) 
-              ),
-              actions: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Settings.notifyWhenTempDrops = Settings.typeNone;
-                        _dataProvider.setNotifyWhenTempDrops();
-                        Settings.notifyWhenTempDropsChanged?.call();
-                        Navigator.of(context).pop();
-                      }, 
-                      child: const Text('Не следить')
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Продолжить')
-                    )
-                  ],
-                )
-              ],
-            )
-          );
-        },
+
+      Helper.confirm(
+        title: 'Уведомление',
+        context: navigatorKey.currentState!.context, 
+        content: 'Температура падает', 
+        cancelText: 'Не следить',
+        confirmText: 'Продолжить',
+        cancelAction: () {
+          Settings.notifyWhenTempDrops = Settings.typeNone;
+          _dataProvider.setNotifyWhenTempDrops();
+          Settings.notifyWhenTempDropsChanged?.call();
+          Navigator.of(navigatorKey.currentState!.context).pop();
+        }, 
+        confirmAction: () => Navigator.of(navigatorKey.currentState!.context).pop(), 
       );
     }
   }

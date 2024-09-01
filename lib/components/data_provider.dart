@@ -16,6 +16,7 @@ abstract class _Keys {
   static const alarmLowBatteryCharge = 'alarm_low_battery_charge';
   static const wakelock = 'wakelock';
   static const alarmSensorDissconnected = 'alarm_sensor_dissconnected';
+  static const allowLocalNotifications = 'allow_local_notifications';
 }
 
 class DataProvider {
@@ -123,5 +124,12 @@ class DataProvider {
   }
   Future<void> setAlarmSensorDissconnected() async {
     (await _sharedPreferences).setBool(_Keys.alarmSensorDissconnected, Settings.alarmSensorDissconnected);
+  }
+
+  Future<bool> getAllowLocalNotifications() async {
+    return (await _sharedPreferences).getBool(_Keys.allowLocalNotifications) ?? true;
+  }
+  Future<void> setAllowLocalNotifications() async {
+    (await _sharedPreferences).setBool(_Keys.allowLocalNotifications, Settings.allowLocalNotifications);
   }
 }
