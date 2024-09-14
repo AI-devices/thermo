@@ -55,7 +55,7 @@ class LocalNotification {
         color: AppStyle.getColorByTemp(temperature: temperature)
       );
       NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetails);
-      await _flutterLocalNotificationsPlugin.show(0, 'температура датчика: ${temperature.toString()}${Helper.celsius}', null, notificationDetails);
+      await _flutterLocalNotificationsPlugin.show(0, 'температура датчика: ${temperature.toStringAsFixed(1)}${Helper.celsius}', null, notificationDetails);
   }
 
   static Future cancelNotifications() async {
