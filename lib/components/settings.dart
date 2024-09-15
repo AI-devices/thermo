@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
@@ -33,7 +34,8 @@ abstract class Settings {
   static late String notifyWhenTimerEnds;
   static late double calibrationSensor;
   static late bool hidePercentSpiritWidget;
-  static VoidCallback? hidePercentSpiritWidgetChanged;
+  static final controllerHidePercentSpiritWidget = StreamController<void>.broadcast();
+  static Stream<void> get hidePercentSpiritWidgetStream => controllerHidePercentSpiritWidget.stream;
   static late Map<String, dynamic> alarmLowBatteryCharge;
   static late bool wakelock;
   static late bool alarmSensorDissconnected;

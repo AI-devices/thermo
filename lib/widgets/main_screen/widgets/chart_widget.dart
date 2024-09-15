@@ -169,10 +169,10 @@ class _ChartWidgetState extends State<ChartWidget> {
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                currentScaleX == scaleXOneHour ? const Icon(Icons.arrow_forward, color: AppStyle.barColor, size: 20) 
-                  : const Icon(Icons.arrow_back, color: AppStyle.barColor, size: 20) ,
+                currentScaleX == scaleXOneHour ? const Icon(Icons.arrow_forward, color: Colors.grey, size: 20) 
+                  : const Icon(Icons.arrow_back, color: Colors.grey, size: 20) ,
                 Text(currentScaleX == scaleXOneHour ? '$maxHoursForStatч' : '1ч', 
-                  style: const TextStyle(color: AppStyle.barColor)
+                  style: const TextStyle(color: Colors.grey)
                 ),
               ],
             )
@@ -191,13 +191,13 @@ class _ChartWidgetState extends State<ChartWidget> {
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return const FlLine(
-                        color: AppStyle.barColor,
+                        color: Colors.grey,
                         strokeWidth: 1,
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return const FlLine(
-                        color: AppStyle.barColor,
+                        color: Colors.grey,
                         strokeWidth: 1,
                       );
                     },
@@ -239,7 +239,7 @@ class _ChartWidgetState extends State<ChartWidget> {
                     LineChartBarData(
                       spots: coordinates,
                       isCurved: true,
-                      color: AppStyle.barColor,
+                      color: AppStyle.mainColor,
                       /*gradient: LinearGradient(
                         begin: Alignment.bottomLeft,
                         end: Alignment.topLeft,

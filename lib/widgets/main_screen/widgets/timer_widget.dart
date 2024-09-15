@@ -34,12 +34,14 @@ class __TimerWidgetState extends State<TimerWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.4,
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: AppStyle.decorMainCotnainers,
+      decoration: AppStyle.decorMainContainer,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          const Text('Таймер', style: TextStyle(fontSize: 18)),
           Flexible(
             flex: 2,
             child: Center(child: buildTime())
@@ -58,7 +60,26 @@ class __TimerWidgetState extends State<TimerWidget> {
     final hours = twoDigits(duration.inHours.remainder(60));
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return Center(child: Text('$hours:$minutes:$seconds', style: const TextStyle(fontSize: 20)));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(width: 5),
+            Text('ч.', style: TextStyle(fontSize: 15, color: AppStyle.greyTextColor)),
+            SizedBox(width: 40),
+            Text('мин.', style: TextStyle(fontSize: 15, color: AppStyle.greyTextColor)),
+            SizedBox(width: 30),
+            Text('сек.', style: TextStyle(fontSize: 15, color: AppStyle.greyTextColor)),
+          ],
+        ),
+        Center(
+          child: Text('$hours:$minutes:$seconds', 
+          style: const TextStyle(fontSize: 48))
+        ),
+      ],
+    );
   }
 
   Widget buildButtons() {
@@ -66,39 +87,28 @@ class __TimerWidgetState extends State<TimerWidget> {
 
     return isRunning || duration.inSeconds != 0
       ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: MaterialButton(
-                height: 32.0, 
-                minWidth: 70.0, 
-                color: isRunning ? Colors.black : Colors.green, 
-                textColor: Colors.white,
-                onPressed: () => isRunning ? _stopTimer(reset: false) : _startTimer(), 
-                child: isRunning ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: MaterialButton( 
-                height: 32.0, 
-                minWidth: 70.0, 
-                color: Colors.red, 
-                textColor: Colors.white, 
-                onPressed: () => _stopTimer(reset: true),
-                child: const Icon(Icons.stop), 
-              ),
-            ),
-          ],
-        )
-
-      : MaterialButton( 
-          height: 32.0, 
-          minWidth: 70.0, 
-          color: Colors.green, 
-          textColor: Colors.white, 
-          onPressed: _startTimer, 
-          child: const Icon(Icons.play_arrow), 
-        );
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          isRunning
+          ? InkResponse(
+            onTap: () => _stopTimer(reset: false),
+            child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: 'Стоп'),
+          )
+          : InkResponse(
+            onTap: () => _startTimer(),
+            child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: 'Продолж.'),
+          ),
+          const SizedBox(width: 20
+          ),
+          InkResponse(
+            onTap: () => _stopTimer(reset: true),
+            child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: 'Сбросить'),
+          ),
+        ],
+      )
+      : InkResponse(
+        onTap: _startTimer,
+        child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'Начать'),
+      );
   }
 }

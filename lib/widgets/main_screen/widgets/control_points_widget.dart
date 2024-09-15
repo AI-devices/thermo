@@ -182,7 +182,7 @@ class ControlPointsWidget extends StatelessWidget {
           ? Helper.loader
           : Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            decoration: AppStyle.decorMainCotnainers,
+            decoration: AppStyle.decorMainContainer,
             child: Column(
               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -230,11 +230,11 @@ class _Row extends StatelessWidget {
                     text: TextSpan(
                       style: TextStyle(
                         //decoration: TextDecoration.underline,
-                        color: model.notifiedPoints[model.controlPoints.indexOf(point)] == true ? Colors.green : Colors.black,
+                        color: model.notifiedPoints[model.controlPoints.indexOf(point)] == true ? AppStyle.mainColor : Colors.black,
                         fontWeight: model.notifiedPoints[model.controlPoints.indexOf(point)] == true ? FontWeight.bold : FontWeight.normal,
                       ),
                       children: [
-                        TextSpan(text: point['value'].toString(), style: const TextStyle(decoration: TextDecoration.underline, fontSize: 18)),
+                        TextSpan(text: point['value'].toString(), style: const TextStyle(fontSize: 18)),
                         const TextSpan(text: Helper.celsius, style: TextStyle(fontSize: 14))
                       ]
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/settings.dart';
+import 'package:thermo/components/styles.dart';
 import 'package:thermo/main.dart';
 
 enum Notify {
@@ -49,20 +50,20 @@ abstract class Notifier {
       case Notify.checkpointReached :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
           text: text ?? 'Пройдена контрольная точка',
-          icon: const Icon(Icons.control_point, color: Colors.green));
+          icon: const Icon(Icons.control_point, color: AppStyle.mainColor));
         break;
     }
   }
 
-  static Icon getNotifyIcon({required String type, double? size, Color? color}) {
+  static Icon getNotifyIcon({required String type, Color? color}) {
     switch (type) {
       case Settings.typeRing :
-        return Icon(Icons.phonelink_ring, size: size ?? 24, color: color ?? Colors.black);
+        return Icon(Icons.volume_up_outlined, size: 30, color: color ?? Colors.black);
       case Settings.typeVibration :
-        return Icon(Icons.vibration, size: size ?? 24, color: color ?? Colors.black);
+        return Icon(Icons.vibration, size: 30, color: color ?? Colors.black);
       case Settings.typeNone :
       default :
-        return Icon(Icons.clear, size: size ?? 24, color: color ?? Colors.black);
+        return Icon(Icons.clear, size: 30, color: color ?? Colors.black);
     }
   }
 }

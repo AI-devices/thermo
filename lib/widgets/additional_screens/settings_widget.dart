@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +19,7 @@ class SettingsWidget extends StatefulWidget {
 }
 
 class _SettingsWidgetState extends State<SettingsWidget> {
+  StreamSubscription<void>? hidePercentSpiritWidgetSubscription;
   final _dataProvider = DataProvider();
   double maxHoursForStat = Settings.maxHoursForChart.toDouble();
 
@@ -25,6 +27,15 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   void initState() {
     super.initState();
     Settings.notifyWhenTempDropsChanged ??= () => setState(() {});
+    hidePercentSpiritWidgetSubscription = Settings.hidePercentSpiritWidgetStream.listen((_){
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    hidePercentSpiritWidgetSubscription?.cancel();
+    super.dispose();
   }
 
   void onChangedHours(double value) {
@@ -70,9 +81,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   void changeVisibilityPercentSpiritWidget() {
     Settings.hidePercentSpiritWidget = !Settings.hidePercentSpiritWidget;
-    Settings.hidePercentSpiritWidgetChanged?.call();
     _dataProvider.setHidePercentSpiritWidget();
-    setState(() {});
+    Settings.controllerHidePercentSpiritWidget.add(Settings.hidePercentSpiritWidget);
   }
 
   changeNotifyAlarmLowBatteryCharge(bool value) {
@@ -200,8 +210,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     SliderTheme(
                       data: const SliderThemeData(
                         showValueIndicator: ShowValueIndicator.always,
-                        thumbColor: AppStyle.barColor,
-                        activeTrackColor: AppStyle.barColor,
+                        thumbColor: AppStyle.mainColor,
+                        activeTrackColor: AppStyle.mainColor,
                       ),
                       child: Slider(
                         inactiveColor: Colors.grey.shade400,
@@ -245,7 +255,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           flex: 5,
           child: InkResponse(
             onTap: changeNotifyWhenTempDrops,
-            child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTempDrops, size: 30, color: AppStyle.barColor))
+            child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTempDrops, color: AppStyle.mainColor))
           )
         )
       ],
@@ -266,7 +276,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             flex: 5,
             child: InkResponse(
               onTap: changeNotifyWhenTimerEnds,
-              child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds, size: 30, color: AppStyle.barColor))
+              child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds, color: AppStyle.mainColor))
             )
           )
         ],

@@ -17,7 +17,7 @@ abstract class Helper {
   static const String plus = ' \u002b';
 
   static final loader = Center(child: Platform.isAndroid
-      ? const CircularProgressIndicator(color: AppStyle.barColor)
+      ? const CircularProgressIndicator(color: AppStyle.mainColor)
       : const CupertinoActivityIndicator());
 
   static ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? 
@@ -32,7 +32,7 @@ abstract class Helper {
         content: Row(
           children: [
             if (icon == null)
-            const Icon(Icons.done, color: Colors.green,)
+            const Icon(Icons.done, color: AppStyle.mainColor)
             else
             icon,
             const SizedBox(width: 10),

@@ -8,7 +8,7 @@ import 'package:thermo/observers/observer_app_lifecycle.dart';
 import 'package:thermo/observers/observer_battery_charge.dart';
 import 'package:thermo/observers/observer_bluetooth_scaner.dart';
 import 'package:thermo/observers/observer_device_scaner.dart';
-import 'package:thermo/widgets/additional_screens/faq_widget.dart';
+import 'package:thermo/widgets/additional_screens/timers_widget.dart';
 import 'package:thermo/widgets/additional_screens/settings_widget.dart';
 import 'package:thermo/widgets/main_screen/main_widget.dart';
 
@@ -24,7 +24,7 @@ class InitWidget extends StatefulWidget {
 class _InitWidgetState extends State<InitWidget> {
   final ObserverAppLifecycle _lifecycleObserver = ObserverAppLifecycle();
   
-  int _selectedTab = 0;
+  int _selectedTab = 1; //TODO потом 1 назначить, временно
   bool _tabChangedBySwipe = false;
 
   bool? bluetoothOn;
@@ -105,7 +105,7 @@ class _InitWidgetState extends State<InitWidget> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.045),
           child: AppBar(
-            backgroundColor: AppStyle.barColor,
+            backgroundColor: AppStyle.headerColor,
             actions: [
               AppStyle.getIconBluetooth(bluetoothOn),
               const SizedBox(width: 20),
@@ -123,9 +123,9 @@ class _InitWidgetState extends State<InitWidget> {
         body: IndexedStack(
           index: _selectedTab,
           children: const [
+            TimersWidget(),
             MainScreenWidget(),
-            SettingsWidget(),
-            FaqWidget(),
+            SettingsWidget()
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -133,16 +133,16 @@ class _InitWidgetState extends State<InitWidget> {
           currentIndex: _selectedTab,
           items: const [
             BottomNavigationBarItem(
+              icon: Icon(Icons.timer_outlined),
+              label: 'Таймер',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: '',
+              label: 'Главный',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.question_mark),
-              label: '',
+              label: 'Настройки',
             ),
           ],
           onTap: onSelectTab,
