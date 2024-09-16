@@ -4,7 +4,6 @@ import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
-import 'package:thermo/widgets/assets.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class MonitoringWidget extends StatefulWidget {
@@ -88,22 +87,23 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
   @override
   Widget build(BuildContext context) {
     if (currentTemperature == null) {
-      return const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, color: Colors.red, size: 30),
-          Padding(
-            padding: EdgeInsets.fromLTRB(2, 10, 2, 0),
-            child: Text('Ожидается подключение к датчику', textAlign: TextAlign.center),
-          )
-        ],
+      return Container(
+        decoration: AppStyle.decorMainContainer,
+        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, color: Color.fromARGB(255, 255, 0, 255), size: 70),
+            Padding(
+              padding: EdgeInsets.fromLTRB(2, 10, 2, 0),
+              child: Text('Ожидается подключение к датчику', textAlign: TextAlign.center, style: TextStyle(color: Color.fromARGB(255, 255, 0, 255))),
+            )
+          ],
+        ),
       );
     }
     return Container(
-      decoration: BoxDecoration(
-        color: AppStyle.getColorByTemp(temperature: currentTemperature),
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
+      decoration: AppStyle.decorMainContainer,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Row(
@@ -141,6 +141,20 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
               ),
             ),
             Expanded(
+              flex: 1,
+              child: SizedBox(
+                height: double.infinity,
+                child: Padding(
+                  //? 3 небольшая корректировка относительно Divider(а) слева от этой иконки
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider - 3),
+                  child: const Align(
+                    alignment: Alignment.bottomLeft, //TODO хз чего его не двинуть влево. по правому краю выровнен, уже все перепробовал
+                    child: Icon(Icons.navigate_before)
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
               flex: 10,
               child: Padding(
                 padding: const EdgeInsets.only(right: 20),
@@ -148,19 +162,23 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                        children: [
-                          TextSpan(
-                            text: currentTemperature?.toStringAsFixed(1),
-                            style: const TextStyle(fontSize: 25)
-                          ),
-                          const TextSpan(
-                            text: Helper.celsius,
-                            style: TextStyle(fontSize: 16)
-                          )
-                        ],
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: AppStyle.getDecorMainContainerByTemp(temp: currentTemperature!),
+                      child: RichText(
+                        text: TextSpan(
+                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                          children: [
+                            TextSpan(
+                              text: currentTemperature?.toStringAsFixed(1),
+                              style: const TextStyle(fontSize: 26)
+                            ),
+                            const TextSpan(
+                              text: Helper.celsius,
+                              style: TextStyle(fontSize: 26)
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     
@@ -169,18 +187,17 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                       children: [
                         Flexible(
                           flex: 1,
-                          child: (diffIcon != null && diff != 0.0) ? diffIcon! : const SizedBox(),
+                          child: (diffIcon != null && diff != 0.0) ? diffIcon! : const SizedBox(), //TODO стрелки сделать согласно дизайну
                         ),
                         Flexible(
                           flex: 3,
                           child: Text(diff.toString(), style: const TextStyle(
                             color: Colors.black, 
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24
+                            fontSize: 16
                           )),
                         ),
                         const SizedBox(width: 2),
-                        Flexible(
+                        /*Flexible(
                           flex: 1,
                           child: SizedBox(
                             width: 17,
@@ -189,20 +206,11 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                               child: AppAssets.iconDelta,
                             ),
                           ),
-                        )
-                        /*const SizedBox(width: 5),
+                        ),*/
                         const Flexible(
-                          flex: 1,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(Helper.celsius, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                              Divider(color: Colors.black, height: 0),
-                              Text('мин', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                            ],
-                          ),
-                        )*/
+                          flex: 4,
+                          child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: 16, color: Colors.black)),
+                        )
                       ],
                     )
                   ],

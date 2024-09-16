@@ -248,7 +248,9 @@ class _Row extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
                 onTap: () => model.changeNotify(model.controlPoints.indexOf(point)),
-                child: Center(child: Notifier.getNotifyIcon(type: point['notify']!))
+                child: Center(child: Notifier.getNotifyIcon(type: point['notify']!, 
+                  color: model.notifiedPoints[model.controlPoints.indexOf(point)] == true ? AppStyle.mainColor : Colors.black)
+                )
               ),
             ),
           ],

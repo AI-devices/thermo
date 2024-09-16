@@ -82,7 +82,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   void changeVisibilityPercentSpiritWidget() {
     Settings.hidePercentSpiritWidget = !Settings.hidePercentSpiritWidget;
     _dataProvider.setHidePercentSpiritWidget();
-    Settings.controllerHidePercentSpiritWidget.add(Settings.hidePercentSpiritWidget);
+    Settings.controllerHidePercentSpiritWidget.add(null);
   }
 
   changeNotifyAlarmLowBatteryCharge(bool value) {

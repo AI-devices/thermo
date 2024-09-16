@@ -6,12 +6,28 @@ abstract class AppStyle {
   static const mainColor = Color.fromRGBO(52, 199, 89, 1);
   static const headerColor = Color.fromRGBO(74, 74, 74, 1);
   static const backgroundColor = Color.fromRGBO(237, 240, 245, 1);
+  static const decorColor = Color.fromARGB(255, 238, 238, 241);
 
   static const greyTextColor = Color.fromRGBO(106, 106, 106, 1); //TODO
   static const dottedLineColor = Color.fromRGBO(146, 146, 146, 1); //TODO
 
+  static BoxDecoration getDecorMainContainerByTemp({required double temp}) {
+    return BoxDecoration(
+      border: Border.all(color: AppStyle.getColorByTemp(temperature: temp)),
+      color: decorColor,
+      borderRadius: BorderRadius.circular(15),
+      boxShadow: [
+        BoxShadow(
+          color: AppStyle.getColorByTemp(temperature: temp),
+          blurRadius: 1.0,
+          spreadRadius: 3.0
+        ),
+      ]
+    );
+  }
+
   static final decorMainContainer = BoxDecoration(
-    color: const Color.fromARGB(255, 238, 238, 241),
+    color: decorColor,
     borderRadius: BorderRadius.circular(15),
     boxShadow: [
       boxShadowBottomRight(),

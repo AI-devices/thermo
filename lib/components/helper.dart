@@ -57,15 +57,29 @@ abstract class Helper {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: AlertDialog(
-            title: Text(title ?? 'Предупреждение'),
-            content: Text(content!),
+            titlePadding: const EdgeInsets.only(left: 25),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: Text(title ?? 'Предупреждение', style: const TextStyle(color: AppStyle.greyTextColor)),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, color: AppStyle.greyTextColor, size: 38)
+                )
+              ],
+            ),
+            content: Text(content!, style: const TextStyle(fontSize: 15)),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10) 
             ),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(), 
-                child: const Text('OK'))
+              InkResponse(
+                onTap: () => Navigator.of(context).pop(),
+                child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'OK')
+              ),
             ],
           )
         );
