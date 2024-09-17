@@ -168,308 +168,406 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(10.0),
         child: ListView(
           children: [
-            _maxHoursForStat(),
-            const Divider(color: Colors.black),
+            const Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Text('Настройки', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
+            ),
             _notifyWhenTempDrops(),
-            const Divider(color: Colors.black),
             _notifyWhenTimerEnds(),
-            const Divider(color: Colors.black),
             _calibrationSensor(),
-            const Divider(color: Colors.black),
+            _calibrationSensorOld(),
             _percentSpirit(),
-            const Divider(color: Colors.black),
             _alarmLowBatteryCharge(),
-            const Divider(color: Colors.black),
             _wakelock(),
-            const Divider(color: Colors.black),
             _alarmSensorDissconnected(),
-            const Divider(color: Colors.black),
             _localNotifications(),
-            const Divider(color: Colors.black),
+            _maxHoursForStat(), //TODO убрать потом отсюда
           ],
         ),
       ),
     );
   }
 
-  Row _maxHoursForStat() {
-    return Row(
-            children: [
-              Flexible(
-                flex: 6,
-                child: Text('Максимальный масштаб статистики (${maxHoursForStat.round()} ч.)')
-              ),
-              const SizedBox(width: 10),
-              Flexible(
-                flex: 5,
-                child: Column(
-                  children: [
-                    SliderTheme(
-                      data: const SliderThemeData(
-                        showValueIndicator: ShowValueIndicator.always,
-                        thumbColor: AppStyle.mainColor,
-                        activeTrackColor: AppStyle.mainColor,
-                      ),
-                      child: Slider(
-                        inactiveColor: Colors.grey.shade400,
-                        value: maxHoursForStat,
-                        min: 2,
-                        max: 9,
-                        divisions: 9,
-                        label: maxHoursForStat.round().toString(),
-                        onChanged: onChangedHours,
-                        onChangeEnd: onChangedHoursEnd,
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 22.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-                        children: [
-                          Text('2',
-                            style: TextStyle(fontSize: 13, color: Colors.grey)),
-                          Text('9',
-                            style: TextStyle(fontSize: 13, color: Colors.grey)),
-                        ],
-                      ),
-                    ),
-                  ],
+  Padding _notifyWhenTempDrops() {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 65,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Flexible(flex: 6, child: Text('Сигнал при падении температуры в течение 5 сек.')),
+            Flexible(
+              flex: 4, 
+              child: Container(
+                height: double.infinity,
+                width: 50,
+                decoration: AppStyle.decorMainContainer,
+                child: IconButton(
+                  icon: Notifier.getNotifyIcon(type: Settings.notifyWhenTempDrops), 
+                  onPressed: changeNotifyWhenTempDrops,
                 ),
-              ),
-            ],
-          );
-  }
-
-  Row _notifyWhenTempDrops() {
-    return Row(
-      children: [
-        const Flexible(
-          flex: 6,
-          child: Text('Сигнал при падении температуры в течение 5 сек.')
+              )
+            ),
+            
+          ],
         ),
-        const SizedBox(width: 10),
-        Flexible(
-          flex: 5,
-          child: InkResponse(
-            onTap: changeNotifyWhenTempDrops,
-            child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTempDrops, color: AppStyle.mainColor))
-          )
-        )
-      ],
+      ),
     );
   }
 
   Padding _notifyWhenTimerEnds() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 6,
-            child: Text('Сигнал при завершении таймера')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: InkResponse(
-              onTap: changeNotifyWhenTimerEnds,
-              child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds, color: AppStyle.mainColor))
-            )
-          )
-        ],
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 65,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Flexible(flex: 6, child: Text('Сигнал при завершении таймера')),
+            Flexible(
+              flex: 4, 
+              child: Container(
+                height: double.infinity,
+                width: 50,
+                decoration: AppStyle.decorMainContainer,
+                child: IconButton(
+                  icon: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds), 
+                  onPressed: changeNotifyWhenTimerEnds,
+                ),
+              )
+            ),
+            
+          ],
+        ),
       ),
     );
   }
 
   Padding _calibrationSensor() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Flexible(
-            fit: FlexFit.tight,
-            flex: 4,
-            child: Row(
-              children: [
-                const Expanded(child: Text('Калибровка датчика')),
-                IconButton(
-                  onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
-                  icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
-                )
-              ],
-            )
-          ),
-          const SizedBox(width: 15),
-          Flexible(
-            flex: 1,
-            child: InkResponse(
-              onTap: () => changeCalibrationSensor(action: 'sub'),
-              child: const Text(Helper.minus, style: TextStyle(fontSize: 30))
-            )
-          ),
-          Flexible(
-            flex: 1,
-            fit: FlexFit.tight,
-            child: Text(Settings.calibrationSensor.toString(), textAlign: TextAlign.right, style: const TextStyle(fontSize: 18))
-          ),
-          Flexible(
-            flex: 1,
-            fit: FlexFit.tight,
-            child: Align(
-              alignment: Alignment.center,
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 65,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              flex: 6,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Flexible(child: Text('Калибровка датчика')),
+                  IconButton(
+                    onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
+                    icon: const Icon(Icons.help_outline, color: AppStyle.greyColor, size: 30)
+                  )
+                ],
+              )
+            ),
+            Flexible(
+              flex: 1,
               child: InkResponse(
-                onTap: () => changeCalibrationSensor(action: 'add'),
-                child: const Text(Helper.plus, style: TextStyle(fontSize: 30))
-              ),
-            )
-          ),
-        ],
+                onTap: () => changeCalibrationSensor(action: 'sub'),
+                child: const Text(Helper.minus, style: TextStyle(fontSize: 30))
+              )
+            ),
+            Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: Text(Settings.calibrationSensor.toString(), textAlign: TextAlign.right, style: const TextStyle(fontSize: 18))
+            ),
+            Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: Align(
+                alignment: Alignment.center,
+                child: InkResponse(
+                  onTap: () => changeCalibrationSensor(action: 'add'),
+                  child: const Text(Helper.plus, style: TextStyle(fontSize: 30))
+                ),
+              )
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _calibrationSensorOld() {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          children: [
+            Flexible(
+              fit: FlexFit.tight,
+              flex: 4,
+              child: Row(
+                children: [
+                  const Expanded(child: Text('Калибровка датчика')),
+                  IconButton(
+                    onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
+                    icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
+                  )
+                ],
+              )
+            ),
+            const SizedBox(width: 15),
+            Flexible(
+              flex: 1,
+              child: InkResponse(
+                onTap: () => changeCalibrationSensor(action: 'sub'),
+                child: const Text(Helper.minus, style: TextStyle(fontSize: 30))
+              )
+            ),
+            Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: Text(Settings.calibrationSensor.toString(), textAlign: TextAlign.right, style: const TextStyle(fontSize: 18))
+            ),
+            Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: Align(
+                alignment: Alignment.center,
+                child: InkResponse(
+                  onTap: () => changeCalibrationSensor(action: 'add'),
+                  child: const Text(Helper.plus, style: TextStyle(fontSize: 30))
+                ),
+              )
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Padding _percentSpirit() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 6,
-            child: Text('Cкрыть автоматический расчет спиртуозности')
-          ),
-          Flexible(
-            flex: 1,
-            child: IconButton(
-              onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.'),
-              icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          children: [
+            const Flexible(
+              flex: 6,
+              child: Text('Cкрыть автоматический расчет спиртуозности')
             ),
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 25),
-                child: Switch(
-                  //activeColor: AppStyle.barColor,
-                  value: Settings.hidePercentSpiritWidget,
-                  onChanged: (_) => changeVisibilityPercentSpiritWidget(),
-                ),
+            Flexible(
+              flex: 1,
+              child: IconButton(
+                onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.'),
+                icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
               ),
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              flex: 5,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 25),
+                  child: Switch(
+                    //activeColor: AppStyle.barColor,
+                    value: Settings.hidePercentSpiritWidget,
+                    onChanged: (_) => changeVisibilityPercentSpiritWidget(),
+                  ),
+                ),
+              )
             )
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Padding _alarmLowBatteryCharge() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Flexible(
-            flex: 6,
-            child: Text('Предупреждение при низком заряде датчика (<${Settings.alarmLowBatteryCharge['percent_charge']}%)')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Switch(
-                  value: Settings.alarmLowBatteryCharge['on'] as bool,
-                  onChanged: (value) => changeNotifyAlarmLowBatteryCharge(value),
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          children: [
+            Flexible(
+              flex: 6,
+              child: Text('Предупреждение при низком заряде датчика (<${Settings.alarmLowBatteryCharge['percent_charge']}%)')
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              flex: 5,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Switch(
+                    value: Settings.alarmLowBatteryCharge['on'] as bool,
+                    onChanged: (value) => changeNotifyAlarmLowBatteryCharge(value),
+                  ),
                 ),
-              ),
+              )
             )
-          )
-        ],
-      ),
-    );
-  }
-
-  Padding _alarmSensorDissconnected() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 6,
-            child: Text('Предупреждение при потере сигнала от датчика')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Switch(
-                  value: Settings.alarmSensorDissconnected,
-                  onChanged: (_) => changeAlarmSensorDissconnected(),
-                ),
-              ),
-            )
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Padding _wakelock() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 7,
-            child: Text('Не давать засыпать телефону')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Switch(
-                  value: Settings.wakelock,
-                  onChanged: (value) => changeWakelock(value),
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          children: [
+            const Flexible(
+              flex: 7,
+              child: Text('Не давать засыпать телефону')
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              flex: 5,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Switch(
+                    value: Settings.wakelock,
+                    onChanged: (value) => changeWakelock(value),
+                  ),
                 ),
-              ),
+              )
             )
-          )
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _alarmSensorDissconnected() {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          children: [
+            const Flexible(
+              flex: 6,
+              child: Text('Предупреждение при потере сигнала от датчика')
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              flex: 5,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Switch(
+                    value: Settings.alarmSensorDissconnected,
+                    onChanged: (_) => changeAlarmSensorDissconnected(),
+                  ),
+                ),
+              )
+            )
+          ],
+        ),
       ),
     );
   }
 
   Padding _localNotifications() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 6,
-            child: Text('Отображение температуры в фоновом режиме приложения')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Switch(
-                  value: Settings.allowLocalNotifications,
-                  onChanged: (value) => changeLocalNotifications(value),
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          children: [
+            const Flexible(
+              flex: 6,
+              child: Text('Отображение температуры в фоновом режиме приложения')
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              flex: 5,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Switch(
+                    value: Settings.allowLocalNotifications,
+                    onChanged: (value) => changeLocalNotifications(value),
+                  ),
                 ),
-              ),
+              )
             )
-          )
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _maxHoursForStat() {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          children: [
+            Flexible(
+              flex: 6,
+              child: Text('Максимальный масштаб статистики (${maxHoursForStat.round()} ч.)')
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              flex: 5,
+              child: Column(
+                children: [
+                  SliderTheme(
+                    data: const SliderThemeData(
+                      showValueIndicator: ShowValueIndicator.always,
+                      thumbColor: AppStyle.mainColor,
+                      activeTrackColor: AppStyle.mainColor,
+                    ),
+                    child: Slider(
+                      inactiveColor: Colors.grey.shade400,
+                      value: maxHoursForStat,
+                      min: 2,
+                      max: 9,
+                      divisions: 9,
+                      label: maxHoursForStat.round().toString(),
+                      onChanged: onChangedHours,
+                      onChangeEnd: onChangedHoursEnd,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 22.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                      children: [
+                        Text('2',
+                          style: TextStyle(fontSize: 13, color: Colors.grey)),
+                        Text('9',
+                          style: TextStyle(fontSize: 13, color: Colors.grey)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

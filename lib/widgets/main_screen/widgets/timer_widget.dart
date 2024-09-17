@@ -67,11 +67,11 @@ class __TimerWidgetState extends State<TimerWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(width: 5),
-            Text('ч.', style: TextStyle(fontSize: 15, color: AppStyle.greyTextColor)),
+            Text('ч.', style: TextStyle(fontSize: 15, color: AppStyle.greyColor)),
             SizedBox(width: 40),
-            Text('мин.', style: TextStyle(fontSize: 15, color: AppStyle.greyTextColor)),
+            Text('мин.', style: TextStyle(fontSize: 15, color: AppStyle.greyColor)),
             SizedBox(width: 30),
-            Text('сек.', style: TextStyle(fontSize: 15, color: AppStyle.greyTextColor)),
+            Text('сек.', style: TextStyle(fontSize: 15, color: AppStyle.greyColor)),
           ],
         ),
         Center(

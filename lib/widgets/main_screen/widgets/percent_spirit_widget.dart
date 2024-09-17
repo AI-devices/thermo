@@ -92,7 +92,7 @@ class _PercentSpiritWidgetState extends State<PercentSpiritWidget> {
                   Text(tempInSampling != null ? '$tempInSampling%' : '---', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                 ],
               ),
-              const Text('Диапазон от 79 до 99 градусов', style: TextStyle(fontSize: 13, color: AppStyle.greyTextColor)),
+              const Text('Диапазон от 79 до 99 градусов', style: TextStyle(fontSize: 13, color: AppStyle.greyColor)),
             ],
           ),
         ],

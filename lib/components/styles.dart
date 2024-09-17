@@ -8,7 +8,7 @@ abstract class AppStyle {
   static const backgroundColor = Color.fromRGBO(237, 240, 245, 1);
   static const decorColor = Color.fromARGB(255, 238, 238, 241);
 
-  static const greyTextColor = Color.fromRGBO(106, 106, 106, 1); //TODO
+  static const greyColor = Color.fromRGBO(106, 106, 106, 1); //TODO
   static const dottedLineColor = Color.fromRGBO(146, 146, 146, 1); //TODO
 
   static BoxDecoration getDecorMainContainerByTemp({required double temp}) {
@@ -149,6 +149,19 @@ abstract class AppStyle {
         boxShadow: [boxShadowBottomRight()]
       ),
       child: Center(child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 15), overflow: TextOverflow.ellipsis)),
+    );
+  }
+  static getButtonCancel({required String text}) {
+    return Container(
+      width: 100,
+      height: 40,
+      decoration: BoxDecoration(
+        border: Border.all(color: mainColor),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        //boxShadow: [boxShadowBottomRight()]
+      ),
+      child: Center(child: Text(text, style: const TextStyle(color: mainColor, fontSize: 15), overflow: TextOverflow.ellipsis)),
     );
   }
 }

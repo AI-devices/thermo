@@ -63,11 +63,11 @@ abstract class Helper {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 30.0),
-                  child: Text(title ?? 'Предупреждение', style: const TextStyle(color: AppStyle.greyTextColor)),
+                  child: Text(title ?? 'Предупреждение', style: const TextStyle(color: AppStyle.greyColor)),
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: AppStyle.greyTextColor, size: 38)
+                  icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
                 )
               ],
             ),
@@ -76,7 +76,7 @@ abstract class Helper {
               borderRadius: BorderRadius.circular(10) 
             ),
             actions: [
-              InkResponse(
+              InkWell(
                 onTap: () => Navigator.of(context).pop(),
                 child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'OK')
               ),
@@ -102,8 +102,21 @@ abstract class Helper {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: AlertDialog(
-            title: Text(title ?? 'Предупреждение'),
-            content: Text(content),
+            titlePadding: const EdgeInsets.only(left: 25),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: Text(title ?? 'Предупреждение', style: const TextStyle(color: AppStyle.greyColor)),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
+                )
+              ],
+            ),
+            content: Text(content, style: const TextStyle(fontSize: 15)),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10) 
             ),
@@ -111,14 +124,14 @@ abstract class Helper {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  TextButton(
-                    onPressed: cancelAction, 
-                    child: Text(cancelText ?? 'Нет')
+                  InkWell(
+                    onTap: cancelAction,
+                    child: AppStyle.getButtonCancel(text: cancelText ?? 'Нет')
                   ),
-                  TextButton(
-                    onPressed: confirmAction, 
-                    child: Text(confirmText ?? 'Да')
-                  )
+                  InkWell(
+                    onTap: confirmAction,
+                    child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: confirmText ?? 'Да')
+                  ),
                 ],
               )
             ],
