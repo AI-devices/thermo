@@ -15,6 +15,7 @@ import 'package:thermo/widgets/assets.dart';
 import 'package:vibration/vibration.dart';
 
 class _ViewModel extends ChangeNotifier {
+  final TextEditingController _controlPointsTextController = TextEditingController();
   StreamSubscription<double>? temperatureSubscription;
   double? _previousTemperature;
   final List<bool> notifiedPoints = [false,false,false,false];
@@ -117,20 +118,40 @@ class _ViewModel extends ChangeNotifier {
   }
 
   changeTemperature(BuildContext context, int indexPoint) {
+    _controlPointsTextController.text = controlPoints[indexPoint]['value'].toString();
     return showDialog<dynamic>(
       context: context,
       builder: (BuildContext context) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: AlertDialog(
+            titlePadding: const EdgeInsets.all(0),
+            title: Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
+              ),
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Укажите температуру контрольной точки'),
+                const Text('Укажите температуру контрольной точки', style: TextStyle(fontSize: 15)),
                 TextFormField(
+                  controller: _controlPointsTextController,
+                  enableInteractiveSelection: false,
+                  cursorColor: AppStyle.mainColor,
+                  style: const TextStyle(color: AppStyle.mainColor),
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: AppStyle.mainColor, width: 2)
+                    ),
+                    hintText: "50.0 ${Helper.celsius}"
+                  ),
                   inputFormatters: [MaskTextInputFormatter(mask: '##.#', filter: { '#': RegExp(r'[0-9]') })],
-                  decoration: const InputDecoration(hintText: "50.0 ${Helper.celsius}"),
-                  initialValue: controlPoints[indexPoint]['value'].toString(),
+                  //initialValue: controlPoints[indexPoint]['value'].toString(),
                   autofocus: true,
                   maxLength: 4,
                   keyboardType: TextInputType.number,
@@ -144,6 +165,24 @@ class _ViewModel extends ChangeNotifier {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10) 
             ),
+            actions: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  InkWell(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: AppStyle.getButtonCancel(text: 'Отмена')
+                  ),
+                  InkWell(
+                    onTap: () {
+                      _changeTemp(indexPoint, _controlPointsTextController.text);
+                      Navigator.of(context).pop();
+                    },
+                    child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'OK')
+                  ),
+                ],
+              )
+            ],
           )
         );
       },

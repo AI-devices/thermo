@@ -35,14 +35,14 @@ abstract class AppStyle {
     ]
   );
 
-  /*static final decorMainCotnainersInset = BoxDecoration(
-    color: Color.fromARGB(1, 238, 238, 241),
+  static final decorMainCotnainersInset = BoxDecoration(
+    color: decorColor,
     borderRadius: BorderRadius.circular(15),
     boxShadow: [
       boxShadowBottomRight(true),
       boxShadowTopLeft(true),
     ]
-  );*/
+  );
 
   static boxShadowBottomRight([bool inset = false]) {
     return BoxShadow(

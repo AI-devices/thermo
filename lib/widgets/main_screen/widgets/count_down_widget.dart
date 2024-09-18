@@ -133,6 +133,14 @@ class __CountDownWidgetState extends State<CountDownWidget> {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: AlertDialog(
+            titlePadding: const EdgeInsets.all(0),
+            title: Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
+              ),
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -140,9 +148,11 @@ class __CountDownWidgetState extends State<CountDownWidget> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5.0),
                   child: TextField(
+                    enableInteractiveSelection: false,
                     cursorColor: AppStyle.mainColor,
                     style: const TextStyle(color: AppStyle.mainColor),
                     decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(color: AppStyle.mainColor, width: 2)
@@ -172,7 +182,12 @@ class __CountDownWidgetState extends State<CountDownWidget> {
                           _setTimer(e);
                           Navigator.of(context).pop();
                         }, 
-                        child: Text(e, style: const TextStyle(decoration: TextDecoration.underline, color: AppStyle.mainColor)))).toList()
+                        child: Text(e, style: const TextStyle(
+                          decoration: TextDecoration.underline, 
+                          color: AppStyle.mainColor,
+                          fontSize: 17
+                        ))
+                      )).toList()
                   ),
                 ),
               ],

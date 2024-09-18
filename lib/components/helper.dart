@@ -13,8 +13,6 @@ extension Ex on double {
 abstract class Helper {
 
   static const String celsius = ' \u2103';
-  static const String minus = ' \u2212';
-  static const String plus = ' \u002b';
 
   static final loader = Center(child: Platform.isAndroid
       ? const CircularProgressIndicator(color: AppStyle.mainColor)

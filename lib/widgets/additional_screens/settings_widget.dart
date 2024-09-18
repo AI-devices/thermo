@@ -178,7 +178,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             _notifyWhenTempDrops(),
             _notifyWhenTimerEnds(),
             _calibrationSensor(),
-            _calibrationSensorOld(),
             _percentSpirit(),
             _alarmLowBatteryCharge(),
             _wakelock(),
@@ -275,77 +274,45 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               )
             ),
             Flexible(
-              flex: 1,
-              child: InkResponse(
-                onTap: () => changeCalibrationSensor(action: 'sub'),
-                child: const Text(Helper.minus, style: TextStyle(fontSize: 30))
-              )
-            ),
-            Flexible(
-              flex: 1,
-              fit: FlexFit.tight,
-              child: Text(Settings.calibrationSensor.toString(), textAlign: TextAlign.right, style: const TextStyle(fontSize: 18))
-            ),
-            Flexible(
-              flex: 1,
-              fit: FlexFit.tight,
-              child: Align(
-                alignment: Alignment.center,
-                child: InkResponse(
-                  onTap: () => changeCalibrationSensor(action: 'add'),
-                  child: const Text(Helper.plus, style: TextStyle(fontSize: 30))
-                ),
-              )
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Padding _calibrationSensorOld() {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        decoration: AppStyle.decorMainContainer,
-        child: Row(
-          children: [
-            Flexible(
-              fit: FlexFit.tight,
-              flex: 4,
+              flex: 5,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const Expanded(child: Text('Калибровка датчика')),
-                  IconButton(
-                    onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
-                    icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
-                  )
+                  Container(
+                    height: 43,
+                    width: MediaQuery.of(context).size.height * 0.05,
+                    decoration: AppStyle.decorMainContainer,
+                    child: IconButton(
+                      icon: const Icon(Icons.remove), 
+                      onPressed: () => changeCalibrationSensor(action: 'sub'),
+                    ),
+                  ),
+                  SizedBox(width: MediaQuery.of(context).size.height * 0.01),
+                  Container(
+                    height: 43,
+                    width: MediaQuery.of(context).size.height * 0.07,
+                    decoration: AppStyle.decorMainCotnainersInset,
+                    child: Center(
+                      child: Text(
+                        Settings.calibrationSensor.toString(), 
+                        textAlign: TextAlign.right, 
+                        style: const TextStyle(fontSize: 18)
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: MediaQuery.of(context).size.height * 0.01),
+                  Expanded(
+                    child: Container(
+                      height: 43,
+                      width: MediaQuery.of(context).size.height * 0.05,
+                      decoration: AppStyle.decorMainContainer,
+                      child: IconButton(
+                        icon: const Icon(Icons.add), 
+                        onPressed: () => changeCalibrationSensor(action: 'add'),
+                      ),
+                    ),
+                  ),
                 ],
-              )
-            ),
-            const SizedBox(width: 15),
-            Flexible(
-              flex: 1,
-              child: InkResponse(
-                onTap: () => changeCalibrationSensor(action: 'sub'),
-                child: const Text(Helper.minus, style: TextStyle(fontSize: 30))
-              )
-            ),
-            Flexible(
-              flex: 1,
-              fit: FlexFit.tight,
-              child: Text(Settings.calibrationSensor.toString(), textAlign: TextAlign.right, style: const TextStyle(fontSize: 18))
-            ),
-            Flexible(
-              flex: 1,
-              fit: FlexFit.tight,
-              child: Align(
-                alignment: Alignment.center,
-                child: InkResponse(
-                  onTap: () => changeCalibrationSensor(action: 'add'),
-                  child: const Text(Helper.plus, style: TextStyle(fontSize: 30))
-                ),
               )
             ),
           ],
@@ -358,35 +325,35 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
+        height: 65,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Flexible(
+            Flexible(
               flex: 6,
-              child: Text('Cкрыть автоматический расчет спиртуозности')
-            ),
-            Flexible(
-              flex: 1,
-              child: IconButton(
-                onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.'),
-                icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
-              ),
-            ),
-            const SizedBox(width: 10),
-            Flexible(
-              flex: 5,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 25),
-                  child: Switch(
-                    //activeColor: AppStyle.barColor,
-                    value: Settings.hidePercentSpiritWidget,
-                    onChanged: (_) => changeVisibilityPercentSpiritWidget(),
-                  ),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Flexible(child: Text('Cкрыть автоматический расчет спиртуозности')),
+                  IconButton(
+                    onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.'),
+                    icon: const Icon(Icons.help_outline, color: AppStyle.greyColor, size: 30)
+                  )
+                ],
               )
-            )
+            ),
+            Flexible(
+              flex: 4, 
+              child: Switch(
+                activeTrackColor: AppStyle.mainColor,
+                activeColor: Colors.white,
+                value: Settings.hidePercentSpiritWidget,
+                onChanged: (_) => changeVisibilityPercentSpiritWidget(),
+              )
+            ),
+            
           ],
         ),
       ),
@@ -397,27 +364,25 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
+        height: 65,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
               flex: 6,
               child: Text('Предупреждение при низком заряде датчика (<${Settings.alarmLowBatteryCharge['percent_charge']}%)')
             ),
-            const SizedBox(width: 10),
             Flexible(
-              flex: 5,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: Switch(
-                    value: Settings.alarmLowBatteryCharge['on'] as bool,
-                    onChanged: (value) => changeNotifyAlarmLowBatteryCharge(value),
-                  ),
-                ),
+              flex: 4, 
+              child: Switch(
+                activeTrackColor: AppStyle.mainColor,
+                activeColor: Colors.white,
+                value: Settings.alarmLowBatteryCharge['on'] as bool,
+                onChanged: (value) => changeNotifyAlarmLowBatteryCharge(value),
               )
-            )
+            ),
           ],
         ),
       ),
@@ -428,27 +393,22 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
+        height: 65,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Flexible(
-              flex: 7,
-              child: Text('Не давать засыпать телефону')
-            ),
-            const SizedBox(width: 10),
+            const Flexible(flex: 6, child: Text('Не давать засыпать телефону')),
             Flexible(
-              flex: 5,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: Switch(
-                    value: Settings.wakelock,
-                    onChanged: (value) => changeWakelock(value),
-                  ),
-                ),
+              flex: 4, 
+              child: Switch(
+                activeTrackColor: AppStyle.mainColor,
+                activeColor: Colors.white,
+                value: Settings.wakelock,
+                onChanged: (value) => changeWakelock(value),
               )
-            )
+            ),
           ],
         ),
       ),
@@ -459,27 +419,22 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
+        height: 65,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Flexible(
-              flex: 6,
-              child: Text('Предупреждение при потере сигнала от датчика')
-            ),
-            const SizedBox(width: 10),
+            const Flexible(flex: 6, child: Text('Предупреждение при потере сигнала от датчика')),
             Flexible(
-              flex: 5,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: Switch(
-                    value: Settings.alarmSensorDissconnected,
-                    onChanged: (_) => changeAlarmSensorDissconnected(),
-                  ),
-                ),
+              flex: 4, 
+              child: Switch(
+                activeTrackColor: AppStyle.mainColor,
+                activeColor: Colors.white,
+                value: Settings.alarmSensorDissconnected,
+                onChanged: (_) => changeAlarmSensorDissconnected(),
               )
-            )
+            ),
           ],
         ),
       ),
@@ -490,27 +445,22 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
+        height: 65,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Flexible(
-              flex: 6,
-              child: Text('Отображение температуры в фоновом режиме приложения')
-            ),
-            const SizedBox(width: 10),
+            const Flexible(flex: 6, child: Text('Отображение температуры в фоновом режиме приложения')),
             Flexible(
-              flex: 5,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 20),
-                  child: Switch(
-                    value: Settings.allowLocalNotifications,
-                    onChanged: (value) => changeLocalNotifications(value),
-                  ),
-                ),
+              flex: 4, 
+              child: Switch(
+                activeTrackColor: AppStyle.mainColor,
+                activeColor: Colors.white,
+                value: Settings.allowLocalNotifications,
+                onChanged: (value) => changeLocalNotifications(value),
               )
-            )
+            ),
           ],
         ),
       ),
@@ -521,6 +471,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
+        height: 100, //TODO
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
