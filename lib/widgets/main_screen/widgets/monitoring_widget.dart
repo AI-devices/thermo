@@ -87,138 +87,131 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
   @override
   Widget build(BuildContext context) {
     if (currentTemperature == null) {
-      return Container(
-        decoration: AppStyle.decorMainContainer,
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, color: Color.fromARGB(255, 255, 0, 255), size: 70),
-            Padding(
-              padding: EdgeInsets.fromLTRB(2, 10, 2, 0),
-              child: Text('Ожидается подключение к датчику', textAlign: TextAlign.center, style: TextStyle(color: Color.fromARGB(255, 255, 0, 255))),
-            )
-          ],
-        ),
+      return const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, color: AppStyle.pinkColor, size: 70),
+          Padding(
+            padding: EdgeInsets.fromLTRB(2, 10, 2, 0),
+            child: Text('Ожидается подключение к датчику', textAlign: TextAlign.center, style: TextStyle(color: AppStyle.pinkColor)),
+          )
+        ],
       );
     }
-    return Container(
-      decoration: AppStyle.decorMainContainer,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Container(
-                height: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black.withOpacity(0.6)),
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [
-                      0.1,
-                      0.5,
-                      0.9,
-                    ],
-                    colors: [
-                      Colors.red,
-                      Colors.yellow,
-                      Colors.blue,
-                    ],
-                  )
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider),
-                  child: const Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Divider(color: Colors.black, thickness: 3)
-                  ),
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              height: double.infinity,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black.withOpacity(0.6)),
+                borderRadius: BorderRadius.circular(10),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [
+                    0.1,
+                    0.5,
+                    0.9,
+                  ],
+                  colors: [
+                    Colors.red,
+                    Colors.yellow,
+                    Colors.blue,
+                  ],
+                )
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: SizedBox(
-                height: double.infinity,
-                child: Padding(
-                  //? 3 небольшая корректировка относительно Divider(а) слева от этой иконки
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider - 3),
-                  child: const Align(
-                    alignment: Alignment.bottomLeft, //TODO хз чего его не двинуть влево. по правому краю выровнен, уже все перепробовал
-                    child: Icon(Icons.navigate_before)
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 10,
               child: Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: AppStyle.getDecorMainContainerByTemp(temp: currentTemperature!),
-                      child: RichText(
-                        text: TextSpan(
-                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                          children: [
-                            TextSpan(
-                              text: currentTemperature?.toStringAsFixed(1),
-                              style: const TextStyle(fontSize: 26)
-                            ),
-                            const TextSpan(
-                              text: Helper.celsius,
-                              style: TextStyle(fontSize: 26)
-                            )
-                          ],
-                        ),
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider),
+                child: const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Divider(color: Colors.black, thickness: 3)
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: SizedBox(
+              height: double.infinity,
+              child: Padding(
+                //? 3 небольшая корректировка относительно Divider(а) слева от этой иконки
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider - 3),
+                child: const Align(
+                  alignment: Alignment.bottomLeft, //TODO хз чего его не двинуть влево. по правому краю выровнен, уже все перепробовал
+                  child: Icon(Icons.navigate_before)
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 10,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: AppStyle.getDecorMainContainerByTemp(temp: currentTemperature!),
+                    child: RichText(
+                      text: TextSpan(
+                        style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                        children: [
+                          TextSpan(
+                            text: currentTemperature?.toStringAsFixed(1),
+                            style: const TextStyle(fontSize: 26)
+                          ),
+                          const TextSpan(
+                            text: Helper.celsius,
+                            style: TextStyle(fontSize: 26)
+                          )
+                        ],
                       ),
                     ),
-                    
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: (diffIcon != null && diff != 0.0) ? diffIcon! : const SizedBox(), //TODO стрелки сделать согласно дизайну
-                        ),
-                        Flexible(
-                          flex: 3,
-                          child: Text(diff.toString(), style: const TextStyle(
-                            color: Colors.black, 
-                            fontSize: 16
-                          )),
-                        ),
-                        const SizedBox(width: 2),
-                        /*Flexible(
-                          flex: 1,
-                          child: SizedBox(
-                            width: 17,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 3),
-                              child: AppAssets.iconDelta,
-                            ),
+                  ),
+                  
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: (diffIcon != null && diff != 0.0) ? diffIcon! : const SizedBox(), //TODO стрелки сделать согласно дизайну
+                      ),
+                      Flexible(
+                        flex: 3,
+                        child: Text(diff.toString(), style: const TextStyle(
+                          color: Colors.black, 
+                          fontSize: 16
+                        )),
+                      ),
+                      const SizedBox(width: 2),
+                      /*Flexible(
+                        flex: 1,
+                        child: SizedBox(
+                          width: 17,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 3),
+                            child: AppAssets.iconDelta,
                           ),
-                        ),*/
-                        const Flexible(
-                          flex: 4,
-                          child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: 16, color: Colors.black)),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              )
+                        ),
+                      ),*/
+                      const Flexible(
+                        flex: 4,
+                        child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: 16, color: Colors.black)),
+                      )
+                    ],
+                  )
+                ],
+              ),
             )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

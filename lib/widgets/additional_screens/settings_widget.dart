@@ -291,7 +291,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                   Container(
                     height: 43,
                     width: MediaQuery.of(context).size.height * 0.07,
-                    decoration: AppStyle.decorMainCotnainersInset,
+                    decoration: AppStyle.decorMainCotnainerInset,
                     child: Center(
                       child: Text(
                         Settings.calibrationSensor.toString(), 

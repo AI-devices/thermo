@@ -267,8 +267,7 @@ class __CountDownWidgetState extends State<CountDownWidget> {
           onTap: () => _resumeTimer(),
           child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: 'Продолж.'),
         ),
-        const SizedBox(width: 20
-        ),
+        const SizedBox(width: 20),
         InkResponse(
           onTap: () => _stopTimer(reset: true),
           child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: 'Сбросить'),

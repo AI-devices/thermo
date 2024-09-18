@@ -42,7 +42,7 @@ class _MonitoringWidgets extends StatelessWidget {
           Flexible(flex: 4, child: Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: AppStyle.decorMainCotnainers,
+            decoration: AppStyle.decorMainContainer,
             child: const MonitoringWidget(),
           )),
           const SizedBox(width:  10),
@@ -60,9 +60,9 @@ class _ChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      height: MediaQuery.of(context).size.height * 0.4,
+      height: MediaQuery.of(context).size.height * 0.5, //TODO
       width: double.infinity,
-      decoration: AppStyle.decorMainCotnainers,
+      decoration: AppStyle.decorMainContainer,
       child: const ChartWidget(),
     );
   }

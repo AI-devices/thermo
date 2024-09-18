@@ -8,8 +8,9 @@ abstract class AppStyle {
   static const backgroundColor = Color.fromRGBO(237, 240, 245, 1);
   static const decorColor = Color.fromARGB(255, 238, 238, 241);
 
-  static const greyColor = Color.fromRGBO(106, 106, 106, 1); //TODO
-  static const dottedLineColor = Color.fromRGBO(146, 146, 146, 1); //TODO
+  static const greyColor = Color.fromRGBO(106, 106, 106, 1);
+  static const dottedColor = Color.fromRGBO(146, 146, 146, 1);
+  static const pinkColor = Color.fromRGBO(255, 0, 255, 1);
 
   static BoxDecoration getDecorMainContainerByTemp({required double temp}) {
     return BoxDecoration(
@@ -35,7 +36,7 @@ abstract class AppStyle {
     ]
   );
 
-  static final decorMainCotnainersInset = BoxDecoration(
+  static final decorMainCotnainerInset = BoxDecoration(
     color: decorColor,
     borderRadius: BorderRadius.circular(15),
     boxShadow: [
@@ -63,19 +64,6 @@ abstract class AppStyle {
       inset: inset
     );
   }
-
-  static final decorMainCotnainers = BoxDecoration( //TODO удалить потом
-    color: Colors.white,
-    border: Border.all(color: Colors.black.withOpacity(0.2)),
-    borderRadius: const BorderRadius.all(Radius.circular(10)),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1),
-        blurRadius: 8,
-        offset: const Offset(0, 2)
-      )
-    ]
-  );
 
   static Color getColorByTemp({required num? temperature}) {
     if (temperature == null) return Colors.white;

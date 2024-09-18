@@ -16,9 +16,8 @@ class ChartWidget extends StatefulWidget {
 
 class _ChartWidgetState extends State<ChartWidget> {
   final List<Color> gradientColors = [
-    Colors.blue,
-    Colors.orange,
-    Colors.red,
+    AppStyle.pinkColor.withOpacity(0.3),
+    AppStyle.pinkColor.withOpacity(0.01),
   ];
 
   StreamSubscription<double>? _temperatureSubscription;
@@ -148,6 +147,10 @@ class _ChartWidgetState extends State<ChartWidget> {
     setState(() {});
   }
 
+  String axisY2temp({required num axisY}) {
+    return (axisY / maxY * 125).toStringAsFixed(1);
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -160,7 +163,13 @@ class _ChartWidgetState extends State<ChartWidget> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Text(Helper.celsius, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        const Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: Text(Helper.celsius, style: TextStyle(fontWeight: FontWeight.bold)),
+          )
+        ),
         Align(
           alignment: Alignment.bottomRight,
           child: TextButton(
@@ -169,10 +178,10 @@ class _ChartWidgetState extends State<ChartWidget> {
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                currentScaleX == scaleXOneHour ? const Icon(Icons.arrow_forward, color: Colors.grey, size: 20) 
-                  : const Icon(Icons.arrow_back, color: Colors.grey, size: 20) ,
+                currentScaleX == scaleXOneHour ? const Icon(Icons.arrow_forward, color: Colors.black, size: 24) 
+                  : const Icon(Icons.arrow_back, color: Colors.black, size: 24) ,
                 Text(currentScaleX == scaleXOneHour ? '$maxHoursForStatч' : '1ч', 
-                  style: const TextStyle(color: Colors.grey)
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
             )
@@ -180,10 +189,29 @@ class _ChartWidgetState extends State<ChartWidget> {
         ),
         Column(
           children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text('График температуры', style: TextStyle(fontSize: 15)),
+            ),
             Flexible(
-              flex: 5,
+              flex: 7,
               child: LineChart(
                 LineChartData(
+                  //? переопределяем в lineTouchData() подсказку при касании с координаты y на температуру
+                  lineTouchData: LineTouchData(
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map(
+                          (LineBarSpot touchedSpot) {
+                            return LineTooltipItem(
+                              (touchedSpot.y / maxY * 125).toStringAsFixed(1) + Helper.celsius,
+                              const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                            );
+                          },
+                        ).toList();
+                      },
+                    )
+                  ),
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: true,
@@ -191,14 +219,16 @@ class _ChartWidgetState extends State<ChartWidget> {
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return const FlLine(
-                        color: Colors.grey,
-                        strokeWidth: 1,
+                        color: AppStyle.dottedColor,
+                        strokeWidth: 0.5,
+                        dashArray: [3, 3]
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return const FlLine(
-                        color: Colors.grey,
-                        strokeWidth: 1,
+                        color: AppStyle.dottedColor,
+                        strokeWidth: 0.5,
+                        dashArray: [3, 3]
                       );
                     },
                   ),
@@ -229,7 +259,12 @@ class _ChartWidgetState extends State<ChartWidget> {
                   ),
                   borderData: FlBorderData(
                     show: true,
-                    border: Border.all(color: const Color(0xff37434d)),
+                    border: const Border(
+                      left: BorderSide(color: AppStyle.dottedColor), 
+                      bottom: BorderSide(color: AppStyle.dottedColor),
+                      top: BorderSide(width: 0.3, color: AppStyle.dottedColor), 
+                      right: BorderSide(width: 0.3, color: AppStyle.dottedColor), 
+                    )
                   ),
                   minX: 0,
                   maxX: maxX,
@@ -238,32 +273,31 @@ class _ChartWidgetState extends State<ChartWidget> {
                   lineBarsData: [
                     LineChartBarData(
                       spots: coordinates,
-                      isCurved: true,
-                      color: AppStyle.mainColor,
-                      /*gradient: LinearGradient(
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topLeft,
-                        colors: gradientColors,
-                      ),*/
-                      barWidth: 5,
-                      isStrokeCapRound: true,
-                      dotData: const FlDotData(
-                        show: false,
-                      ),
+                      isCurved: true, //TODO почему не закругленный график??? не работает
+                      color: AppStyle.pinkColor,
+                      barWidth: 3,
+                      dotData: const FlDotData(show: false),
                       belowBarData: BarAreaData(
                         show: true,
-                        /*gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topLeft,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                           colors: gradientColors
-                              .map((color) => color.withOpacity(0.3))
+                              .map((color) => color)
                               .toList(),
-                        ),*/
+                        ),
                       ),
                     ),
                   ],
                 )
               ),
+            ),
+            Flexible(
+              flex: 1,
+              child: Container(
+                height: double.infinity,
+                child: Text('test')
+                )
             ),
             Flexible(
               flex: 1,
@@ -278,45 +312,34 @@ class _ChartWidgetState extends State<ChartWidget> {
   Widget buildButtons() {
     final isRunning = _timer != null && _timer!.isActive;
 
-    return isRunning || _duration.inSeconds != 0
-      ? SizedBox(
-        width: MediaQuery.of(context).size.width * 0.4,
-        child: Row(
-            //mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                child: MaterialButton(
-                  height: 32.0, 
-                  minWidth: 70.0, 
-                  color: isRunning ? Colors.black : Colors.green, 
-                  textColor: Colors.white,
-                  onPressed: () => isRunning ? _stopTimer(reset: false) : _startTimer(), 
-                  child: isRunning ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: MaterialButton( 
-                  height: 32.0, 
-                  minWidth: 70.0, 
-                  color: Colors.red, 
-                  textColor: Colors.white, 
-                  onPressed: () => _stopTimer(reset: true),
-                  child: const Icon(Icons.stop), 
-                ),
-              ),
-            ],
-          ),
-      )
+    if (!isRunning && _duration.inSeconds == 0) {
+      return InkResponse(
+        onTap: _startTimer,
+        child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'Старт'),
+      );
+    }
 
-      : MaterialButton( 
-          height: 32.0, 
-          minWidth: 70.0, 
-          color: Colors.green, 
-          textColor: Colors.white, 
-          onPressed: _startTimer, 
-          child: const Icon(Icons.play_arrow), 
-        );
+    if (isRunning) {
+      return InkResponse(
+        onTap: () => _stopTimer(reset: false),
+        child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: 'Пауза'),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        InkResponse(
+          onTap: () => _startTimer(),
+          child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: 'Продолж.'),
+        ),
+        const SizedBox(width: 15),
+        InkResponse(
+          onTap: () => _stopTimer(reset: true),
+          child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: 'Сбросить'),
+        ),
+      ],
+    );
   }
 
   Widget bottomTitleWidgetsScaleHour(double value, TitleMeta meta) {
@@ -338,7 +361,7 @@ class _ChartWidgetState extends State<ChartWidget> {
       case 12:
         text = const Text('60', style: style); break;
       case 14:
-        text = const Text('min', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)); break;
+        text = const Text('min', style: TextStyle(fontWeight: FontWeight.bold)); break;
       default:
         text = const Text('', style: style); break;
     }
