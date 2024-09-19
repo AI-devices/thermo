@@ -16,7 +16,6 @@ abstract class Settings {
   
   static bool envDebug = false;
   static late int maxHoursForChart;
-  static VoidCallback? maxHoursForChartChanged;
   
   static late List<FlSpot> coordinatesChart;
   static setCoordinatesChart(List<FlSpot> coordinates) {

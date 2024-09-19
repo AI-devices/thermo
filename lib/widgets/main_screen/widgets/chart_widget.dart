@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
@@ -15,6 +16,9 @@ class ChartWidget extends StatefulWidget {
 }
 
 class _ChartWidgetState extends State<ChartWidget> {
+  final _dataProvider = DataProvider();
+  double maxHoursForChart = Settings.maxHoursForChart.toDouble();
+  
   final List<Color> gradientColors = [
     AppStyle.pinkColor.withOpacity(0.3),
     AppStyle.pinkColor.withOpacity(0.01),
@@ -47,11 +51,6 @@ class _ChartWidgetState extends State<ChartWidget> {
     _temperatureSubscription = ApiBluetooth.temperatureStream.listen((double temperature) => _currentTemperature = temperature);
     _setAxisX(init: true);
 
-    Settings.maxHoursForChartChanged ??= () {
-      _setAxisX(init: false);
-      setState(() {});
-    };
-
     /*WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_duration.inSeconds != 0) Notifier.snackBar(notify: Notify.lastChartIsLoaded);
     });*/
@@ -80,8 +79,14 @@ class _ChartWidgetState extends State<ChartWidget> {
 
     FlSpot flSpot = FlSpot(x, y > maxY ? maxY : y);
 
-    log(flSpot.props.toString());
-    coordinates.add(flSpot);
+    log(flSpot.props.toString(), name: 'flSpot');
+
+    if (coordinates.length == 1 && coordinates[0].x == 0 && coordinates[0].y == 0) {
+      coordinates = [flSpot];
+    } else {
+      coordinates.add(flSpot);
+    }
+    
     Settings.setCoordinatesChart(coordinates);
     setState(() {});
   }
@@ -155,7 +160,6 @@ class _ChartWidgetState extends State<ChartWidget> {
   void dispose() {
     _timer?.cancel();
     _temperatureSubscription?.cancel();
-    Settings.maxHoursForChartChanged = null;
     super.dispose();
   }
 
@@ -194,7 +198,7 @@ class _ChartWidgetState extends State<ChartWidget> {
               child: Text('График температуры', style: TextStyle(fontSize: 15)),
             ),
             Flexible(
-              flex: 7,
+              flex: 16,
               child: LineChart(
                 LineChartData(
                   //? переопределяем в lineTouchData() подсказку при касании с координаты y на температуру
@@ -273,7 +277,7 @@ class _ChartWidgetState extends State<ChartWidget> {
                   lineBarsData: [
                     LineChartBarData(
                       spots: coordinates,
-                      isCurved: true, //TODO почему не закругленный график??? не работает
+                      isCurved: true,
                       color: AppStyle.pinkColor,
                       barWidth: 3,
                       dotData: const FlDotData(show: false),
@@ -293,17 +297,76 @@ class _ChartWidgetState extends State<ChartWidget> {
               ),
             ),
             Flexible(
-              flex: 1,
-              child: Container(
-                height: double.infinity,
-                child: Text('test')
-                )
+              flex: 5,
+              child: _maxHoursForStat()
             ),
             Flexible(
-              flex: 1,
+              flex: 3,
               child: buildButtons()
             )
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _maxHoursForStat() {
+    return Row(
+      children: [
+        Flexible(
+          flex: 5,
+          child: Text('Максимальный масштаб статистики (${maxHoursForChart.round()} ч.)', style: const TextStyle(fontSize: 12))
+        ),
+        Flexible(
+          flex: 6,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SliderTheme(
+                data: SliderThemeData(
+                  trackHeight: 5.0, 
+                  overlayShape: SliderComponentShape.noOverlay,
+                  showValueIndicator: ShowValueIndicator.always,
+                  thumbColor: AppStyle.mainColor,
+                  activeTrackColor: AppStyle.mainColor,
+                ),
+                child: Slider(
+                  inactiveColor: Colors.grey.shade400,
+                  value: maxHoursForChart,
+                  min: 2,
+                  max: 9,
+                  divisions: 7,
+                  label: maxHoursForChart.toDouble().round().toString(),
+                  onChanged: (double value) {
+                    maxHoursForChart = value;
+                    setState(() {});
+                  },
+                  onChangeEnd: (double value) {
+                    _dataProvider.setMaxHoursForStat(value.round());
+                    Settings.maxHoursForChart = value.round();
+                    _setAxisX(init: false);
+                    setState(() {});
+                  },
+                ),
+              ),
+              Padding(
+                padding:  const EdgeInsets.symmetric(horizontal: 9.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('2', style: TextStyle(fontSize: 12, color: maxHoursForChart == 2 ? Colors.black : Colors.grey)),
+                    Text('3', style: TextStyle(fontSize: 12, color: maxHoursForChart == 3 ? Colors.black : Colors.grey)),
+                    Text('4', style: TextStyle(fontSize: 12, color: maxHoursForChart == 4 ? Colors.black : Colors.grey)),
+                    Text('5', style: TextStyle(fontSize: 12, color: maxHoursForChart == 5 ? Colors.black : Colors.grey)),
+                    Text('6', style: TextStyle(fontSize: 12, color: maxHoursForChart == 6 ? Colors.black : Colors.grey)),
+                    Text('7', style: TextStyle(fontSize: 12, color: maxHoursForChart == 7 ? Colors.black : Colors.grey)),
+                    Text('8', style: TextStyle(fontSize: 12, color: maxHoursForChart == 8 ? Colors.black : Colors.grey)),
+                    Text('9', style: TextStyle(fontSize: 12, color: maxHoursForChart == 9 ? Colors.black : Colors.grey)),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

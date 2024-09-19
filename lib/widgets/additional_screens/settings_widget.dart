@@ -21,7 +21,6 @@ class SettingsWidget extends StatefulWidget {
 class _SettingsWidgetState extends State<SettingsWidget> {
   StreamSubscription<void>? hidePercentSpiritWidgetSubscription;
   final _dataProvider = DataProvider();
-  double maxHoursForStat = Settings.maxHoursForChart.toDouble();
 
   @override
   void initState() {
@@ -36,17 +35,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   void dispose() {
     hidePercentSpiritWidgetSubscription?.cancel();
     super.dispose();
-  }
-
-  void onChangedHours(double value) {
-      maxHoursForStat = value;
-      setState(() {});
-  }
-
-  void onChangedHoursEnd(double value) {
-    _dataProvider.setMaxHoursForStat(value.round());
-    Settings.maxHoursForChart = value.round();
-    Settings.maxHoursForChartChanged?.call();
   }
 
   void changeNotifyWhenTempDrops() {
@@ -183,7 +171,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             _wakelock(),
             _alarmSensorDissconnected(),
             _localNotifications(),
-            _maxHoursForStat(), //TODO убрать потом отсюда
           ],
         ),
       ),
@@ -460,62 +447,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 value: Settings.allowLocalNotifications,
                 onChanged: (value) => changeLocalNotifications(value),
               )
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Padding _maxHoursForStat() {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 100, //TODO
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        decoration: AppStyle.decorMainContainer,
-        child: Row(
-          children: [
-            Flexible(
-              flex: 6,
-              child: Text('Максимальный масштаб статистики (${maxHoursForStat.round()} ч.)')
-            ),
-            const SizedBox(width: 10),
-            Flexible(
-              flex: 5,
-              child: Column(
-                children: [
-                  SliderTheme(
-                    data: const SliderThemeData(
-                      showValueIndicator: ShowValueIndicator.always,
-                      thumbColor: AppStyle.mainColor,
-                      activeTrackColor: AppStyle.mainColor,
-                    ),
-                    child: Slider(
-                      inactiveColor: Colors.grey.shade400,
-                      value: maxHoursForStat,
-                      min: 2,
-                      max: 9,
-                      divisions: 9,
-                      label: maxHoursForStat.round().toString(),
-                      onChanged: onChangedHours,
-                      onChangeEnd: onChangedHoursEnd,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 22.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-                      children: [
-                        Text('2',
-                          style: TextStyle(fontSize: 13, color: Colors.grey)),
-                        Text('9',
-                          style: TextStyle(fontSize: 13, color: Colors.grey)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),

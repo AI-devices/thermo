@@ -142,7 +142,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                 //? 3 небольшая корректировка относительно Divider(а) слева от этой иконки
                 padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider - 3),
                 child: const Align(
-                  alignment: Alignment.bottomLeft, //TODO хз чего его не двинуть влево. по правому краю выровнен, уже все перепробовал
+                  alignment: Alignment.bottomLeft,
                   child: Icon(Icons.navigate_before)
                 ),
               ),
