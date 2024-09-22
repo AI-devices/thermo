@@ -83,16 +83,34 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
             child: AlertDialog(
+              titlePadding: const EdgeInsets.all(0),
+              title: Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
+                ),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text('Укажите процент заряда датчика для уведомления'),
                   TextFormField(
+                    cursorColor: AppStyle.mainColor,
+                    style: const TextStyle(color: AppStyle.mainColor),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(2)
                     ],
-                    decoration: const InputDecoration(hintText: "20 %"),
+                    enableInteractiveSelection: false,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: AppStyle.mainColor, width: 2)
+                      ),
+                      hintText: "20 %"
+                    ),
                     initialValue: Settings.alarmLowBatteryCharge['percent_charge'],
                     autofocus: true,
                     keyboardType: TextInputType.number,

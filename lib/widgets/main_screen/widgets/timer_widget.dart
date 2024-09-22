@@ -48,7 +48,10 @@ class __TimerWidgetState extends State<TimerWidget> {
           ),
           Flexible(
             flex: 1,
-            child: buildButtons()
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: buildButtons(),
+            )
           ),
         ],
       ),

@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
+import 'package:thermo/widgets/assets.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class MonitoringWidget extends StatefulWidget {
@@ -20,7 +22,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
   double? currentTemperature;
   double? previousTemperature;
   double diff = 0.0;
-  Icon? diffIcon;
+  SvgPicture diffIcon = AppAssets.arrowRight;
 
   double positionFlaskDivider = 0.0; //0.16 это самый верх колбы в нашем случае, 0.0 - низ
 
@@ -62,15 +64,26 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
 
       final currentDiff = (currentTemperature! - previousTemperature!) * 12; //помножаем на 12 прогнозируя разницу температур за минуту (таймер 5 сек)
       
-      if (currentDiff > 0 && currentDiff > diff)  {
-        diffIcon = const Icon(Icons.keyboard_double_arrow_up, size: 24);
-      } else if (currentDiff > 0 && currentDiff < diff) {
-        diffIcon = const Icon(Icons.keyboard_arrow_up, size: 24);
-      } else if (currentDiff < 0 && currentDiff > diff) {
-        diffIcon = const Icon(Icons.keyboard_double_arrow_down, size: 24);
-      } else {
-        diffIcon = const Icon(Icons.keyboard_arrow_down, size: 24);
+      if (currentDiff == 0)  {
+        diffIcon = AppAssets.arrowRight;
+      } else if (currentDiff > 3.375)  {
+        diffIcon = AppAssets.arrowUp4;
+      } else if (currentDiff > 2.25) {
+        diffIcon = AppAssets.arrowUp3;
+      } else if (currentDiff > 1.125) {
+        diffIcon = AppAssets.arrowUp2;
+      } else if (currentDiff > 0) {
+        diffIcon = AppAssets.arrowUp1;
+      } else if (currentDiff < 3.375) {
+        diffIcon = AppAssets.arrowDown4;
+      } else if (currentDiff < 2.25) {
+        diffIcon = AppAssets.arrowDown3;
+      } else if (currentDiff < 1.125) {
+        diffIcon = AppAssets.arrowDown2;
+      } else if (currentDiff < 0) {
+        diffIcon = AppAssets.arrowDown1;
       }
+
       diff = double.parse(currentDiff.toStringAsFixed(1)).abs();
       previousTemperature = currentTemperature;
       setState(() {});
@@ -179,10 +192,8 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Flexible(
-                        flex: 1,
-                        child: (diffIcon != null && diff != 0.0) ? diffIcon! : const SizedBox(), //TODO стрелки сделать согласно дизайну
-                      ),
+                      SizedBox(width: 30, child: diffIcon),
+                      const SizedBox(width: 5),
                       Flexible(
                         flex: 3,
                         child: Text(diff.toString(), style: const TextStyle(
@@ -191,18 +202,8 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                         )),
                       ),
                       const SizedBox(width: 2),
-                      /*Flexible(
-                        flex: 1,
-                        child: SizedBox(
-                          width: 17,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 3),
-                            child: AppAssets.iconDelta,
-                          ),
-                        ),
-                      ),*/
                       const Flexible(
-                        flex: 4,
+                        flex: 5,
                         child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: 16, color: Colors.black)),
                       )
                     ],

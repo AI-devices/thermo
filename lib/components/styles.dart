@@ -47,7 +47,7 @@ abstract class AppStyle {
 
   static boxShadowBottomRight([bool inset = false]) {
     return BoxShadow(
-      color: const Color.fromARGB(255, 106, 106, 106),
+      color: const Color.fromARGB(255, 176, 176, 177),
       offset: const Offset(2.0, 2.0),
       blurRadius: 3.0,
       spreadRadius: 1.0,

@@ -225,8 +225,8 @@ class __CountDownWidgetState extends State<CountDownWidget> {
                 duration: _durationCircular,
                 isReverse: true,
                 controller: _controller,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width * 0.45,
+                height: MediaQuery.of(context).size.height * 0.45,
                 textStyle: const TextStyle(fontSize: 26),
                 ringColor: Colors.white,
                 fillColor: AppStyle.mainColor,
@@ -245,7 +245,10 @@ class __CountDownWidgetState extends State<CountDownWidget> {
           ),
           Flexible(
             flex: 1,
-            child: buildButtons(),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: buildButtons(),
+            ),
           ),
         ],
       ),
