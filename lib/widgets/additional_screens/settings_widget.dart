@@ -266,7 +266,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-              flex: 6,
+              flex: 3,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -285,7 +285,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 children: [
                   Container(
                     height: 43,
-                    width: MediaQuery.of(context).size.height * 0.05,
+                    width: 43,
                     decoration: AppStyle.decorMainContainer,
                     child: IconButton(
                       icon: const Icon(Icons.remove), 
@@ -306,10 +306,10 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   SizedBox(width: MediaQuery.of(context).size.height * 0.01),
-                  Expanded(
+                  Flexible(
                     child: Container(
                       height: 43,
-                      width: MediaQuery.of(context).size.height * 0.05,
+                      width: 43,
                       decoration: AppStyle.decorMainContainer,
                       child: IconButton(
                         icon: const Icon(Icons.add), 
