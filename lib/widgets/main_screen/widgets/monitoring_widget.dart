@@ -100,11 +100,11 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
   @override
   Widget build(BuildContext context) {
     if (currentTemperature == null) {
-      return const Column(
+      return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, color: AppStyle.pinkColor, size: 70),
-          Padding(
+          Icon(Icons.error_outline, color: AppStyle.pinkColor, size: MediaQuery.of(context).size.width * 0.15),
+          const Padding(
             padding: EdgeInsets.fromLTRB(2, 10, 2, 0),
             child: Text('Ожидается подключение к датчику', textAlign: TextAlign.center, style: TextStyle(color: AppStyle.pinkColor)),
           )

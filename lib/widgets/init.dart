@@ -24,7 +24,7 @@ class InitWidget extends StatefulWidget {
 class _InitWidgetState extends State<InitWidget> {
   final ObserverAppLifecycle _lifecycleObserver = ObserverAppLifecycle();
   
-  int _selectedTab = 2; //TODO 1
+  int _selectedTab = 1;
   bool _tabChangedBySwipe = false;
 
   bool? bluetoothOn;

@@ -56,7 +56,7 @@ class _PercentSpiritWidgetState extends State<PercentSpiritWidget> {
 
   Container _show(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.1,
+      height: MediaQuery.of(context).size.height * 0.111,
       width: double.infinity,
       decoration: AppStyle.decorMainContainer,
       child: Stack(
