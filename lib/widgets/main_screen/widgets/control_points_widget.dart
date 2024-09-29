@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
@@ -253,7 +254,7 @@ class _Row extends StatelessWidget {
     
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: Adaptive.padding(10)),
         child: Row(
           //mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,8 +274,8 @@ class _Row extends StatelessWidget {
                         fontWeight: model.notifiedPoints[model.controlPoints.indexOf(point)] == true ? FontWeight.bold : FontWeight.normal,
                       ),
                       children: [
-                        TextSpan(text: point['value'].toString(), style: const TextStyle(fontSize: 18)),
-                        const TextSpan(text: Helper.celsius, style: TextStyle(fontSize: 14))
+                        TextSpan(text: point['value'].toString(), style: TextStyle(fontSize: Adaptive.text(18))),
+                        TextSpan(text: Helper.celsius, style: TextStyle(fontSize: Adaptive.text(14)))
                       ]
                     ),
                   )

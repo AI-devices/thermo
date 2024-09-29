@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/widgets/assets.dart';
 import 'package:vibration/vibration.dart';

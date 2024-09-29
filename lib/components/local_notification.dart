@@ -52,6 +52,7 @@ class LocalNotification {
         ongoing: true,
         autoCancel: false,
         silent: true,
+        timeoutAfter: 10000, //скрываем уведомление через 10 сек (например закрыли приложение, чтобы уведомление не оставалось)
         color: AppStyle.getColorByTemp(temperature: temperature)
       );
       NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetails);

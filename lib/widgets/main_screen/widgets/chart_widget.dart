@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
@@ -314,11 +315,13 @@ class _ChartWidgetState extends State<ChartWidget> {
     return Row(
       children: [
         Flexible(
-          flex: 5,
-          child: Text('Максимальный масштаб статистики (${maxHoursForChart.round()} ч.)', style: const TextStyle(fontSize: 12))
+          flex: 1,
+          child: Text('Максимальный масштаб статистики (${maxHoursForChart.round()} ч.)', 
+            style: TextStyle(fontSize: Adaptive.text(12))
+          ) 
         ),
         Flexible(
-          flex: 6,
+          flex: 1,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -354,14 +357,14 @@ class _ChartWidgetState extends State<ChartWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('2', style: TextStyle(fontSize: 12, color: maxHoursForChart == 2 ? Colors.black : Colors.grey)),
-                    Text('3', style: TextStyle(fontSize: 12, color: maxHoursForChart == 3 ? Colors.black : Colors.grey)),
-                    Text('4', style: TextStyle(fontSize: 12, color: maxHoursForChart == 4 ? Colors.black : Colors.grey)),
-                    Text('5', style: TextStyle(fontSize: 12, color: maxHoursForChart == 5 ? Colors.black : Colors.grey)),
-                    Text('6', style: TextStyle(fontSize: 12, color: maxHoursForChart == 6 ? Colors.black : Colors.grey)),
-                    Text('7', style: TextStyle(fontSize: 12, color: maxHoursForChart == 7 ? Colors.black : Colors.grey)),
-                    Text('8', style: TextStyle(fontSize: 12, color: maxHoursForChart == 8 ? Colors.black : Colors.grey)),
-                    Text('9', style: TextStyle(fontSize: 12, color: maxHoursForChart == 9 ? Colors.black : Colors.grey)),
+                    Text('2', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 2 ? Colors.black : Colors.grey)),
+                    Text('3', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 3 ? Colors.black : Colors.grey)),
+                    Text('4', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 4 ? Colors.black : Colors.grey)),
+                    Text('5', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 5 ? Colors.black : Colors.grey)),
+                    Text('6', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 6 ? Colors.black : Colors.grey)),
+                    Text('7', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 7 ? Colors.black : Colors.grey)),
+                    Text('8', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 8 ? Colors.black : Colors.grey)),
+                    Text('9', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 9 ? Colors.black : Colors.grey)),
                   ],
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
@@ -56,7 +57,7 @@ class _PercentSpiritWidgetState extends State<PercentSpiritWidget> {
 
   Container _show(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.111,
+      height: MediaQuery.of(context).size.height * 0.1,
       width: double.infinity,
       decoration: AppStyle.decorMainContainer,
       child: Stack(
@@ -81,18 +82,18 @@ class _PercentSpiritWidgetState extends State<PercentSpiritWidget> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const Text('Спиртуозность, %AC', style: TextStyle(fontSize: 15)),
+              Text('Спиртуозность, %AC', style: TextStyle(fontSize: Adaptive.text(15))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('в кубе: ', style: TextStyle(fontSize: 15)),
-                  Text(tempInCube != null ? '$tempInCube%' : '---', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                  const Text(' | ', style: TextStyle(fontSize: 15)),
-                  const Text('в отборе: ', style: TextStyle(fontSize: 15)),
-                  Text(tempInSampling != null ? '$tempInSampling%' : '---', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  Text('в кубе: ', style: TextStyle(fontSize: Adaptive.text(15))),
+                  Text(tempInCube != null ? '$tempInCube%' : '---', style: TextStyle(fontWeight: FontWeight.bold, fontSize: Adaptive.text(15))),
+                  Text(' | ', style: TextStyle(fontSize: Adaptive.text(15))),
+                  Text('в отборе: ', style: TextStyle(fontSize: Adaptive.text(15))),
+                  Text(tempInSampling != null ? '$tempInSampling%' : '---', style: TextStyle(fontWeight: FontWeight.bold, fontSize: Adaptive.text(15))),
                 ],
               ),
-              const Text('Диапазон от 79 до 99 градусов', style: TextStyle(fontSize: 13, color: AppStyle.greyColor)),
+              Text('Диапазон от 79 до 99 градусов', style: TextStyle(fontSize: Adaptive.text(13), color: AppStyle.greyColor)),
             ],
           ),
         ],
@@ -110,13 +111,13 @@ class _PercentSpiritWidgetState extends State<PercentSpiritWidget> {
             _dataProvider.setHidePercentSpiritWidget();
             Settings.controllerHidePercentSpiritWidget.add(null);
           },
-          child: const Text('Показать спиртуозность', style: TextStyle(fontSize: 15, decoration: TextDecoration.underline, fontStyle: FontStyle.italic))
+          child: Text('Показать спиртуозность', style: TextStyle(fontSize: Adaptive.text(15), decoration: TextDecoration.underline, fontStyle: FontStyle.italic))
         ),
         const SizedBox(width: 15),
         Container(
           decoration: AppStyle.decorMainContainer,
           child: IconButton(
-            icon: const Icon(Icons.remove_red_eye_outlined, size: 30), 
+            icon: Icon(Icons.remove_red_eye_outlined, size: Adaptive.icon(30)), 
             onPressed: () {
               Settings.hidePercentSpiritWidget = false;
               _dataProvider.setHidePercentSpiritWidget();

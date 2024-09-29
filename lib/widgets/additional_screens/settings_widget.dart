@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/local_notification.dart';
@@ -205,7 +206,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Flexible(flex: 6, child: Text('Сигнал при падении температуры в течение 5 сек.')),
+            Flexible(flex: 6, child: Text('Сигнал при падении температуры в течение 5 сек.', style: TextStyle(fontSize: Adaptive.text(14)))),
             Flexible(
               flex: 4, 
               child: Container(
@@ -235,7 +236,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Flexible(flex: 6, child: Text('Сигнал при завершении таймера')),
+            Flexible(flex: 6, child: Text('Сигнал при завершении таймера', style: TextStyle(fontSize: Adaptive.text(14)))),
             Flexible(
               flex: 4, 
               child: Container(
@@ -266,14 +267,17 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-              flex: 3,
+              flex: 6,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Flexible(child: Text('Калибровка датчика')),
-                  IconButton(
-                    onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
-                    icon: const Icon(Icons.help_outline, color: AppStyle.greyColor, size: 30)
+                  Flexible(flex: 3, child: Text('Калибровка датчика', style: TextStyle(fontSize: Adaptive.text(14)))),
+                  Flexible(
+                    flex: 1,
+                    child: IconButton(
+                      onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
+                      icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30))
+                    ),
                   )
                 ],
               )
@@ -337,14 +341,14 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-              flex: 6,
+              flex: 7,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Flexible(child: Text('Cкрыть автоматический расчет спиртуозности')),
+                  Flexible(child: Text('Cкрыть автоматический расчет спиртуозности', style: TextStyle(fontSize: Adaptive.text(14)))),
                   IconButton(
                     onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.'),
-                    icon: const Icon(Icons.help_outline, color: AppStyle.greyColor, size: 30)
+                    icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30))
                   )
                 ],
               )
@@ -377,7 +381,9 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           children: [
             Flexible(
               flex: 6,
-              child: Text('Предупреждение при низком заряде датчика (<${Settings.alarmLowBatteryCharge['percent_charge']}%)')
+              child: Text('Предупреждение при низком заряде датчика (<${Settings.alarmLowBatteryCharge['percent_charge']}%)',
+                style: TextStyle(fontSize: Adaptive.text(14))
+              )
             ),
             Flexible(
               flex: 4, 
@@ -404,7 +410,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Flexible(flex: 6, child: Text('Не давать засыпать телефону')),
+            Flexible(flex: 6, child: Text('Не давать засыпать телефону', style: TextStyle(fontSize: Adaptive.text(14)))),
             Flexible(
               flex: 4, 
               child: Switch(
@@ -430,7 +436,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Flexible(flex: 6, child: Text('Предупреждение при потере сигнала от датчика')),
+            Flexible(flex: 6, child: Text('Предупреждение при потере сигнала от датчика', style: TextStyle(fontSize: Adaptive.text(14)))),
             Flexible(
               flex: 4, 
               child: Switch(
@@ -456,7 +462,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Flexible(flex: 6, child: Text('Отображение температуры в фоновом режиме приложения')),
+            Flexible(flex: 6, child: Text('Отображение температуры в фоновом режиме приложения', style: TextStyle(fontSize: Adaptive.text(14)))),
             Flexible(
               flex: 4, 
               child: Switch(

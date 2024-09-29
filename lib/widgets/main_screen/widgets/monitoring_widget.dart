@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/settings.dart';
@@ -103,10 +104,13 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, color: AppStyle.pinkColor, size: MediaQuery.of(context).size.width * 0.15),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(2, 10, 2, 0),
-            child: Text('Ожидается подключение к датчику', textAlign: TextAlign.center, style: TextStyle(color: AppStyle.pinkColor)),
+          Icon(Icons.error_outline, color: AppStyle.pinkColor, size: Adaptive.icon(62)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(2, 10, 2, 0),
+            child: Text('Ожидается подключение к датчику', 
+              textAlign: TextAlign.center, 
+              style: TextStyle(color: AppStyle.pinkColor, fontSize: Adaptive.text(14))
+            ),
           )
         ],
       );
@@ -196,15 +200,15 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                       const SizedBox(width: 5),
                       Flexible(
                         flex: 3,
-                        child: Text(diff.toString(), style: const TextStyle(
+                        child: Text(diff.toString(), style: TextStyle(
                           color: Colors.black, 
-                          fontSize: 16
+                          fontSize: Adaptive.text(16)
                         )),
                       ),
                       const SizedBox(width: 2),
-                      const Flexible(
+                      Flexible(
                         flex: 5,
-                        child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: 16, color: Colors.black)),
+                        child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: Adaptive.text(16), color: Colors.black)),
                       )
                     ],
                   )
