@@ -116,7 +116,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
       );
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -199,7 +199,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                       SizedBox(width: 30, child: diffIcon),
                       const SizedBox(width: 5),
                       Flexible(
-                        flex: 3,
+                        flex: 4,
                         child: Text(diff.toString(), style: TextStyle(
                           color: Colors.black, 
                           fontSize: Adaptive.text(16)
