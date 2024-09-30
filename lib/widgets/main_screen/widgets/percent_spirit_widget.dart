@@ -82,7 +82,7 @@ class _PercentSpiritWidgetState extends State<PercentSpiritWidget> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text('Спиртуозность, %AC', style: TextStyle(fontSize: Adaptive.text(15))),
+              Text('Спиртуозность, %AC', style: TextStyle(fontSize: Adaptive.text(15) / MediaQuery.of(context).textScaleFactor)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

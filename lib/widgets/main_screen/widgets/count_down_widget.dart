@@ -218,7 +218,7 @@ class __CountDownWidgetState extends State<CountDownWidget> {
             child: InkResponse(
               onTap: _dialogSetTimer,
               child: CircularCountDownTimer(
-                strokeCap: StrokeCap.square,
+                strokeCap: StrokeCap.round,
                 strokeWidth: 15,
                 //key: UniqueKey(),
                 textFormat: CountdownTextFormat.HH_MM_SS,

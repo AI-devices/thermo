@@ -22,7 +22,10 @@ class MyApp extends StatelessWidget {
           //showUnselectedLabels: false,
         ),
       ),
-      home: const InitWidget(title: 'Main page'),
+      home: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1)), //? игнорируем масштабирование текста на уровне ОС
+        child: const InitWidget(title: 'Main page')
+      ),
     );
   }
 }

@@ -276,7 +276,7 @@ class _Row extends StatelessWidget {
                       ),
                       children: [
                         TextSpan(text: point['value'].toString(), style: TextStyle(fontSize: Adaptive.text(18))),
-                        TextSpan(text: Helper.celsius, style: TextStyle(fontSize: Adaptive.text(14)))
+                        TextSpan(text: Helper.celsius, style: TextStyle(fontSize: Adaptive.text(14))),
                       ]
                     ),
                   )
