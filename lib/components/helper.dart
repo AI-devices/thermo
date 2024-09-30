@@ -43,102 +43,6 @@ abstract class Helper {
       ));
   }
 
-  static void alert({
-    required BuildContext context,
-    String? content = 'Что-то пошло не так..',
-    String? title,
-  }) {
-    content ??= 'Что-то пошло не так..';
-    showDialog<dynamic>(
-      context: context,
-      builder: (BuildContext context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-          child: AlertDialog(
-            titlePadding: const EdgeInsets.only(left: 25),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 30.0),
-                  child: Text(title ?? 'Предупреждение', style: const TextStyle(color: AppStyle.greyColor)),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
-                )
-              ],
-            ),
-            content: Text(content!, style: const TextStyle(fontSize: 15)),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10) 
-            ),
-            actions: [
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'OK')
-              ),
-            ],
-          )
-        );
-      },
-    );
-  }
-
-  static Future<dynamic> confirm ({
-    required BuildContext context,
-    required String content,
-    required VoidCallback cancelAction,
-    required VoidCallback confirmAction,
-    String? cancelText,
-    String? confirmText,
-    String? title,
-  }) async {
-    return showDialog<dynamic>(
-      context: context,
-      builder: (BuildContext context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-          child: AlertDialog(
-            titlePadding: const EdgeInsets.only(left: 25),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 30.0),
-                  child: Text(title ?? 'Предупреждение', style: const TextStyle(color: AppStyle.greyColor)),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
-                )
-              ],
-            ),
-            content: Text(content, style: const TextStyle(fontSize: 15)),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10) 
-            ),
-            actions: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  InkWell(
-                    onTap: cancelAction,
-                    child: AppStyle.getButtonCancel(text: cancelText ?? 'Нет')
-                  ),
-                  InkWell(
-                    onTap: confirmAction,
-                    child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: confirmText ?? 'Да')
-                  ),
-                ],
-              )
-            ],
-          )
-        );
-      },
-    );
-  }
-
   //парсит данные по температуре полученные от датчика
   static double parseTemperature(List<int> data) {
     //print(Uint8List.fromList(data).buffer.asInt16List());
@@ -149,5 +53,68 @@ abstract class Helper {
   static int getDurationInSeconds(String time) {
     final digits = time.replaceAll(RegExp(r'[^0-9]'),'');
     return int.parse(digits.substring(4)) + (int.parse(digits.substring(2,4)) * 60) + (int.parse(digits.substring(0,2)) * 3600);
+  }
+
+  static Future<dynamic> alert ({
+    required BuildContext context,
+    required String content,
+    bool choice = false,
+    VoidCallback? cancelAction,
+    VoidCallback? confirmAction,
+    VoidCallback? closeAction,
+    String? cancelText,
+    String? confirmText,
+    String? title,
+  }) async {
+    return showDialog<dynamic>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: AlertDialog(
+            titlePadding: const EdgeInsets.only(left: 25),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: Text(title ?? 'Предупреждение', style: const TextStyle(color: AppStyle.greyColor)),
+                ),
+                IconButton(
+                  onPressed: closeAction ?? () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
+                )
+              ],
+            ),
+            content: Text(content, style: const TextStyle(fontSize: 15)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10) 
+            ),
+            actions: <Widget>[
+              if (choice == false)
+                InkWell(
+                  onTap: confirmAction ?? () => Navigator.of(context).pop(),
+                  child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'OK')
+                )
+              else  
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    InkWell(
+                      onTap: cancelAction ?? () => Navigator.of(context).pop(),
+                      child: AppStyle.getButtonCancel(text: cancelText ?? 'Нет')
+                    ),
+                    InkWell(
+                      onTap: confirmAction ?? () => Navigator.of(context).pop(),
+                      child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: confirmText ?? 'Да')
+                    ),
+                  ],
+                )
+            ],
+          )
+        );
+      },
+    );
   }
 }

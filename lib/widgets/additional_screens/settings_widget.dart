@@ -22,6 +22,7 @@ class SettingsWidget extends StatefulWidget {
 class _SettingsWidgetState extends State<SettingsWidget> {
   StreamSubscription<void>? hidePercentSpiritWidgetSubscription;
   final _dataProvider = DataProvider();
+  final TextEditingController _lowBatteryChargeTextController = TextEditingController();
 
   @override
   void initState() {
@@ -30,6 +31,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     hidePercentSpiritWidgetSubscription = Settings.hidePercentSpiritWidgetStream.listen((_){
       setState(() {});
     });
+    _lowBatteryChargeTextController.text = Settings.alarmLowBatteryCharge['percent_charge'];
   }
 
   @override
@@ -79,6 +81,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       _setAlarmLowBatteryCharge(on: value);
     } else {
       return showDialog<dynamic>(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return BackdropFilter(
@@ -97,6 +100,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 children: [
                   const Text('Укажите процент заряда датчика для уведомления'),
                   TextFormField(
+                    controller: _lowBatteryChargeTextController,
                     cursorColor: AppStyle.mainColor,
                     style: const TextStyle(color: AppStyle.mainColor),
                     inputFormatters: [
@@ -112,12 +116,11 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                       ),
                       hintText: "20 %"
                     ),
-                    initialValue: Settings.alarmLowBatteryCharge['percent_charge'],
                     autofocus: true,
                     keyboardType: TextInputType.number,
                     onFieldSubmitted: (value) {
                       Navigator.of(context).pop();
-                      if (value != '') _setAlarmLowBatteryCharge(on: true, percentBatteryCharge: value);
+                      if (value != '') _setAlarmLowBatteryCharge(on: true);
                     },
                   )
                 ],
@@ -125,6 +128,15 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10) 
               ),
+              actions: <Widget>[
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    if (_lowBatteryChargeTextController.text != '') _setAlarmLowBatteryCharge(on: true);
+                  },
+                  child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'OK')
+                ),
+              ],
             )
           );
         },
@@ -132,9 +144,11 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     }
   }
 
-  _setAlarmLowBatteryCharge({required bool on, String? percentBatteryCharge}) {
+  _setAlarmLowBatteryCharge({required bool on}) {
     Settings.alarmLowBatteryCharge['on'] = on;
-    if (percentBatteryCharge != null) Settings.alarmLowBatteryCharge['percent_charge'] = percentBatteryCharge;
+    if (Settings.alarmLowBatteryCharge['on'] == true) {
+      Settings.alarmLowBatteryCharge['percent_charge'] = _lowBatteryChargeTextController.text;
+    }
     _dataProvider.setAlarmLowBatteryCharge();
     setState(() {});
   }
@@ -154,14 +168,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   void changeLocalNotifications(bool value) async {
     if (value == true && Settings.notificationIsEnabled == false) {
-      return Helper.confirm(
+      return Helper.alert(
+        choice: true,
         context: context, 
         content: 'У приложения нет доступа к отправке уведомлений. Вы можете дать разрешение в настройках. Хотите это сделать?', 
-        cancelAction: () => Navigator.of(context).pop(), 
         confirmAction: () {
           Navigator.of(context).pop();
           openAppSettings();
-          Helper.alert(context: context, content: 'После включения уведомлений нужно будет перезапустить приложение и включить еще раз настройку');
         }, 
       );
     }
@@ -206,7 +219,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 6, child: Text('Сигнал при падении температуры в течение 5 сек.', style: TextStyle(fontSize: Adaptive.text(14)))),
+            Flexible(flex: 7, child: Text('Сигнал при падении температуры в течение 5 секунд', style: TextStyle(fontSize: Adaptive.text(14)))),
             Flexible(
               flex: 4, 
               child: Container(

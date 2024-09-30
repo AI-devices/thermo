@@ -42,7 +42,8 @@ class Monitoring {
       if (Settings.notifyWhenTempDrops == Settings.typeNone) return;
       if (Navigator.of(navigatorKey.currentState!.context).canPop()) Navigator.of(navigatorKey.currentState!.context).pop();
 
-      Helper.confirm(
+      Helper.alert(
+        choice: true,
         title: 'Уведомление',
         context: navigatorKey.currentState!.context, 
         content: 'Температура падает', 
@@ -53,8 +54,7 @@ class Monitoring {
           _dataProvider.setNotifyWhenTempDrops();
           Settings.notifyWhenTempDropsChanged?.call();
           Navigator.of(navigatorKey.currentState!.context).pop();
-        }, 
-        confirmAction: () => Navigator.of(navigatorKey.currentState!.context).pop(), 
+        }
       );
     }
   }

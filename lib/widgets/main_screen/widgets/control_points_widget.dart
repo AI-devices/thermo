@@ -55,11 +55,12 @@ class _ViewModel extends ChangeNotifier {
         if (point['value'] >= temperature && point['value'] <= _previousTemperature) reached = true;
       }
       if (reached == true) {
-        needUpdateWidget = true;
-        notifiedPoints[key] = true;
-        if (point['notify'] == Settings.typeNone) continue;
-        //Notifier.snackBar(notify: Notify.checkpointReached, text: 'Контрольная точка в ${point['value']}${Helper.celsius} пройдена');
-        _alert(point: point);
+        if (point['notify'] == Settings.typeNone) {
+          needUpdateWidget = true;
+          notifiedPoints[key] = true;
+        } else {
+          _alert(key: key, point: point);
+        }
       }
     }
     _previousTemperature = temperature;
@@ -69,39 +70,39 @@ class _ViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> _alert({required dynamic point}) async {
-    if (Navigator.of(navigatorKey.currentState!.context).canPop()) {
+  Future<void> _alert({required int key, required dynamic point}) async {
+    if (Navigator.of(navigatorKey.currentState!.context).canPop()) return;
+    /*if (Navigator.of(navigatorKey.currentState!.context).canPop()) {
       Navigator.of(navigatorKey.currentState!.context).pop();
       if (point['notify'] == Settings.typeRing) await _player.stop();
-    }
+    }*/
 
     if (point['notify'] == Settings.typeVibration) Vibration.vibrate(duration: 5000);
     if (point['notify'] == Settings.typeRing) _player.play(AssetSource('../${AppAssets.alarmAudioLong}'));
 
     // ignore: use_build_context_synchronously
-    showDialog<dynamic>(
-      context: navigatorKey.currentState!.context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-          child: AlertDialog(
-            title: const Text('Уведомление'),
-            content: Text('Контрольная точка в ${point['value']}${Helper.celsius} пройдена'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10) 
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _player.stop();
-                }, 
-                child: const Text('OK'))
-            ],
-          )
-        );
+    Helper.alert(
+      choice: true,
+      title: 'Уведомление',
+      context: navigatorKey.currentState!.context, 
+      content: 'Контрольная точка в ${point['value']}${Helper.celsius} пройдена', 
+      cancelText: 'Не следить',
+      confirmText: 'Продолжить',
+      closeAction: () {
+        Navigator.of(navigatorKey.currentState!.context).pop();
+        _player.stop();
       },
+      confirmAction: () {
+        Navigator.of(navigatorKey.currentState!.context).pop();
+        _player.stop();
+      },
+      cancelAction: () {
+        Navigator.of(navigatorKey.currentState!.context).pop();
+        _player.stop();
+        notifiedPoints[key] = true;
+        updateControlPoints = !updateControlPoints;
+        notifyListeners();
+      }
     );
   }
 
