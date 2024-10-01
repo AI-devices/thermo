@@ -56,15 +56,15 @@ abstract class Notifier {
     }
   }
 
-  static Icon getNotifyIcon({required String type, Color? color}) {
+  static Icon getNotifyIcon({required String type, required BuildContext context, Color? color}) {
     switch (type) {
       case Settings.typeRing :
-        return Icon(Icons.volume_up_outlined, size: Adaptive.icon(30), color: color ?? Colors.black);
+        return Icon(Icons.volume_up_outlined, size: Adaptive.icon(30, context), color: color ?? Colors.black);
       case Settings.typeVibration :
-        return Icon(Icons.vibration, size: Adaptive.icon(30), color: color ?? Colors.black);
+        return Icon(Icons.vibration, size: Adaptive.icon(30, context), color: color ?? Colors.black);
       case Settings.typeNone :
       default :
-        return Icon(Icons.clear, size: Adaptive.icon(30), color: color ?? Colors.black);
+        return Icon(Icons.clear, size: Adaptive.icon(30, context), color: color ?? Colors.black);
     }
   }
 }

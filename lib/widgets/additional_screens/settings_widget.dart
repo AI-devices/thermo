@@ -219,7 +219,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 7, child: Text('Сигнал при падении температуры в течение 5 секунд', style: TextStyle(fontSize: Adaptive.text(14)))),
+            Flexible(flex: 7, child: Text('Сигнал при падении температуры в течение 5 секунд', style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Container(
@@ -227,7 +227,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 width: 50,
                 decoration: AppStyle.decorMainContainer,
                 child: IconButton(
-                  icon: Notifier.getNotifyIcon(type: Settings.notifyWhenTempDrops), 
+                  icon: Notifier.getNotifyIcon(type: Settings.notifyWhenTempDrops, context: context), 
                   onPressed: changeNotifyWhenTempDrops,
                 ),
               )
@@ -249,7 +249,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 6, child: Text('Сигнал при завершении таймера', style: TextStyle(fontSize: Adaptive.text(14)))),
+            Flexible(flex: 6, child: Text('Сигнал при завершении таймера', style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Container(
@@ -257,7 +257,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 width: 50,
                 decoration: AppStyle.decorMainContainer,
                 child: IconButton(
-                  icon: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds), 
+                  icon: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds, context: context), 
                   onPressed: changeNotifyWhenTimerEnds,
                 ),
               )
@@ -279,21 +279,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            Flexible(flex: 2, child: Text('Калибровка датчика', style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
-              flex: 6,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Flexible(flex: 3, child: Text('Калибровка датчика', style: TextStyle(fontSize: Adaptive.text(14)))),
-                  Flexible(
-                    flex: 1,
-                    child: IconButton(
-                      onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
-                      icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30))
-                    ),
-                  )
-                ],
-              )
+              flex: 1,
+              child: IconButton(
+                onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
+                icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30, context))
+              ),
             ),
             Flexible(
               flex: 5,
@@ -312,7 +304,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                   SizedBox(width: MediaQuery.of(context).size.height * 0.01),
                   Container(
                     height: 43,
-                    width: MediaQuery.of(context).size.height * 0.07,
+                    width: MediaQuery.of(context).size.width * 0.12,
                     decoration: AppStyle.decorMainCotnainerInset,
                     child: Center(
                       child: Text(
@@ -323,15 +315,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   SizedBox(width: MediaQuery.of(context).size.height * 0.01),
-                  Flexible(
-                    child: Container(
-                      height: 43,
-                      width: 43,
-                      decoration: AppStyle.decorMainContainer,
-                      child: IconButton(
-                        icon: const Icon(Icons.add), 
-                        onPressed: () => changeCalibrationSensor(action: 'add'),
-                      ),
+                  Container(
+                    height: 43,
+                    width: 43,
+                    decoration: AppStyle.decorMainContainer,
+                    child: IconButton(
+                      icon: const Icon(Icons.add), 
+                      onPressed: () => changeCalibrationSensor(action: 'add'),
                     ),
                   ),
                 ],
@@ -358,10 +348,10 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Flexible(child: Text('Cкрыть автоматический расчет спиртуозности', style: TextStyle(fontSize: Adaptive.text(14)))),
+                  Flexible(child: Text('Cкрыть автоматический расчет спиртуозности', style: TextStyle(fontSize: Adaptive.text(14, context)))),
                   IconButton(
                     onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.'),
-                    icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30))
+                    icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30, context))
                   )
                 ],
               )
@@ -395,7 +385,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             Flexible(
               flex: 6,
               child: Text('Предупреждение при низком заряде датчика (<${Settings.alarmLowBatteryCharge['percent_charge']}%)',
-                style: TextStyle(fontSize: Adaptive.text(14))
+                style: TextStyle(fontSize: Adaptive.text(14, context))
               )
             ),
             Flexible(
@@ -423,7 +413,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 6, child: Text('Не давать засыпать телефону', style: TextStyle(fontSize: Adaptive.text(14)))),
+            Flexible(flex: 6, child: Text('Не давать засыпать телефону', style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Switch(
@@ -449,7 +439,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 6, child: Text('Предупреждение при потере сигнала от датчика', style: TextStyle(fontSize: Adaptive.text(14)))),
+            Flexible(flex: 6, child: Text('Предупреждение при потере сигнала от датчика', style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Switch(
@@ -475,7 +465,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 6, child: Text('Отображение температуры в фоновом режиме приложения', style: TextStyle(fontSize: Adaptive.text(14)))),
+            Flexible(flex: 6, child: Text('Отображение температуры в фоновом режиме приложения', style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Switch(

@@ -82,18 +82,18 @@ class _PercentSpiritWidgetState extends State<PercentSpiritWidget> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text('Спиртуозность, %AC', style: TextStyle(fontSize: Adaptive.text(15))),
+              Text('Спиртуозность, %AC', style: TextStyle(fontSize: Adaptive.text(15, context))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('в кубе: ', style: TextStyle(fontSize: Adaptive.text(15))),
-                  Text(tempInCube != null ? '$tempInCube%' : '---', style: TextStyle(fontWeight: FontWeight.bold, fontSize: Adaptive.text(15))),
-                  Text(' | ', style: TextStyle(fontSize: Adaptive.text(15))),
-                  Text('в отборе: ', style: TextStyle(fontSize: Adaptive.text(15))),
-                  Text(tempInSampling != null ? '$tempInSampling%' : '---', style: TextStyle(fontWeight: FontWeight.bold, fontSize: Adaptive.text(15))),
+                  Text('в кубе: ', style: TextStyle(fontSize: Adaptive.text(15, context))),
+                  Text(tempInCube != null ? '$tempInCube%' : '---', style: TextStyle(fontWeight: FontWeight.bold, fontSize: Adaptive.text(15, context))),
+                  Text(' | ', style: TextStyle(fontSize: Adaptive.text(15, context))),
+                  Text('в отборе: ', style: TextStyle(fontSize: Adaptive.text(15, context))),
+                  Text(tempInSampling != null ? '$tempInSampling%' : '---', style: TextStyle(fontWeight: FontWeight.bold, fontSize: Adaptive.text(15, context))),
                 ],
               ),
-              Text('Диапазон от 79 до 99 градусов', style: TextStyle(fontSize: Adaptive.text(13), color: AppStyle.greyColor)),
+              Text('Диапазон от 79 до 99 градусов', style: TextStyle(fontSize: Adaptive.text(13, context), color: AppStyle.greyColor)),
             ],
           ),
         ],
@@ -111,13 +111,13 @@ class _PercentSpiritWidgetState extends State<PercentSpiritWidget> {
             _dataProvider.setHidePercentSpiritWidget();
             Settings.controllerHidePercentSpiritWidget.add(null);
           },
-          child: Text('Показать спиртуозность', style: TextStyle(fontSize: Adaptive.text(15), decoration: TextDecoration.underline, fontStyle: FontStyle.italic))
+          child: Text('Показать спиртуозность', style: TextStyle(fontSize: Adaptive.text(15, context), decoration: TextDecoration.underline, fontStyle: FontStyle.italic))
         ),
         const SizedBox(width: 15),
         Container(
           decoration: AppStyle.decorMainContainer,
           child: IconButton(
-            icon: Icon(Icons.remove_red_eye_outlined, size: Adaptive.icon(30)), 
+            icon: Icon(Icons.remove_red_eye_outlined, size: Adaptive.icon(30, context)), 
             onPressed: () {
               Settings.hidePercentSpiritWidget = false;
               _dataProvider.setHidePercentSpiritWidget();

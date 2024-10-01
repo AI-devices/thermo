@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1)), //? игнорируем масштабирование текста на уровне ОС
+        data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1)), //? игнорируем размер текста, заданный на уровне ОС
         child: const InitWidget(title: 'Main page')
       ),
     );

@@ -255,7 +255,7 @@ class _Row extends StatelessWidget {
     
     return Expanded(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Adaptive.padding(10)),
+        padding: EdgeInsets.symmetric(horizontal: Adaptive.padding(10, context)),
         child: Row(
           //mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -275,8 +275,8 @@ class _Row extends StatelessWidget {
                         fontWeight: model.notifiedPoints[model.controlPoints.indexOf(point)] == true ? FontWeight.bold : FontWeight.normal,
                       ),
                       children: [
-                        TextSpan(text: point['value'].toString(), style: TextStyle(fontSize: Adaptive.text(18))),
-                        TextSpan(text: Helper.celsius, style: TextStyle(fontSize: Adaptive.text(14))),
+                        TextSpan(text: point['value'].toString(), style: TextStyle(fontSize: Adaptive.text(18, context))),
+                        TextSpan(text: Helper.celsius, style: TextStyle(fontSize: Adaptive.text(14, context))),
                       ]
                     ),
                   )
@@ -289,7 +289,7 @@ class _Row extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
                 onTap: () => model.changeNotify(model.controlPoints.indexOf(point)),
-                child: Center(child: Notifier.getNotifyIcon(type: point['notify']!, 
+                child: Center(child: Notifier.getNotifyIcon(type: point['notify']!, context: context,
                   color: model.notifiedPoints[model.controlPoints.indexOf(point)] == true ? AppStyle.mainColor : Colors.black)
                 )
               ),

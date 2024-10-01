@@ -14,14 +14,15 @@ abstract class DevicePermissions {
   static Future<bool> checkPermissions() async {
     AndroidDeviceInfo androidInfo = await _deviceInfo.androidInfo;
     log(androidInfo.version.release, name: 'version OS');
+    log('${androidInfo.displayMetrics.widthPx} px', name: 'screen width');
 
-    _notification();
-    _vibration();
+    await _notification();
+    await _vibration();
 
     //final ignoreBatteryPermission = await DevicePermissions._getPermission(Permission.ignoreBatteryOptimizations);
     if (await ApiBluetooth.isSupported() == false) return false;
 
-    return double.parse(androidInfo.version.release) < 12 ? _location() : _bluetooth();
+    return double.parse(androidInfo.version.release) < 12 ? await _location() : await _bluetooth();
   }
 
   static Future<bool> _bluetooth() async {

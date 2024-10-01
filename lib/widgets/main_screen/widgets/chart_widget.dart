@@ -317,7 +317,7 @@ class _ChartWidgetState extends State<ChartWidget> {
         Flexible(
           flex: 1,
           child: Text('Максимальный масштаб статистики (${maxHoursForChart.round()} ч.)', 
-            style: TextStyle(fontSize: Adaptive.text(12))
+            style: TextStyle(fontSize: Adaptive.text(12, context))
           ) 
         ),
         Flexible(
@@ -357,14 +357,14 @@ class _ChartWidgetState extends State<ChartWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('2', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 2 ? Colors.black : Colors.grey)),
-                    Text('3', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 3 ? Colors.black : Colors.grey)),
-                    Text('4', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 4 ? Colors.black : Colors.grey)),
-                    Text('5', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 5 ? Colors.black : Colors.grey)),
-                    Text('6', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 6 ? Colors.black : Colors.grey)),
-                    Text('7', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 7 ? Colors.black : Colors.grey)),
-                    Text('8', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 8 ? Colors.black : Colors.grey)),
-                    Text('9', style: TextStyle(fontSize: Adaptive.text(12), color: maxHoursForChart == 9 ? Colors.black : Colors.grey)),
+                    Text('2', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 2 ? Colors.black : Colors.grey)),
+                    Text('3', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 3 ? Colors.black : Colors.grey)),
+                    Text('4', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 4 ? Colors.black : Colors.grey)),
+                    Text('5', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 5 ? Colors.black : Colors.grey)),
+                    Text('6', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 6 ? Colors.black : Colors.grey)),
+                    Text('7', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 7 ? Colors.black : Colors.grey)),
+                    Text('8', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 8 ? Colors.black : Colors.grey)),
+                    Text('9', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 9 ? Colors.black : Colors.grey)),
                   ],
                 ),
               ),

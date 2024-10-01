@@ -104,12 +104,12 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, color: AppStyle.pinkColor, size: Adaptive.icon(62)),
+          Icon(Icons.error_outline, color: AppStyle.pinkColor, size: Adaptive.icon(62, context)),
           Padding(
             padding: const EdgeInsets.fromLTRB(2, 10, 2, 0),
             child: Text('Ожидается подключение к датчику', 
               textAlign: TextAlign.center, 
-              style: TextStyle(color: AppStyle.pinkColor, fontSize: Adaptive.text(14))
+              style: TextStyle(color: AppStyle.pinkColor, fontSize: Adaptive.text(14, context))
             ),
           )
         ],
@@ -202,13 +202,13 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                         flex: 4,
                         child: Text(diff.toString(), style: TextStyle(
                           color: Colors.black, 
-                          fontSize: Adaptive.text(16)
+                          fontSize: Adaptive.text(16, context)
                         )),
                       ),
                       const SizedBox(width: 2),
                       Flexible(
                         flex: 5,
-                        child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: Adaptive.text(16), color: Colors.black)),
+                        child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: Adaptive.text(16, context), color: Colors.black)),
                       )
                     ],
                   )
