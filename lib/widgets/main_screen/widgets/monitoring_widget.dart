@@ -207,7 +207,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
                       ),
                       const SizedBox(width: 2),
                       Flexible(
-                        flex: 5,
+                        flex: 7,
                         child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: Adaptive.text(16, context), color: Colors.black)),
                       )
                     ],

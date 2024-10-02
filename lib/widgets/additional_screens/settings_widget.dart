@@ -358,12 +358,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             ),
             Flexible(
               flex: 4, 
-              child: Switch(
-                activeTrackColor: AppStyle.mainColor,
-                activeColor: Colors.white,
-                value: Settings.hidePercentSpiritWidget,
-                onChanged: (_) => changeVisibilityPercentSpiritWidget(),
-              )
+              child: Helper.switcher(value: Settings.hidePercentSpiritWidget, action: (_) => changeVisibilityPercentSpiritWidget())
             ),
             
           ],
@@ -390,12 +385,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             ),
             Flexible(
               flex: 4, 
-              child: Switch(
-                activeTrackColor: AppStyle.mainColor,
-                activeColor: Colors.white,
-                value: Settings.alarmLowBatteryCharge['on'] as bool,
-                onChanged: (value) => changeNotifyAlarmLowBatteryCharge(value),
-              )
+              child: Helper.switcher(value: Settings.alarmLowBatteryCharge['on'] as bool, action: (value) => changeNotifyAlarmLowBatteryCharge(value))
             ),
           ],
         ),
@@ -416,12 +406,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             Flexible(flex: 6, child: Text('Не давать засыпать телефону', style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
-              child: Switch(
-                activeTrackColor: AppStyle.mainColor,
-                activeColor: Colors.white,
-                value: Settings.wakelock,
-                onChanged: (value) => changeWakelock(value),
-              )
+              child: Helper.switcher(value: Settings.wakelock, action: (value) => changeWakelock(value))
             ),
           ],
         ),
@@ -442,12 +427,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             Flexible(flex: 6, child: Text('Предупреждение при потере сигнала от датчика', style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
-              child: Switch(
-                activeTrackColor: AppStyle.mainColor,
-                activeColor: Colors.white,
-                value: Settings.alarmSensorDissconnected,
-                onChanged: (_) => changeAlarmSensorDissconnected(),
-              )
+              child: Helper.switcher(value: Settings.alarmSensorDissconnected, action: (_) => changeAlarmSensorDissconnected())
             ),
           ],
         ),
@@ -468,12 +448,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             Flexible(flex: 6, child: Text('Отображение температуры в фоновом режиме приложения', style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
-              child: Switch(
-                activeTrackColor: AppStyle.mainColor,
-                activeColor: Colors.white,
-                value: Settings.allowLocalNotifications,
-                onChanged: (value) => changeLocalNotifications(value),
-              )
+              child: Helper.switcher(value: Settings.allowLocalNotifications, action: (value) => changeLocalNotifications(value))
             ),
           ],
         ),

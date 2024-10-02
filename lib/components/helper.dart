@@ -117,4 +117,17 @@ abstract class Helper {
       },
     );
   }
+
+  static Switch switcher ({required bool value, required Function(bool) action}) {
+    return Switch(
+      trackOutlineColor: MaterialStateProperty.all(Colors.white.withOpacity(0)), //прозрачный border
+      thumbIcon: MaterialStateProperty.all(const Icon(null)), //размер круга внутри Switch в состоянии off становится таким же как в on
+      inactiveTrackColor: const Color.fromARGB(255, 221, 221, 221),
+      inactiveThumbColor: Colors.white,
+      activeTrackColor: AppStyle.mainColor,
+      activeColor: Colors.white,
+      value: value,
+      onChanged: action,
+    );
+  }
 }
