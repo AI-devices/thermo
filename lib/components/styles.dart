@@ -30,6 +30,7 @@ abstract class AppStyle {
   static final decorMainContainer = BoxDecoration(
     color: decorColor,
     borderRadius: BorderRadius.circular(15),
+    border: Border.all(color: Colors.white),
     boxShadow: [
       boxShadowBottomRight(),
       boxShadowTopLeft(),
@@ -59,7 +60,7 @@ abstract class AppStyle {
     return BoxShadow(
       color: Colors.white,
       offset: const Offset(-2.0, -2.0),
-      blurRadius: 3.0,
+      blurRadius: 5.0,
       spreadRadius: 1.0,
       inset: inset
     );
@@ -134,6 +135,7 @@ abstract class AppStyle {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.white),
         boxShadow: [boxShadowBottomRight()]
       ),
       child: Center(child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 15), overflow: TextOverflow.ellipsis)),

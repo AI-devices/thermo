@@ -213,7 +213,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        height: 65,
+        height: 68,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
@@ -243,7 +243,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        height: 65,
+        height: 68,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
@@ -273,7 +273,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        height: 65,
+        height: 68,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
@@ -337,7 +337,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        height: 65,
+        height: 68,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
@@ -371,7 +371,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        height: 65,
+        height: 68,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
@@ -397,7 +397,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        height: 65,
+        height: 68,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
@@ -418,7 +418,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        height: 65,
+        height: 68,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
@@ -439,7 +439,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        height: 65,
+        height: 68,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppStyle.decorMainContainer,
         child: Row(
