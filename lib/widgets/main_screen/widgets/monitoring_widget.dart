@@ -167,53 +167,31 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
           ),
           Expanded(
             flex: 10,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: AppStyle.getDecorMainContainerByTemp(temp: currentTemperature!),
-                    child: RichText(
-                      text: TextSpan(
-                        style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                        children: [
-                          TextSpan(
-                            text: currentTemperature?.toStringAsFixed(1),
-                            style: const TextStyle(fontSize: 26)
-                          ),
-                          const TextSpan(
-                            text: Helper.celsius,
-                            style: TextStyle(fontSize: 26)
-                          )
-                        ],
-                      ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: AppStyle.getDecorMainContainerByTemp(temp: currentTemperature!),
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      children: [
+                        TextSpan(
+                          text: currentTemperature?.toStringAsFixed(1),
+                          style: const TextStyle(fontSize: 26)
+                        ),
+                        const TextSpan(
+                          text: Helper.celsius,
+                          style: TextStyle(fontSize: 26)
+                        )
+                      ],
                     ),
                   ),
-                  
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(width: 30, child: diffIcon),
-                      const SizedBox(width: 5),
-                      Flexible(
-                        flex: 4,
-                        child: Text(diff.toString(), style: TextStyle(
-                          color: Colors.black, 
-                          fontSize: Adaptive.text(16, context)
-                        )),
-                      ),
-                      const SizedBox(width: 2),
-                      Flexible(
-                        flex: 7,
-                        child: Text('${Helper.celsius}/мин', style: TextStyle(fontSize: Adaptive.text(16, context), color: Colors.black)),
-                      )
-                    ],
-                  )
-                ],
-              ),
+                ),
+                SizedBox(width: 40, height: 30, child: diffIcon)
+              ],
             )
           )
         ],
