@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 
@@ -56,7 +57,8 @@ class LocalNotification {
         color: AppStyle.getColorByTemp(temperature: temperature)
       );
       NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetails);
-      await _flutterLocalNotificationsPlugin.show(0, 'температура датчика: ${temperature.toStringAsFixed(1)}${Helper.celsius}', null, notificationDetails);
+      await _flutterLocalNotificationsPlugin.show(0, Lang.text('температура датчика: %s', ['${temperature.toStringAsFixed(1)}${Helper.celsius}']), 
+        null, notificationDetails);
   }
 
   static Future cancelNotifications() async {

@@ -6,6 +6,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth_v1.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth_v2.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
@@ -103,7 +104,7 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
 
     Helper.alert(
       context: navigatorKey.currentState!.context,
-      content: 'Потеряно соединение с термодатчиком',
+      content: Lang.text('Потеряно соединение с термодатчиком'),
       closeAction: () {
         Navigator.of(navigatorKey.currentState!.context).pop();
         _player.stop();

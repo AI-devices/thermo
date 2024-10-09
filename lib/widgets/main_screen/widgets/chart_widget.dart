@@ -6,6 +6,7 @@ import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 
@@ -316,7 +317,7 @@ class _ChartWidgetState extends State<ChartWidget> {
       children: [
         Flexible(
           flex: 1,
-          child: Text('Максимальный масштаб статистики (${maxHoursForChart.round()} ч.)', 
+          child: Text(Lang.text('Максимальный масштаб статистики (%s ч.)', [maxHoursForChart.round()]), 
             style: TextStyle(fontSize: Adaptive.text(12, context))
           ) 
         ),

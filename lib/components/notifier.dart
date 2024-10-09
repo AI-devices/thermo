@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:thermo/main.dart';
@@ -20,12 +21,12 @@ abstract class Notifier {
     switch (notify) {
       case Notify.bluetoothIsNotSupported :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
-          text: 'Данный девайс не поддерживает Bluetooth',
+          text: Lang.text('Данный девайс не поддерживает Bluetooth'),
           icon: const Icon(Icons.bluetooth_disabled, color: Colors.red));
         break;
       case Notify.bluetoothDissconected :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
-          text: 'Нет соединения с Bluetooth',
+          text: Lang.text('Нет соединения с Bluetooth'),
           icon: const Icon(Icons.bluetooth_disabled, color: Colors.red));
         break;
       /*case Notify.locationIsRequred :
@@ -36,7 +37,7 @@ abstract class Notifier {
         break;*/
       case Notify.sensorNotFound :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
-          text: 'Термодатчик не обнаружен. Убедитесь, что он включен',
+          text: Lang.text('Термодатчик не обнаружен. Убедитесь, что он включен'),
           icon: const Icon(Icons.close, color: Colors.red));
         break;
       /*case Notify.sensorConnected :
@@ -45,12 +46,12 @@ abstract class Notifier {
         break;*/
       case Notify.sensorDissconnected :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
-          text: 'Потеряно соединение с термодатчиком',
+          text: Lang.text('Потеряно соединение с термодатчиком'),
           icon: const Icon(Icons.thermostat, color: Colors.red));
         break;
       case Notify.checkpointReached :
         Helper.viewSnackBar(context: navigatorKey.currentState!.context,
-          text: text ?? 'Пройдена контрольная точка',
+          text: text ?? Lang.text('Пройдена контрольная точка'),
           icon: const Icon(Icons.control_point, color: AppStyle.mainColor));
         break;
     }

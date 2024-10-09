@@ -7,6 +7,7 @@ import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
@@ -83,11 +84,11 @@ class _ViewModel extends ChangeNotifier {
     // ignore: use_build_context_synchronously
     Helper.alert(
       choice: true,
-      title: 'Уведомление',
+      title: Lang.text('Уведомление'),
       context: navigatorKey.currentState!.context, 
-      content: 'Контрольная точка в ${point['value']}${Helper.celsius} пройдена', 
-      cancelText: 'Не следить',
-      confirmText: 'Продолжить',
+      content: Lang.text('Контрольная точка в %s пройдена', ['${point['value']}${Helper.celsius}']), 
+      cancelText: Lang.text('Не следить'),
+      confirmText: Lang.text('Продолжить'),
       closeAction: () {
         Navigator.of(navigatorKey.currentState!.context).pop();
         _player.stop();

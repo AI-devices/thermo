@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/styles.dart';
 
 class TimerWidget extends StatefulWidget {
@@ -66,15 +67,15 @@ class __TimerWidgetState extends State<TimerWidget> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(width: 5),
-            Text('ч.', style: TextStyle(fontSize: 15, color: AppStyle.greyColor)),
-            SizedBox(width: 40),
-            Text('мин.', style: TextStyle(fontSize: 15, color: AppStyle.greyColor)),
-            SizedBox(width: 30),
-            Text('сек.', style: TextStyle(fontSize: 15, color: AppStyle.greyColor)),
+            const SizedBox(width: 5),
+            Text(Lang.text('ч.'), style: const TextStyle(fontSize: 15, color: AppStyle.greyColor)),
+            const SizedBox(width: 40),
+            Text(Lang.text('мин.'), style: const TextStyle(fontSize: 15, color: AppStyle.greyColor)),
+            const SizedBox(width: 30),
+            Text(Lang.text('сек.'), style: const TextStyle(fontSize: 15, color: AppStyle.greyColor)),
           ],
         ),
         Center(

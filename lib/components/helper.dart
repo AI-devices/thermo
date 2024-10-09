@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 
@@ -79,7 +80,7 @@ abstract class Helper {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 30.0),
-                  child: Text(title ?? 'Предупреждение', style: const TextStyle(color: AppStyle.greyColor)),
+                  child: Text(title ?? Lang.text('Предупреждение'), style: const TextStyle(color: AppStyle.greyColor)),
                 ),
                 IconButton(
                   onPressed: closeAction ?? () => Navigator.of(context).pop(),

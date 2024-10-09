@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
 import 'package:thermo/widgets/assets.dart';
@@ -44,11 +45,11 @@ class Monitoring {
 
       Helper.alert(
         choice: true,
-        title: 'Уведомление',
+        title: Lang.text('Уведомление'),
         context: navigatorKey.currentState!.context, 
-        content: 'Температура падает', 
-        cancelText: 'Не следить',
-        confirmText: 'Продолжить',
+        content: Lang.text('Температура падает'), 
+        cancelText: Lang.text('Не следить'),
+        confirmText: Lang.text('Продолжить'),
         cancelAction: () {
           Settings.notifyWhenTempDrops = Settings.typeNone;
           _dataProvider.setNotifyWhenTempDrops();

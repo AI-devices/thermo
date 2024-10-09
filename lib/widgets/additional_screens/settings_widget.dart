@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/local_notification.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
@@ -55,13 +56,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   void changeCalibrationSensor({required String action}) {
     if (action == 'sub') {
       if (Settings.calibrationSensor <= -5.0) {
-        Helper.alert(context: context, content: 'Достигнуто минимальное значение калибровки');
+        Helper.alert(context: context, content: Lang.text('Достигнуто минимальное значение калибровки'));
         return;
       }
       Settings.calibrationSensor = double.parse((Settings.calibrationSensor - 0.1).toStringAsFixed(1));
     } else {
       if (Settings.calibrationSensor >= 5.0) {
-        Helper.alert(context: context, content: 'Достигнуто максимальное значение калибровки');
+        Helper.alert(context: context, content: Lang.text('Достигнуто максимальное значение калибровки'));
         return;
       }
       Settings.calibrationSensor = double.parse((Settings.calibrationSensor + 0.1).toStringAsFixed(1));
@@ -98,7 +99,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Укажите процент заряда датчика для уведомления'),
+                  Text(Lang.text('Укажите процент заряда датчика для уведомления')),
                   TextFormField(
                     controller: _lowBatteryChargeTextController,
                     cursorColor: AppStyle.mainColor,
@@ -219,7 +220,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 7, child: Text('Сигнал при падении температуры в течение 5 секунд', style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(flex: 7, child: Text(Lang.text('Сигнал при падении температуры в течение 5 секунд'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Container(
@@ -249,7 +250,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 6, child: Text('Сигнал при завершении таймера', style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(flex: 6, child: Text(Lang.text('Сигнал при завершении таймера'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Container(
@@ -279,11 +280,11 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 2, child: Text('Калибровка датчика', style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(flex: 2, child: Text(Lang.text('Калибровка датчика'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 1,
               child: IconButton(
-                onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
+                onPressed: () => Helper.alert(context: context, title: Lang.text('Пояснение'), content: Lang.text('Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.')),
                 icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30, context))
               ),
             ),
@@ -348,9 +349,9 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Flexible(child: Text('Cкрыть автоматический расчет спиртуозности', style: TextStyle(fontSize: Adaptive.text(14, context)))),
+                  Flexible(child: Text(Lang.text('Cкрыть автоматический расчет спиртуозности'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
                   IconButton(
-                    onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.'),
+                    onPressed: () => Helper.alert(context: context, title: Lang.text('Пояснение'), content: Lang.text('Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.')),
                     icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30, context))
                   )
                 ],
@@ -379,7 +380,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
           children: [
             Flexible(
               flex: 6,
-              child: Text('Предупреждение при низком заряде датчика (<${Settings.alarmLowBatteryCharge['percent_charge']}%)',
+              child: Text(Lang.text('Предупреждение при низком заряде датчика (<%s%)', [Settings.alarmLowBatteryCharge['percent_charge']]),
                 style: TextStyle(fontSize: Adaptive.text(14, context))
               )
             ),
@@ -403,7 +404,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 6, child: Text('Не давать засыпать телефону', style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(flex: 6, child: Text(Lang.text('Не давать засыпать телефону'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Helper.switcher(value: Settings.wakelock, action: (value) => changeWakelock(value))
@@ -424,7 +425,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 6, child: Text('Предупреждение при потере сигнала от датчика', style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(flex: 6, child: Text(Lang.text('Предупреждение при потере сигнала от датчика'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Helper.switcher(value: Settings.alarmSensorDissconnected, action: (_) => changeAlarmSensorDissconnected())

@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
 import 'package:thermo/widgets/assets.dart';
@@ -49,7 +50,7 @@ class ObserverBatteryCharge {
 
     Helper.alert(
       context: navigatorKey.currentState!.context,
-      content: 'Низкий заряд батареи ($charge%)',
+      content: Lang.text('Низкий заряд батареи (%s%)', [charge]),
       closeAction: () {
         Navigator.of(navigatorKey.currentState!.context).pop();
         _player.stop();
