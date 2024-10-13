@@ -139,7 +139,7 @@ class _ViewModel extends ChangeNotifier {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Укажите температуру контрольной точки', style: TextStyle(fontSize: 15)),
+                Text(Lang.text('Укажите температуру контрольной точки'), style: const TextStyle(fontSize: 15)),
                 TextFormField(
                   controller: _controlPointsTextController,
                   enableInteractiveSelection: false,
@@ -174,7 +174,7 @@ class _ViewModel extends ChangeNotifier {
                 children: [
                   InkWell(
                     onTap: () => Navigator.of(context).pop(),
-                    child: AppStyle.getButtonCancel(text: 'Отмена')
+                    child: AppStyle.getButtonCancel(text: Lang.text('Отмена'))
                   ),
                   InkWell(
                     onTap: () {

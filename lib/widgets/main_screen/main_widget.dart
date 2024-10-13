@@ -5,7 +5,6 @@ import 'package:thermo/widgets/main_screen/widgets/monitoring_widget.dart';
 import 'package:thermo/widgets/main_screen/widgets/chart_widget.dart';
 import 'package:thermo/widgets/main_screen/widgets/percent_spirit_widget.dart';
 
-
 class MainScreenWidget extends StatelessWidget {
   const MainScreenWidget({Key? key}) : super(key: key);
 

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:thermo/widgets/assets.dart';
@@ -105,7 +106,7 @@ class __CountDownWidgetState extends State<CountDownWidget> {
 
   void _onCompleted() {
     if (_isRunning == true) {
-      Helper.viewSnackBar(context: context, text: 'Таймер завершился!', icon: const Icon(Icons.lock_clock, color: AppStyle.mainColor));
+      Helper.viewSnackBar(context: context, text: Lang.text('Таймер завершился!'), icon: const Icon(Icons.lock_clock, color: AppStyle.mainColor));
       _isRunning = false;
       setState(() {});
     }
@@ -144,7 +145,7 @@ class __CountDownWidgetState extends State<CountDownWidget> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Установите обратный таймер', style: TextStyle(fontSize: 16)),
+                Text(Lang.text('Установите обратный таймер'), style: const TextStyle(fontSize: 16)),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5.0),
                   child: TextField(
@@ -212,7 +213,7 @@ class __CountDownWidgetState extends State<CountDownWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('Обратный таймер', style: TextStyle(fontSize: 18)),
+          Text(Lang.text('Обратный таймер'), style: const TextStyle(fontSize: 18)),
           Flexible(
             flex: 2,
             child: InkResponse(
@@ -264,22 +265,22 @@ class __CountDownWidgetState extends State<CountDownWidget> {
         _isRunning
         ? InkResponse(
           onTap: () => _stopTimer(reset: false),
-          child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: 'Пауза'),
+          child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: Lang.text('Пауза')),
         )
         : InkResponse(
           onTap: () => _resumeTimer(),
-          child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: 'Продолж.'),
+          child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: Lang.text('Продолж.')),
         ),
         const SizedBox(width: 20),
         InkResponse(
           onTap: () => _stopTimer(reset: true),
-          child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: 'Сбросить'),
+          child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: Lang.text('Сбросить')),
         ),
       ],
     )
     : InkResponse(
       onTap: _startTimer,
-      child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'Начать'),
+      child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: Lang.text('Начать')),
     );  
   }
 }

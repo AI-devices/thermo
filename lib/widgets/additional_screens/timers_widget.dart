@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thermo/widgets/main_screen/widgets/count_down_widget.dart';
-import 'package:thermo/widgets/main_screen/widgets/timer_widget.dart';
+import 'package:thermo/widgets/additional_screens/count_down_widget.dart';
+import 'package:thermo/widgets/additional_screens/timer_widget.dart';
 
 class TimersWidget extends StatelessWidget {
   const TimersWidget({Key? key}) : super(key: key);

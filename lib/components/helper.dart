@@ -104,11 +104,11 @@ abstract class Helper {
                   children: [
                     InkWell(
                       onTap: cancelAction ?? () => Navigator.of(context).pop(),
-                      child: AppStyle.getButtonCancel(text: cancelText ?? 'Нет')
+                      child: AppStyle.getButtonCancel(text: cancelText ?? Lang.text('Нет'))
                     ),
                     InkWell(
                       onTap: confirmAction ?? () => Navigator.of(context).pop(),
-                      child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: confirmText ?? 'Да')
+                      child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: confirmText ?? Lang.text('Да'))
                     ),
                   ],
                 )

@@ -95,7 +95,7 @@ class _ChartWidgetState extends State<ChartWidget> {
 
   void _startTimer() {
     if (ApiBluetooth.statusSensor == false || _currentTemperature == null) {
-      Helper.alert(context: context, content: 'Нет подключения к датчику');
+      Helper.alert(context: context, content: Lang.text('Нет подключения к датчику'));
       return;
     }
     setState(() {});
@@ -140,7 +140,7 @@ class _ChartWidgetState extends State<ChartWidget> {
       coordinates = coordinates.map((e) => FlSpot(double.parse((e.x / maxHoursForStat).toStringAsFixed(5)), e.y)).toList();
     } else {
       if (coordinates.last.x * maxHoursForStat > maxX) {
-        Helper.alert(context: context, content: 'Текущая статистика вышла за диапазон одного часа. Уменьшить масштаб нельзя.');
+        Helper.alert(context: context, content: Lang.text('Текущая статистика вышла за диапазон одного часа. Уменьшить масштаб нельзя.'));
         return;
       }
       currentScaleX = scaleXOneHour;
@@ -186,7 +186,7 @@ class _ChartWidgetState extends State<ChartWidget> {
               children: [
                 currentScaleX == scaleXOneHour ? const Icon(Icons.arrow_forward, color: Colors.black, size: 24) 
                   : const Icon(Icons.arrow_back, color: Colors.black, size: 24) ,
-                Text(currentScaleX == scaleXOneHour ? '$maxHoursForStatч' : '1ч', 
+                Text(currentScaleX == scaleXOneHour ? maxHoursForStat.toString() + Lang.text('ч.') : '1${Lang.text('ч.')}', 
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
@@ -195,9 +195,9 @@ class _ChartWidgetState extends State<ChartWidget> {
         ),
         Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Text('График температуры', style: TextStyle(fontSize: 15)),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(Lang.text('График температуры'), style: const TextStyle(fontSize: 15)),
             ),
             Flexible(
               flex: 16,
@@ -382,14 +382,14 @@ class _ChartWidgetState extends State<ChartWidget> {
     if (!isRunning && _duration.inSeconds == 0) {
       return InkResponse(
         onTap: _startTimer,
-        child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'Старт'),
+        child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: Lang.text('Старт')),
       );
     }
 
     if (isRunning) {
       return InkResponse(
         onTap: () => _stopTimer(reset: false),
-        child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: 'Пауза'),
+        child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: Lang.text('Пауза')),
       );
     }
 
@@ -398,12 +398,12 @@ class _ChartWidgetState extends State<ChartWidget> {
       children: [
         InkResponse(
           onTap: () => _startTimer(),
-          child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: 'Продолж.'),
+          child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: Lang.text('Продолж.')),
         ),
         const SizedBox(width: 15),
         InkResponse(
           onTap: () => _stopTimer(reset: true),
-          child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: 'Сбросить'),
+          child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: Lang.text('Сбросить')),
         ),
       ],
     );

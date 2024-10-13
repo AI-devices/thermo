@@ -42,7 +42,7 @@ class __TimerWidgetState extends State<TimerWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('Таймер', style: TextStyle(fontSize: 18)),
+          Text(Lang.text('Таймер'), style: const TextStyle(fontSize: 18)),
           Flexible(
             flex: 2,
             child: Center(child: buildTime())
@@ -96,23 +96,23 @@ class __TimerWidgetState extends State<TimerWidget> {
           isRunning
           ? InkResponse(
             onTap: () => _stopTimer(reset: false),
-            child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: 'Стоп'),
+            child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: Lang.text('Стоп')),
           )
           : InkResponse(
             onTap: () => _startTimer(),
-            child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: 'Продолж.'),
+            child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: Lang.text('Продолж.')),
           ),
           const SizedBox(width: 20
           ),
           InkResponse(
             onTap: () => _stopTimer(reset: true),
-            child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: 'Сбросить'),
+            child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: Lang.text('Сбросить')),
           ),
         ],
       )
       : InkResponse(
         onTap: _startTimer,
-        child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'Начать'),
+        child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: Lang.text('Начать')),
       );
   }
 }

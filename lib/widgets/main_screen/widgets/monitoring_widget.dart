@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:thermo/widgets/assets.dart';
@@ -107,7 +108,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
           Icon(Icons.error_outline, color: AppStyle.pinkColor, size: Adaptive.icon(62, context)),
           Padding(
             padding: const EdgeInsets.fromLTRB(2, 10, 2, 0),
-            child: Text('Ожидается подключение к датчику', 
+            child: Text(Lang.text('Ожидается подключение к датчику'), 
               textAlign: TextAlign.center, 
               style: TextStyle(color: AppStyle.pinkColor, fontSize: Adaptive.text(14, context))
             ),

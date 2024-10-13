@@ -172,7 +172,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       return Helper.alert(
         choice: true,
         context: context, 
-        content: 'У приложения нет доступа к отправке уведомлений. Вы можете дать разрешение в настройках. Хотите это сделать?', 
+        content: Lang.text('У приложения нет доступа к отправке уведомлений. Вы можете дать разрешение в настройках. Хотите это сделать?'), 
         confirmAction: () {
           Navigator.of(context).pop();
           openAppSettings();
@@ -192,9 +192,9 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         padding: const EdgeInsets.all(10.0),
         child: ListView(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(5.0),
-              child: Text('Настройки', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text(Lang.text('Настройки'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
             ),
             _notifyWhenTempDrops(),
             _notifyWhenTimerEnds(),
@@ -446,7 +446,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(flex: 6, child: Text('Отображение температуры в фоновом режиме приложения', style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(flex: 6, child: Text(Lang.text('Отображение температуры в фоновом режиме приложения'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
             Flexible(
               flex: 4, 
               child: Helper.switcher(value: Settings.allowLocalNotifications, action: (value) => changeLocalNotifications(value))

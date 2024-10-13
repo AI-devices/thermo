@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/local_notification.dart';
 import 'package:thermo/components/permissions.dart';
 import 'package:thermo/components/styles.dart';
@@ -131,18 +132,18 @@ class _InitWidgetState extends State<InitWidget> {
         bottomNavigationBar: BottomNavigationBar(
           //iconSize: 24,
           currentIndex: _selectedTab,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.timer_outlined),
-              label: 'Таймер',
+              icon: const Icon(Icons.timer_outlined),
+              label: Lang.text('Таймер'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Главный',
+              icon: const Icon(Icons.home),
+              label: Lang.text('Главный'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Настройки',
+              icon: const Icon(Icons.settings),
+              label: Lang.text('Настройки'),
             ),
           ],
           onTap: onSelectTab,
