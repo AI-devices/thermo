@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:thermo/widgets/assets.dart';
@@ -21,7 +24,7 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
   double? currentTemperature;
   double? previousTemperature;
   double diff = 0.0;
-  Icon? diffIcon;
+  SvgPicture diffIcon = AppAssets.arrowRight;
 
   double positionFlaskDivider = 0.0; //0.16 это самый верх колбы в нашем случае, 0.0 - низ
 
@@ -63,15 +66,26 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
 
       final currentDiff = (currentTemperature! - previousTemperature!) * 12; //помножаем на 12 прогнозируя разницу температур за минуту (таймер 5 сек)
       
-      if (currentDiff > 0 && currentDiff > diff)  {
-        diffIcon = const Icon(Icons.keyboard_double_arrow_up, size: 24);
-      } else if (currentDiff > 0 && currentDiff < diff) {
-        diffIcon = const Icon(Icons.keyboard_arrow_up, size: 24);
-      } else if (currentDiff < 0 && currentDiff > diff) {
-        diffIcon = const Icon(Icons.keyboard_double_arrow_down, size: 24);
-      } else {
-        diffIcon = const Icon(Icons.keyboard_arrow_down, size: 24);
+      if (currentDiff == 0)  {
+        diffIcon = AppAssets.arrowRight;
+      } else if (currentDiff > 3.375)  {
+        diffIcon = AppAssets.arrowUp4;
+      } else if (currentDiff > 2.25) {
+        diffIcon = AppAssets.arrowUp3;
+      } else if (currentDiff > 1.125) {
+        diffIcon = AppAssets.arrowUp2;
+      } else if (currentDiff > 0) {
+        diffIcon = AppAssets.arrowUp1;
+      } else if (currentDiff < 3.375) {
+        diffIcon = AppAssets.arrowDown4;
+      } else if (currentDiff < 2.25) {
+        diffIcon = AppAssets.arrowDown3;
+      } else if (currentDiff < 1.125) {
+        diffIcon = AppAssets.arrowDown2;
+      } else if (currentDiff < 0) {
+        diffIcon = AppAssets.arrowDown1;
       }
+
       diff = double.parse(currentDiff.toStringAsFixed(1)).abs();
       previousTemperature = currentTemperature;
       setState(() {});
@@ -88,129 +102,100 @@ class _MonitoringWidgetState extends State<MonitoringWidget> {
   @override
   Widget build(BuildContext context) {
     if (currentTemperature == null) {
-      return const Column(
+      return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, color: Colors.red, size: 30),
+          Icon(Icons.error_outline, color: AppStyle.pinkColor, size: Adaptive.icon(62, context)),
           Padding(
-            padding: EdgeInsets.fromLTRB(2, 10, 2, 0),
-            child: Text('Ожидается подключение к датчику', textAlign: TextAlign.center),
+            padding: const EdgeInsets.fromLTRB(2, 10, 2, 0),
+            child: Text(Lang.text('Ожидается подключение к датчику'), 
+              textAlign: TextAlign.center, 
+              style: TextStyle(color: AppStyle.pinkColor, fontSize: Adaptive.text(14, context))
+            ),
           )
         ],
       );
     }
-    return Container(
-      decoration: BoxDecoration(
-        color: AppStyle.getColorByTemp(temperature: currentTemperature),
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Container(
-                height: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black.withOpacity(0.6)),
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [
-                      0.1,
-                      0.5,
-                      0.9,
-                    ],
-                    colors: [
-                      Colors.red,
-                      Colors.yellow,
-                      Colors.blue,
-                    ],
-                  )
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider),
-                  child: const Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Divider(color: Colors.black, thickness: 3)
-                  ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              height: double.infinity,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black.withOpacity(0.6)),
+                borderRadius: BorderRadius.circular(10),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [
+                    0.1,
+                    0.5,
+                    0.9,
+                  ],
+                  colors: [
+                    Colors.red,
+                    Colors.yellow,
+                    Colors.blue,
+                  ],
+                )
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider),
+                child: const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Divider(color: Colors.black, thickness: 3)
                 ),
               ),
             ),
-            Expanded(
-              flex: 10,
+          ),
+          Expanded(
+            flex: 1,
+            child: SizedBox(
+              height: double.infinity,
               child: Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                        children: [
-                          TextSpan(
-                            text: currentTemperature?.toStringAsFixed(1),
-                            style: const TextStyle(fontSize: 25)
-                          ),
-                          const TextSpan(
-                            text: Helper.celsius,
-                            style: TextStyle(fontSize: 16)
-                          )
-                        ],
-                      ),
-                    ),
-                    
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: (diffIcon != null && diff != 0.0) ? diffIcon! : const SizedBox(),
-                        ),
-                        Flexible(
-                          flex: 3,
-                          child: Text(diff.toString(), style: const TextStyle(
-                            color: Colors.black, 
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24
-                          )),
-                        ),
-                        const SizedBox(width: 2),
-                        Flexible(
-                          flex: 1,
-                          child: SizedBox(
-                            width: 17,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 3),
-                              child: AppAssets.iconDelta,
-                            ),
-                          ),
-                        )
-                        /*const SizedBox(width: 5),
-                        const Flexible(
-                          flex: 1,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(Helper.celsius, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                              Divider(color: Colors.black, height: 0),
-                              Text('мин', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                            ],
-                          ),
-                        )*/
-                      ],
-                    )
-                  ],
+                //? 3 небольшая корректировка относительно Divider(а) слева от этой иконки
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * positionFlaskDivider - 3),
+                child: const Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Icon(Icons.navigate_before)
                 ),
-              )
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: AppStyle.getDecorMainContainerByTemp(temp: currentTemperature!),
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      children: [
+                        TextSpan(
+                          text: currentTemperature?.toStringAsFixed(1),
+                          style: const TextStyle(fontSize: 26)
+                        ),
+                        const TextSpan(
+                          text: Helper.celsius,
+                          style: TextStyle(fontSize: 26)
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 40, height: 30, child: diffIcon)
+              ],
             )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 import 'package:thermo/widgets/assets.dart';
@@ -105,7 +106,7 @@ class __CountDownWidgetState extends State<CountDownWidget> {
 
   void _onCompleted() {
     if (_isRunning == true) {
-      Helper.viewSnackBar(context: context, text: 'Таймер завершился!', icon: const Icon(Icons.lock_clock, color: Colors.green));
+      Helper.viewSnackBar(context: context, text: Lang.text('Таймер завершился!'), icon: const Icon(Icons.lock_clock, color: AppStyle.mainColor));
       _isRunning = false;
       setState(() {});
     }
@@ -133,14 +134,32 @@ class __CountDownWidgetState extends State<CountDownWidget> {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: AlertDialog(
+            titlePadding: const EdgeInsets.all(0),
+            title: Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
+              ),
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Установите таймер'),
+                Text(Lang.text('Установите обратный таймер'), style: const TextStyle(fontSize: 16)),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
                   child: TextField(
-                    decoration: const InputDecoration(hintText: '00:00:00'),
+                    enableInteractiveSelection: false,
+                    cursorColor: AppStyle.mainColor,
+                    style: const TextStyle(color: AppStyle.mainColor),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: AppStyle.mainColor, width: 2)
+                      ),
+                      hintText: '00:00:00'
+                    ),
                     //initialValue: '00:15:00',
                     autofocus: true,
                     inputFormatters: [MaskTextInputFormatter(mask: '##:##:##', filter: { '#': RegExp(r'[0-9]') })],
@@ -164,7 +183,12 @@ class __CountDownWidgetState extends State<CountDownWidget> {
                           _setTimer(e);
                           Navigator.of(context).pop();
                         }, 
-                        child: Text(e, style: const TextStyle(decoration: TextDecoration.underline)))).toList()
+                        child: Text(e, style: const TextStyle(
+                          decoration: TextDecoration.underline, 
+                          color: AppStyle.mainColor,
+                          fontSize: 17
+                        ))
+                      )).toList()
                   ),
                 ),
               ],
@@ -182,27 +206,31 @@ class __CountDownWidgetState extends State<CountDownWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.4,
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: AppStyle.decorMainCotnainers,
+      decoration: AppStyle.decorMainContainer,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Text(Lang.text('Обратный таймер'), style: const TextStyle(fontSize: 18)),
           Flexible(
             flex: 2,
             child: InkResponse(
               onTap: _dialogSetTimer,
               child: CircularCountDownTimer(
+                strokeCap: StrokeCap.round,
+                strokeWidth: 15,
                 //key: UniqueKey(),
                 textFormat: CountdownTextFormat.HH_MM_SS,
                 duration: _durationCircular,
                 isReverse: true,
                 controller: _controller,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                textStyle: const TextStyle(fontSize: 20),
-                ringColor: Colors.grey[300]!,
-                fillColor: Colors.green,
+                width: MediaQuery.of(context).size.width * 0.45,
+                height: MediaQuery.of(context).size.height * 0.45,
+                textStyle: const TextStyle(fontSize: 26),
+                ringColor: Colors.white,
+                fillColor: AppStyle.mainColor,
                 autoStart: false,
                 timeFormatterFunction: (defaultFormatterFunction, duration) {
                   if (duration.inSeconds == 0) {
@@ -218,7 +246,10 @@ class __CountDownWidgetState extends State<CountDownWidget> {
           ),
           Flexible(
             flex: 1,
-            child: buildButtons(),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: buildButtons(),
+            ),
           ),
         ],
       ),
@@ -229,38 +260,27 @@ class __CountDownWidgetState extends State<CountDownWidget> {
     
     return _isRunning || _isPause
      ? Row(
-       mainAxisAlignment: MainAxisAlignment.center,
-       children: [
-         Expanded(
-           child: MaterialButton( 
-             height: 32.0, 
-             minWidth: 70.0, 
-             color: _isRunning ? Colors.black : Colors.green, 
-             textColor: Colors.white,
-             onPressed: () => _isRunning ? _stopTimer(reset: false) : _resumeTimer(), 
-             child: _isRunning ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
-           ),
-         ),
-         const SizedBox(width: 12),
-         Expanded(
-           child: MaterialButton( 
-             height: 32.0, 
-             minWidth: 70.0, 
-             color: Colors.red, 
-             textColor: Colors.white, 
-             onPressed: () => _stopTimer(reset: true),
-             child: const Icon(Icons.stop),
-           ),
-         ),
-       ],
-     )
-    : MaterialButton( 
-        height: 32.0, 
-        minWidth: 70.0, 
-        color: Colors.green, 
-        textColor: Colors.white, 
-        onPressed: _startTimer, 
-        child: const Icon(Icons.play_arrow),
-      );  
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _isRunning
+        ? InkResponse(
+          onTap: () => _stopTimer(reset: false),
+          child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: Lang.text('Пауза')),
+        )
+        : InkResponse(
+          onTap: () => _resumeTimer(),
+          child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: Lang.text('Продолж.')),
+        ),
+        const SizedBox(width: 20),
+        InkResponse(
+          onTap: () => _stopTimer(reset: true),
+          child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: Lang.text('Сбросить')),
+        ),
+      ],
+    )
+    : InkResponse(
+      onTap: _startTimer,
+      child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: Lang.text('Начать')),
+    );  
   }
 }

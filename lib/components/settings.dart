@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/widgets/assets.dart';
 import 'package:vibration/vibration.dart';
@@ -15,7 +17,6 @@ abstract class Settings {
   
   static bool envDebug = false;
   static late int maxHoursForChart;
-  static VoidCallback? maxHoursForChartChanged;
   
   static late List<FlSpot> coordinatesChart;
   static setCoordinatesChart(List<FlSpot> coordinates) {
@@ -33,7 +34,8 @@ abstract class Settings {
   static late String notifyWhenTimerEnds;
   static late double calibrationSensor;
   static late bool hidePercentSpiritWidget;
-  static VoidCallback? hidePercentSpiritWidgetChanged;
+  static final controllerHidePercentSpiritWidget = StreamController<void>.broadcast();
+  static Stream<void> get hidePercentSpiritWidgetStream => controllerHidePercentSpiritWidget.stream;
   static late Map<String, dynamic> alarmLowBatteryCharge;
   static late bool wakelock;
   static late bool alarmSensorDissconnected;

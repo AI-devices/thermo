@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/components/styles.dart';
 
@@ -15,10 +18,12 @@ class ChartWidget extends StatefulWidget {
 }
 
 class _ChartWidgetState extends State<ChartWidget> {
+  final _dataProvider = DataProvider();
+  double maxHoursForChart = Settings.maxHoursForChart.toDouble();
+  
   final List<Color> gradientColors = [
-    Colors.blue,
-    Colors.orange,
-    Colors.red,
+    AppStyle.pinkColor.withOpacity(0.3),
+    AppStyle.pinkColor.withOpacity(0.01),
   ];
 
   StreamSubscription<double>? _temperatureSubscription;
@@ -48,11 +53,6 @@ class _ChartWidgetState extends State<ChartWidget> {
     _temperatureSubscription = ApiBluetooth.temperatureStream.listen((double temperature) => _currentTemperature = temperature);
     _setAxisX(init: true);
 
-    Settings.maxHoursForChartChanged ??= () {
-      _setAxisX(init: false);
-      setState(() {});
-    };
-
     /*WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_duration.inSeconds != 0) Notifier.snackBar(notify: Notify.lastChartIsLoaded);
     });*/
@@ -81,15 +81,21 @@ class _ChartWidgetState extends State<ChartWidget> {
 
     FlSpot flSpot = FlSpot(x, y > maxY ? maxY : y);
 
-    log(flSpot.props.toString());
-    coordinates.add(flSpot);
+    log(flSpot.props.toString(), name: 'flSpot');
+
+    if (coordinates.length == 1 && coordinates[0].x == 0 && coordinates[0].y == 0) {
+      coordinates = [flSpot];
+    } else {
+      coordinates.add(flSpot);
+    }
+    
     Settings.setCoordinatesChart(coordinates);
     setState(() {});
   }
 
   void _startTimer() {
     if (ApiBluetooth.statusSensor == false || _currentTemperature == null) {
-      Helper.alert(context: context, content: 'Нет подключения к датчику');
+      Helper.alert(context: context, content: Lang.text('Нет подключения к датчику'));
       return;
     }
     setState(() {});
@@ -134,7 +140,7 @@ class _ChartWidgetState extends State<ChartWidget> {
       coordinates = coordinates.map((e) => FlSpot(double.parse((e.x / maxHoursForStat).toStringAsFixed(5)), e.y)).toList();
     } else {
       if (coordinates.last.x * maxHoursForStat > maxX) {
-        Helper.alert(context: context, content: 'Текущая статистика вышла за диапазон одного часа. Уменьшить масштаб нельзя.');
+        Helper.alert(context: context, content: Lang.text('Текущая статистика вышла за диапазон одного часа. Уменьшить масштаб нельзя.'));
         return;
       }
       currentScaleX = scaleXOneHour;
@@ -148,11 +154,14 @@ class _ChartWidgetState extends State<ChartWidget> {
     setState(() {});
   }
 
+  String axisY2temp({required num axisY}) {
+    return (axisY / maxY * 125).toStringAsFixed(1);
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
     _temperatureSubscription?.cancel();
-    Settings.maxHoursForChartChanged = null;
     super.dispose();
   }
 
@@ -160,7 +169,13 @@ class _ChartWidgetState extends State<ChartWidget> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Text(Helper.celsius, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        const Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: Text(Helper.celsius, style: TextStyle(fontWeight: FontWeight.bold)),
+          )
+        ),
         Align(
           alignment: Alignment.bottomRight,
           child: TextButton(
@@ -169,10 +184,10 @@ class _ChartWidgetState extends State<ChartWidget> {
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                currentScaleX == scaleXOneHour ? const Icon(Icons.arrow_forward, color: AppStyle.barColor, size: 20) 
-                  : const Icon(Icons.arrow_back, color: AppStyle.barColor, size: 20) ,
-                Text(currentScaleX == scaleXOneHour ? '$maxHoursForStatч' : '1ч', 
-                  style: const TextStyle(color: AppStyle.barColor)
+                currentScaleX == scaleXOneHour ? const Icon(Icons.arrow_forward, color: Colors.black, size: 24) 
+                  : const Icon(Icons.arrow_back, color: Colors.black, size: 24) ,
+                Text(currentScaleX == scaleXOneHour ? maxHoursForStat.toString() + Lang.text('ч.') : '1${Lang.text('ч.')}', 
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
             )
@@ -180,10 +195,29 @@ class _ChartWidgetState extends State<ChartWidget> {
         ),
         Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(Lang.text('График температуры'), style: const TextStyle(fontSize: 15)),
+            ),
             Flexible(
-              flex: 5,
+              flex: 16,
               child: LineChart(
                 LineChartData(
+                  //? переопределяем в lineTouchData() подсказку при касании с координаты y на температуру
+                  lineTouchData: LineTouchData(
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map(
+                          (LineBarSpot touchedSpot) {
+                            return LineTooltipItem(
+                              (touchedSpot.y / maxY * 125).toStringAsFixed(1) + Helper.celsius,
+                              const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                            );
+                          },
+                        ).toList();
+                      },
+                    )
+                  ),
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: true,
@@ -191,14 +225,16 @@ class _ChartWidgetState extends State<ChartWidget> {
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return const FlLine(
-                        color: AppStyle.barColor,
-                        strokeWidth: 1,
+                        color: AppStyle.dottedColor,
+                        strokeWidth: 0.5,
+                        dashArray: [3, 3]
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return const FlLine(
-                        color: AppStyle.barColor,
-                        strokeWidth: 1,
+                        color: AppStyle.dottedColor,
+                        strokeWidth: 0.5,
+                        dashArray: [3, 3]
                       );
                     },
                   ),
@@ -229,7 +265,12 @@ class _ChartWidgetState extends State<ChartWidget> {
                   ),
                   borderData: FlBorderData(
                     show: true,
-                    border: Border.all(color: const Color(0xff37434d)),
+                    border: const Border(
+                      left: BorderSide(color: AppStyle.dottedColor), 
+                      bottom: BorderSide(color: AppStyle.dottedColor),
+                      top: BorderSide(width: 0.3, color: AppStyle.dottedColor), 
+                      right: BorderSide(width: 0.3, color: AppStyle.dottedColor), 
+                    )
                   ),
                   minX: 0,
                   maxX: maxX,
@@ -239,26 +280,18 @@ class _ChartWidgetState extends State<ChartWidget> {
                     LineChartBarData(
                       spots: coordinates,
                       isCurved: true,
-                      color: AppStyle.barColor,
-                      /*gradient: LinearGradient(
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topLeft,
-                        colors: gradientColors,
-                      ),*/
-                      barWidth: 5,
-                      isStrokeCapRound: true,
-                      dotData: const FlDotData(
-                        show: false,
-                      ),
+                      color: AppStyle.pinkColor,
+                      barWidth: 3,
+                      dotData: const FlDotData(show: false),
                       belowBarData: BarAreaData(
                         show: true,
-                        /*gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topLeft,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                           colors: gradientColors
-                              .map((color) => color.withOpacity(0.3))
+                              .map((color) => color)
                               .toList(),
-                        ),*/
+                        ),
                       ),
                     ),
                   ],
@@ -266,7 +299,11 @@ class _ChartWidgetState extends State<ChartWidget> {
               ),
             ),
             Flexible(
-              flex: 1,
+              flex: 5,
+              child: _maxHoursForStat()
+            ),
+            Flexible(
+              flex: 3,
               child: buildButtons()
             )
           ],
@@ -275,48 +312,101 @@ class _ChartWidgetState extends State<ChartWidget> {
     );
   }
 
-  Widget buildButtons() {
-    final isRunning = _timer != null && _timer!.isActive;
-
-    return isRunning || _duration.inSeconds != 0
-      ? SizedBox(
-        width: MediaQuery.of(context).size.width * 0.4,
-        child: Row(
-            //mainAxisAlignment: MainAxisAlignment.end,
+  Widget _maxHoursForStat() {
+    return Row(
+      children: [
+        Flexible(
+          flex: 1,
+          child: Text(Lang.text('Максимальный масштаб статистики (%s ч.)', [maxHoursForChart.round()]), 
+            style: TextStyle(fontSize: Adaptive.text(12, context))
+          ) 
+        ),
+        Flexible(
+          flex: 1,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: MaterialButton(
-                  height: 32.0, 
-                  minWidth: 70.0, 
-                  color: isRunning ? Colors.black : Colors.green, 
-                  textColor: Colors.white,
-                  onPressed: () => isRunning ? _stopTimer(reset: false) : _startTimer(), 
-                  child: isRunning ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+              SliderTheme(
+                data: SliderThemeData(
+                  trackHeight: 5.0, 
+                  overlayShape: SliderComponentShape.noOverlay,
+                  showValueIndicator: ShowValueIndicator.always,
+                  thumbColor: AppStyle.mainColor,
+                  activeTrackColor: AppStyle.mainColor,
+                ),
+                child: Slider(
+                  inactiveColor: Colors.grey.shade400,
+                  value: maxHoursForChart,
+                  min: 2,
+                  max: 9,
+                  divisions: 7,
+                  label: maxHoursForChart.toDouble().round().toString(),
+                  onChanged: (double value) {
+                    maxHoursForChart = value;
+                    setState(() {});
+                  },
+                  onChangeEnd: (double value) {
+                    _dataProvider.setMaxHoursForStat(value.round());
+                    Settings.maxHoursForChart = value.round();
+                    _setAxisX(init: false);
+                    setState(() {});
+                  },
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: MaterialButton( 
-                  height: 32.0, 
-                  minWidth: 70.0, 
-                  color: Colors.red, 
-                  textColor: Colors.white, 
-                  onPressed: () => _stopTimer(reset: true),
-                  child: const Icon(Icons.stop), 
+              Padding(
+                padding:  const EdgeInsets.symmetric(horizontal: 9.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('2', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 2 ? Colors.black : Colors.grey)),
+                    Text('3', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 3 ? Colors.black : Colors.grey)),
+                    Text('4', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 4 ? Colors.black : Colors.grey)),
+                    Text('5', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 5 ? Colors.black : Colors.grey)),
+                    Text('6', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 6 ? Colors.black : Colors.grey)),
+                    Text('7', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 7 ? Colors.black : Colors.grey)),
+                    Text('8', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 8 ? Colors.black : Colors.grey)),
+                    Text('9', style: TextStyle(fontSize: Adaptive.text(12, context), color: maxHoursForChart == 9 ? Colors.black : Colors.grey)),
+                  ],
                 ),
               ),
             ],
           ),
-      )
+        ),
+      ],
+    );
+  }
 
-      : MaterialButton( 
-          height: 32.0, 
-          minWidth: 70.0, 
-          color: Colors.green, 
-          textColor: Colors.white, 
-          onPressed: _startTimer, 
-          child: const Icon(Icons.play_arrow), 
-        );
+  Widget buildButtons() {
+    final isRunning = _timer != null && _timer!.isActive;
+
+    if (!isRunning && _duration.inSeconds == 0) {
+      return InkResponse(
+        onTap: _startTimer,
+        child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: Lang.text('Старт')),
+      );
+    }
+
+    if (isRunning) {
+      return InkResponse(
+        onTap: () => _stopTimer(reset: false),
+        child: AppStyle.getButton(color: AppStyle.colorButtonOrange, text: Lang.text('Пауза')),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        InkResponse(
+          onTap: () => _startTimer(),
+          child: AppStyle.getButton(color: AppStyle.colorButtonBlue, text: Lang.text('Продолж.')),
+        ),
+        const SizedBox(width: 15),
+        InkResponse(
+          onTap: () => _stopTimer(reset: true),
+          child: AppStyle.getButton(color: AppStyle.colorButtonRed, text: Lang.text('Сбросить')),
+        ),
+      ],
+    );
   }
 
   Widget bottomTitleWidgetsScaleHour(double value, TitleMeta meta) {
@@ -338,7 +428,7 @@ class _ChartWidgetState extends State<ChartWidget> {
       case 12:
         text = const Text('60', style: style); break;
       case 14:
-        text = const Text('min', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)); break;
+        text = const Text('min', style: TextStyle(fontWeight: FontWeight.bold)); break;
       default:
         text = const Text('', style: style); break;
     }

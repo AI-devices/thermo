@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:thermo/components/adaptive.dart';
 import 'package:thermo/components/data_provider.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/local_notification.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
@@ -18,24 +21,24 @@ class SettingsWidget extends StatefulWidget {
 }
 
 class _SettingsWidgetState extends State<SettingsWidget> {
+  StreamSubscription<void>? hidePercentSpiritWidgetSubscription;
   final _dataProvider = DataProvider();
-  double maxHoursForStat = Settings.maxHoursForChart.toDouble();
+  final TextEditingController _lowBatteryChargeTextController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     Settings.notifyWhenTempDropsChanged ??= () => setState(() {});
-  }
-
-  void onChangedHours(double value) {
-      maxHoursForStat = value;
+    hidePercentSpiritWidgetSubscription = Settings.hidePercentSpiritWidgetStream.listen((_){
       setState(() {});
+    });
+    _lowBatteryChargeTextController.text = Settings.alarmLowBatteryCharge['percent_charge'];
   }
 
-  void onChangedHoursEnd(double value) {
-    _dataProvider.setMaxHoursForStat(value.round());
-    Settings.maxHoursForChart = value.round();
-    Settings.maxHoursForChartChanged?.call();
+  @override
+  void dispose() {
+    hidePercentSpiritWidgetSubscription?.cancel();
+    super.dispose();
   }
 
   void changeNotifyWhenTempDrops() {
@@ -53,13 +56,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   void changeCalibrationSensor({required String action}) {
     if (action == 'sub') {
       if (Settings.calibrationSensor <= -5.0) {
-        Helper.alert(context: context, content: 'Достигнуто минимальное значение калибровки');
+        Helper.alert(context: context, content: Lang.text('Достигнуто минимальное значение калибровки'));
         return;
       }
       Settings.calibrationSensor = double.parse((Settings.calibrationSensor - 0.1).toStringAsFixed(1));
     } else {
       if (Settings.calibrationSensor >= 5.0) {
-        Helper.alert(context: context, content: 'Достигнуто максимальное значение калибровки');
+        Helper.alert(context: context, content: Lang.text('Достигнуто максимальное значение калибровки'));
         return;
       }
       Settings.calibrationSensor = double.parse((Settings.calibrationSensor + 0.1).toStringAsFixed(1));
@@ -70,9 +73,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   void changeVisibilityPercentSpiritWidget() {
     Settings.hidePercentSpiritWidget = !Settings.hidePercentSpiritWidget;
-    Settings.hidePercentSpiritWidgetChanged?.call();
     _dataProvider.setHidePercentSpiritWidget();
-    setState(() {});
+    Settings.controllerHidePercentSpiritWidget.add(null);
   }
 
   changeNotifyAlarmLowBatteryCharge(bool value) {
@@ -80,27 +82,46 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       _setAlarmLowBatteryCharge(on: value);
     } else {
       return showDialog<dynamic>(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
             child: AlertDialog(
+              titlePadding: const EdgeInsets.all(0),
+              title: Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, color: AppStyle.greyColor, size: 38)
+                ),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Укажите процент заряда датчика для уведомления'),
+                  Text(Lang.text('Укажите процент заряда датчика для уведомления')),
                   TextFormField(
+                    controller: _lowBatteryChargeTextController,
+                    cursorColor: AppStyle.mainColor,
+                    style: const TextStyle(color: AppStyle.mainColor),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(2)
                     ],
-                    decoration: const InputDecoration(hintText: "20 %"),
-                    initialValue: Settings.alarmLowBatteryCharge['percent_charge'],
+                    enableInteractiveSelection: false,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: AppStyle.mainColor, width: 2)
+                      ),
+                      hintText: "20 %"
+                    ),
                     autofocus: true,
                     keyboardType: TextInputType.number,
                     onFieldSubmitted: (value) {
                       Navigator.of(context).pop();
-                      if (value != '') _setAlarmLowBatteryCharge(on: true, percentBatteryCharge: value);
+                      if (value != '') _setAlarmLowBatteryCharge(on: true);
                     },
                   )
                 ],
@@ -108,6 +129,15 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10) 
               ),
+              actions: <Widget>[
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    if (_lowBatteryChargeTextController.text != '') _setAlarmLowBatteryCharge(on: true);
+                  },
+                  child: AppStyle.getButton(color: AppStyle.colorButtonGreen, text: 'OK')
+                ),
+              ],
             )
           );
         },
@@ -115,9 +145,11 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     }
   }
 
-  _setAlarmLowBatteryCharge({required bool on, String? percentBatteryCharge}) {
+  _setAlarmLowBatteryCharge({required bool on}) {
     Settings.alarmLowBatteryCharge['on'] = on;
-    if (percentBatteryCharge != null) Settings.alarmLowBatteryCharge['percent_charge'] = percentBatteryCharge;
+    if (Settings.alarmLowBatteryCharge['on'] == true) {
+      Settings.alarmLowBatteryCharge['percent_charge'] = _lowBatteryChargeTextController.text;
+    }
     _dataProvider.setAlarmLowBatteryCharge();
     setState(() {});
   }
@@ -137,14 +169,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   void changeLocalNotifications(bool value) async {
     if (value == true && Settings.notificationIsEnabled == false) {
-      return Helper.confirm(
+      return Helper.alert(
+        choice: true,
         context: context, 
-        content: 'У приложения нет доступа к отправке уведомлений. Вы можете дать разрешение в настройках. Хотите это сделать?', 
-        cancelAction: () => Navigator.of(context).pop(), 
+        content: Lang.text('У приложения нет доступа к отправке уведомлений. Вы можете дать разрешение в настройках. Хотите это сделать?'), 
         confirmAction: () {
           Navigator.of(context).pop();
           openAppSettings();
-          Helper.alert(context: context, content: 'После включения уведомлений нужно будет перезапустить приложение и включить еще раз настройку');
         }, 
       );
     }
@@ -158,308 +189,270 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(10.0),
         child: ListView(
           children: [
-            _maxHoursForStat(),
-            const Divider(color: Colors.black),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text(Lang.text('Настройки'), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
+            ),
             _notifyWhenTempDrops(),
-            const Divider(color: Colors.black),
             _notifyWhenTimerEnds(),
-            const Divider(color: Colors.black),
             _calibrationSensor(),
-            const Divider(color: Colors.black),
             _percentSpirit(),
-            const Divider(color: Colors.black),
             _alarmLowBatteryCharge(),
-            const Divider(color: Colors.black),
             _wakelock(),
-            const Divider(color: Colors.black),
             _alarmSensorDissconnected(),
-            const Divider(color: Colors.black),
             _localNotifications(),
-            const Divider(color: Colors.black),
           ],
         ),
       ),
     );
   }
 
-  Row _maxHoursForStat() {
-    return Row(
-            children: [
-              Flexible(
-                flex: 6,
-                child: Text('Максимальный масштаб статистики (${maxHoursForStat.round()} ч.)')
-              ),
-              const SizedBox(width: 10),
-              Flexible(
-                flex: 5,
-                child: Column(
-                  children: [
-                    SliderTheme(
-                      data: const SliderThemeData(
-                        showValueIndicator: ShowValueIndicator.always,
-                        thumbColor: AppStyle.barColor,
-                        activeTrackColor: AppStyle.barColor,
-                      ),
-                      child: Slider(
-                        inactiveColor: Colors.grey.shade400,
-                        value: maxHoursForStat,
-                        min: 2,
-                        max: 9,
-                        divisions: 9,
-                        label: maxHoursForStat.round().toString(),
-                        onChanged: onChangedHours,
-                        onChangeEnd: onChangedHoursEnd,
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 22.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-                        children: [
-                          Text('2',
-                            style: TextStyle(fontSize: 13, color: Colors.grey)),
-                          Text('9',
-                            style: TextStyle(fontSize: 13, color: Colors.grey)),
-                        ],
-                      ),
-                    ),
-                  ],
+  Padding _notifyWhenTempDrops() {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 68,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(flex: 7, child: Text(Lang.text('Сигнал при падении температуры в течение 5 секунд'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(
+              flex: 4, 
+              child: Container(
+                height: double.infinity,
+                width: 50,
+                decoration: AppStyle.decorMainContainer,
+                child: IconButton(
+                  icon: Notifier.getNotifyIcon(type: Settings.notifyWhenTempDrops, context: context), 
+                  onPressed: changeNotifyWhenTempDrops,
                 ),
-              ),
-            ],
-          );
-  }
-
-  Row _notifyWhenTempDrops() {
-    return Row(
-      children: [
-        const Flexible(
-          flex: 6,
-          child: Text('Сигнал при падении температуры в течение 5 сек.')
+              )
+            ),
+            
+          ],
         ),
-        const SizedBox(width: 10),
-        Flexible(
-          flex: 5,
-          child: InkResponse(
-            onTap: changeNotifyWhenTempDrops,
-            child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTempDrops, size: 30, color: AppStyle.barColor))
-          )
-        )
-      ],
+      ),
     );
   }
 
   Padding _notifyWhenTimerEnds() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 6,
-            child: Text('Сигнал при завершении таймера')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: InkResponse(
-              onTap: changeNotifyWhenTimerEnds,
-              child: Center(child: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds, size: 30, color: AppStyle.barColor))
-            )
-          )
-        ],
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 68,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(flex: 6, child: Text(Lang.text('Сигнал при завершении таймера'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(
+              flex: 4, 
+              child: Container(
+                height: double.infinity,
+                width: 50,
+                decoration: AppStyle.decorMainContainer,
+                child: IconButton(
+                  icon: Notifier.getNotifyIcon(type: Settings.notifyWhenTimerEnds, context: context), 
+                  onPressed: changeNotifyWhenTimerEnds,
+                ),
+              )
+            ),
+            
+          ],
+        ),
       ),
     );
   }
 
   Padding _calibrationSensor() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Flexible(
-            fit: FlexFit.tight,
-            flex: 4,
-            child: Row(
-              children: [
-                const Expanded(child: Text('Калибровка датчика')),
-                IconButton(
-                  onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.'),
-                  icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
-                )
-              ],
-            )
-          ),
-          const SizedBox(width: 15),
-          Flexible(
-            flex: 1,
-            child: InkResponse(
-              onTap: () => changeCalibrationSensor(action: 'sub'),
-              child: const Text(Helper.minus, style: TextStyle(fontSize: 30))
-            )
-          ),
-          Flexible(
-            flex: 1,
-            fit: FlexFit.tight,
-            child: Text(Settings.calibrationSensor.toString(), textAlign: TextAlign.right, style: const TextStyle(fontSize: 18))
-          ),
-          Flexible(
-            flex: 1,
-            fit: FlexFit.tight,
-            child: Align(
-              alignment: Alignment.center,
-              child: InkResponse(
-                onTap: () => changeCalibrationSensor(action: 'add'),
-                child: const Text(Helper.plus, style: TextStyle(fontSize: 30))
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 68,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(flex: 2, child: Text(Lang.text('Калибровка датчика'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(
+              flex: 1,
+              child: IconButton(
+                onPressed: () => Helper.alert(context: context, title: Lang.text('Пояснение'), content: Lang.text('Повышает или снижает показания датчика в приложении на указанное значение. Показания на экране датчика не корректируются.')),
+                icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30, context))
               ),
-            )
-          ),
-        ],
+            ),
+            Flexible(
+              flex: 5,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    height: 43,
+                    width: 43,
+                    decoration: AppStyle.decorMainContainer,
+                    child: IconButton(
+                      icon: const Icon(Icons.remove), 
+                      onPressed: () => changeCalibrationSensor(action: 'sub'),
+                    ),
+                  ),
+                  SizedBox(width: MediaQuery.of(context).size.height * 0.01),
+                  Container(
+                    height: 43,
+                    width: MediaQuery.of(context).size.width * 0.12,
+                    decoration: AppStyle.decorMainCotnainerInset,
+                    child: Center(
+                      child: Text(
+                        Settings.calibrationSensor.toString(), 
+                        textAlign: TextAlign.right, 
+                        style: const TextStyle(fontSize: 18)
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: MediaQuery.of(context).size.height * 0.01),
+                  Container(
+                    height: 43,
+                    width: 43,
+                    decoration: AppStyle.decorMainContainer,
+                    child: IconButton(
+                      icon: const Icon(Icons.add), 
+                      onPressed: () => changeCalibrationSensor(action: 'add'),
+                    ),
+                  ),
+                ],
+              )
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Padding _percentSpirit() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 6,
-            child: Text('Cкрыть автоматический расчет спиртуозности')
-          ),
-          Flexible(
-            flex: 1,
-            child: IconButton(
-              onPressed: () => Helper.alert(context: context, title: 'Пояснение', content: 'Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.'),
-              icon: const Icon(Icons.question_mark, color: Color.fromARGB(255, 189, 188, 188))
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 68,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              flex: 7,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Flexible(child: Text(Lang.text('Cкрыть автоматический расчет спиртуозности'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
+                  IconButton(
+                    onPressed: () => Helper.alert(context: context, title: Lang.text('Пояснение'), content: Lang.text('Приблизительный расчет спиртуозности в кубе и в отборе по температуре при нагреве в перегонном кубе. Диапазон температуры от 79 до 99 градусов.')),
+                    icon: Icon(Icons.help_outline, color: AppStyle.greyColor, size: Adaptive.icon(30, context))
+                  )
+                ],
+              )
             ),
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 25),
-                child: Switch(
-                  //activeColor: AppStyle.barColor,
-                  value: Settings.hidePercentSpiritWidget,
-                  onChanged: (_) => changeVisibilityPercentSpiritWidget(),
-                ),
-              ),
-            )
-          )
-        ],
+            Flexible(
+              flex: 4, 
+              child: Helper.switcher(value: Settings.hidePercentSpiritWidget, action: (_) => changeVisibilityPercentSpiritWidget())
+            ),
+            
+          ],
+        ),
       ),
     );
   }
 
   Padding _alarmLowBatteryCharge() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Flexible(
-            flex: 6,
-            child: Text('Предупреждение при низком заряде датчика (<${Settings.alarmLowBatteryCharge['percent_charge']}%)')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Switch(
-                  value: Settings.alarmLowBatteryCharge['on'] as bool,
-                  onChanged: (value) => changeNotifyAlarmLowBatteryCharge(value),
-                ),
-              ),
-            )
-          )
-        ],
-      ),
-    );
-  }
-
-  Padding _alarmSensorDissconnected() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 6,
-            child: Text('Предупреждение при потере сигнала от датчика')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Switch(
-                  value: Settings.alarmSensorDissconnected,
-                  onChanged: (_) => changeAlarmSensorDissconnected(),
-                ),
-              ),
-            )
-          )
-        ],
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 68,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              flex: 6,
+              child: Text(Lang.text('Предупреждение при низком заряде датчика (<%s%)', [Settings.alarmLowBatteryCharge['percent_charge']]),
+                style: TextStyle(fontSize: Adaptive.text(14, context))
+              )
+            ),
+            Flexible(
+              flex: 4, 
+              child: Helper.switcher(value: Settings.alarmLowBatteryCharge['on'] as bool, action: (value) => changeNotifyAlarmLowBatteryCharge(value))
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Padding _wakelock() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 7,
-            child: Text('Не давать засыпать телефону')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Switch(
-                  value: Settings.wakelock,
-                  onChanged: (value) => changeWakelock(value),
-                ),
-              ),
-            )
-          )
-        ],
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 68,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(flex: 6, child: Text(Lang.text('Не давать засыпать телефону'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(
+              flex: 4, 
+              child: Helper.switcher(value: Settings.wakelock, action: (value) => changeWakelock(value))
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _alarmSensorDissconnected() {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 68,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(flex: 6, child: Text(Lang.text('Предупреждение при потере сигнала от датчика'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(
+              flex: 4, 
+              child: Helper.switcher(value: Settings.alarmSensorDissconnected, action: (_) => changeAlarmSensorDissconnected())
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Padding _localNotifications() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          const Flexible(
-            flex: 6,
-            child: Text('Отображение температуры в фоновом режиме приложения')
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            flex: 5,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Switch(
-                  value: Settings.allowLocalNotifications,
-                  onChanged: (value) => changeLocalNotifications(value),
-                ),
-              ),
-            )
-          )
-        ],
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        height: 68,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: AppStyle.decorMainContainer,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(flex: 6, child: Text(Lang.text('Отображение температуры в фоновом режиме приложения'), style: TextStyle(fontSize: Adaptive.text(14, context)))),
+            Flexible(
+              flex: 4, 
+              child: Helper.switcher(value: Settings.allowLocalNotifications, action: (value) => changeLocalNotifications(value))
+            ),
+          ],
+        ),
       ),
     );
   }

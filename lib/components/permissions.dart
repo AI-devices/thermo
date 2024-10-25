@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
 import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
 import 'package:vibration/vibration.dart';
@@ -14,21 +15,22 @@ abstract class DevicePermissions {
   static Future<bool> checkPermissions() async {
     AndroidDeviceInfo androidInfo = await _deviceInfo.androidInfo;
     log(androidInfo.version.release, name: 'version OS');
+    log('${androidInfo.displayMetrics.widthPx} px', name: 'screen width');
 
-    _notification();
-    _vibration();
+    await _notification();
+    await _vibration();
 
     //final ignoreBatteryPermission = await DevicePermissions._getPermission(Permission.ignoreBatteryOptimizations);
     if (await ApiBluetooth.isSupported() == false) return false;
 
-    return double.parse(androidInfo.version.release) < 12 ? _location() : _bluetooth();
+    return double.parse(androidInfo.version.release) < 12 ? await _location() : await _bluetooth();
   }
 
   static Future<bool> _bluetooth() async {
     final permission = await DevicePermissions._getPermission(Permission.bluetoothConnect);
     if (!permission.isGranted) {
       // ignore: use_build_context_synchronously
-      Helper.alert(context: navigatorKey.currentState!.context, content: 'Доступ к bluetooth запрещен. Установить соединение с датчиком невозможно');
+      Helper.alert(context: navigatorKey.currentState!.context, content: Lang.text('Доступ к bluetooth запрещен. Установить соединение с датчиком невозможно'));
       return false;
     }
     return true;
@@ -38,14 +40,14 @@ abstract class DevicePermissions {
     bool locationIsEnabled = await Geolocator.isLocationServiceEnabled();
     if (!locationIsEnabled) {
       // ignore: use_build_context_synchronously
-      Helper.alert(context: navigatorKey.currentState!.context, content: 'Включите передачу локации. Без этого bluetooth работать не будет.');
+      Helper.alert(context: navigatorKey.currentState!.context, content: Lang.text('Включите передачу локации. Без этого bluetooth работать не будет'));
       return false;
     }
 
     final permission = await DevicePermissions._getPermission(Permission.location);
     if (!permission.isGranted) {
       // ignore: use_build_context_synchronously
-      Helper.alert(context: navigatorKey.currentState!.context, content: 'Доступ к локации запрещен. Без этого bluetooth работать не будет.');
+      Helper.alert(context: navigatorKey.currentState!.context, content: Lang.text('Доступ к локации запрещен. Без этого bluetooth работать не будет'));
       return false;
     }
     return true;

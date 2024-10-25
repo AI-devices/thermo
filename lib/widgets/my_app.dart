@@ -13,19 +13,19 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Mir.Dev',
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          backgroundColor: AppStyle.backgroundColor,     
-        ),
+        scaffoldBackgroundColor: AppStyle.backgroundColor,
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: AppStyle.barColor,
+          backgroundColor: AppStyle.mainColor,
           selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.grey,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
+          unselectedItemColor: AppStyle.backgroundColor,
+          //showSelectedLabels: false,
+          //showUnselectedLabels: false,
         ),
       ),
-      home: const InitWidget(title: 'Main page'),
+      home: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1)), //? игнорируем размер текста, заданный на уровне ОС
+        child: const InitWidget(title: 'Main page')
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/local_notification.dart';
 import 'package:thermo/components/permissions.dart';
 import 'package:thermo/components/styles.dart';
@@ -8,7 +9,7 @@ import 'package:thermo/observers/observer_app_lifecycle.dart';
 import 'package:thermo/observers/observer_battery_charge.dart';
 import 'package:thermo/observers/observer_bluetooth_scaner.dart';
 import 'package:thermo/observers/observer_device_scaner.dart';
-import 'package:thermo/widgets/additional_screens/faq_widget.dart';
+import 'package:thermo/widgets/additional_screens/timers_widget.dart';
 import 'package:thermo/widgets/additional_screens/settings_widget.dart';
 import 'package:thermo/widgets/main_screen/main_widget.dart';
 
@@ -24,7 +25,7 @@ class InitWidget extends StatefulWidget {
 class _InitWidgetState extends State<InitWidget> {
   final ObserverAppLifecycle _lifecycleObserver = ObserverAppLifecycle();
   
-  int _selectedTab = 0;
+  int _selectedTab = 1;
   bool _tabChangedBySwipe = false;
 
   bool? bluetoothOn;
@@ -105,7 +106,7 @@ class _InitWidgetState extends State<InitWidget> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.045),
           child: AppBar(
-            backgroundColor: AppStyle.barColor,
+            backgroundColor: AppStyle.headerColor,
             actions: [
               AppStyle.getIconBluetooth(bluetoothOn),
               const SizedBox(width: 20),
@@ -123,26 +124,26 @@ class _InitWidgetState extends State<InitWidget> {
         body: IndexedStack(
           index: _selectedTab,
           children: const [
+            TimersWidget(),
             MainScreenWidget(),
-            SettingsWidget(),
-            FaqWidget(),
+            SettingsWidget()
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           //iconSize: 24,
           currentIndex: _selectedTab,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '',
+              icon: const Icon(Icons.timer_outlined),
+              label: Lang.text('Таймер'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: '',
+              icon: const Icon(Icons.home),
+              label: Lang.text('Главный'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.question_mark),
-              label: '',
+              icon: const Icon(Icons.settings),
+              label: Lang.text('Настройки'),
             ),
           ],
           onTap: onSelectTab,

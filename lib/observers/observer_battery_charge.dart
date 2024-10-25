@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
 import 'package:thermo/widgets/assets.dart';
@@ -47,28 +48,16 @@ class ObserverBatteryCharge {
 
     _player.play(AssetSource('../${AppAssets.alarmAudioLong}'));
 
-    showDialog<dynamic>(
+    Helper.alert(
       context: navigatorKey.currentState!.context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-          child: AlertDialog(
-            title: const Text('Предупреждение'),
-            content: Text('Низкий заряд батареи ($charge%)'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10) 
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _player.stop();
-                }, 
-                child: const Text('OK'))
-            ],
-          )
-        );
+      content: Lang.text('Низкий заряд батареи (%s%)', [charge]),
+      closeAction: () {
+        Navigator.of(navigatorKey.currentState!.context).pop();
+        _player.stop();
+      },
+      confirmAction: () {
+        Navigator.of(navigatorKey.currentState!.context).pop();
+        _player.stop();
       },
     );
   }

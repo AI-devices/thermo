@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth_v1.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth_v2.dart';
+import 'package:thermo/components/helper.dart';
+import 'package:thermo/components/lang.dart';
 import 'package:thermo/components/notifier.dart';
 import 'package:thermo/components/settings.dart';
 import 'package:thermo/main.dart';
@@ -101,28 +102,16 @@ class ApiBluetooth with ApiBluetoothV1, ApiBluetoothV2 {
     if (Navigator.of(navigatorKey.currentState!.context).canPop()) return;
     if (_player.state != PlayerState.playing) _player.play(AssetSource('../${AppAssets.alarmAudioLong}'));
 
-    showDialog<dynamic>(
-      barrierDismissible: false,
+    Helper.alert(
       context: navigatorKey.currentState!.context,
-      builder: (BuildContext context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-          child: AlertDialog(
-            title: const Text('Предупреждение'),
-            content: const Text('Потеряно соединение с термодатчиком'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10) 
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _player.stop();
-                }, 
-                child: const Text('OK'))
-            ],
-          )
-        );
+      content: Lang.text('Потеряно соединение с термодатчиком'),
+      closeAction: () {
+        Navigator.of(navigatorKey.currentState!.context).pop();
+        _player.stop();
+      },
+      confirmAction: () {
+        Navigator.of(navigatorKey.currentState!.context).pop();
+        _player.stop();
       },
     );
   }
