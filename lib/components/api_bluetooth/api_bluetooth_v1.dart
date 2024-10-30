@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:thermo/components/api_bluetooth/api_bluetooth.dart';
+import 'package:thermo/components/api_bluetooth/api_bluetooth_v2.dart';
 import 'package:thermo/components/helper.dart';
 import 'package:thermo/components/settings.dart';
 
@@ -23,6 +24,13 @@ mixin ApiBluetoothV1 {
     FlutterBluePlus.stopScan();
     log(r.toString(), name: ApiBluetooth.version.toString());
     if (!Settings.remoteIds.contains(r.device.remoteId.toString())) Settings.remoteIds.add(r.device.remoteId.toString());
+
+    //? т.к. новая версия не отдает сразу температуру, а только при изменении, то первый раз при подключении считываем с advertise
+    if (ApiBluetooth.version == ApiBluetoothVersion.version1newSensor) {
+      var result = ApiBluetoothV2.parseBytesFromAdvertise(r.advertisementData);
+      if (result['temperature'] != null) ApiBluetooth.controllerTemperature.add(result['temperature']);
+    }
+
     _listenConnect(deviceId: r.device.remoteId);
   }
 

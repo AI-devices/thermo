@@ -27,8 +27,8 @@ mixin ApiBluetoothV2 {
     if (r.timeStamp.difference(lastHandledDatetime).inSeconds <= 1) return; //считываем данные раз в секунду, тут сыпится очень много дублей
     lastHandledDatetime = r.timeStamp;
 
-    List<int>? dataInBytes = r.advertisementData.serviceData[r.advertisementData.serviceData.keys.first];
-    if (dataInBytes == null || dataInBytes.length != 6) return;
+    var result = parseBytesFromAdvertise(r.advertisementData);
+    if (result['temperature'] == null) return;
 
     if (ApiBluetooth.statusSensor == false) {
       ApiBluetooth.statusSensor = true;
@@ -37,17 +37,8 @@ mixin ApiBluetoothV2 {
       //Notifier.snackBar(notify: Notify.sensorConnected);
     }
 
-    /**
-     * пример dataInBytes : [64,2,54,11,1,87]
-     * 64 (0x40) ничего не значит или какой-то скрытый смысл
-     * 2  (0x02) следующие два байта указывают на температуру
-     * 54 (0x36) low byte
-     * 11 (0xb)  high byte
-     * 1  (0x01) следующий один байт указывает на заряд батареи
-     * 87 (0x57) заряд батареи
-     */
-    ApiBluetooth.controllerTemperature.add(Helper.parseTemperature([dataInBytes[2], dataInBytes[3]]));
-    batteryCharge = dataInBytes[5];
+    ApiBluetooth.controllerTemperature.add(result['temperature']);
+    batteryCharge = result['battery'];
   }
 
   void dissconnectToSensorV2() {
@@ -74,5 +65,26 @@ mixin ApiBluetoothV2 {
         (this as ApiBluetooth).dissconnect();
       }
     });
+  }
+
+  static Map<String, dynamic> parseBytesFromAdvertise(AdvertisementData advertisementData)
+  {
+    Map<String, dynamic> result = {'temperature': null, 'battery': null};
+
+    List<int>? dataInBytes = advertisementData.serviceData[advertisementData.serviceData.keys.first];
+    if (dataInBytes == null || dataInBytes.length != 6) return result;
+
+    /**
+     * пример dataInBytes : [64,2,54,11,1,87]
+     * 64 (0x40) ничего не значит или какой-то скрытый смысл
+     * 2  (0x02) следующие два байта указывают на температуру
+     * 54 (0x36) low byte
+     * 11 (0xb)  high byte
+     * 1  (0x01) следующий один байт указывает на заряд батареи
+     * 87 (0x57) заряд батареи
+     */
+    result['temperature'] = Helper.parseTemperature([dataInBytes[2], dataInBytes[3]]);
+    result['battery'] = dataInBytes[5];
+    return result;
   }
 }
