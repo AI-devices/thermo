@@ -1,5 +1,5 @@
 abstract class Lang {
-  static const bool ru = false;
+  static const bool ru = true;
 
   static String text(String text, [List<dynamic>? vars]) {
     if (ru == false) text = _rusToEng[text]!;
