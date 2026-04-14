@@ -7,11 +7,10 @@ import Foundation
 
 import audioplayers_darwin
 import device_info_plus
-import flutter_blue_plus
+import flutter_blue_plus_darwin
 import flutter_local_notifications
 import geolocator_apple
 import package_info_plus
-import path_provider_foundation
 import shared_preferences_foundation
 import wakelock_plus
 
