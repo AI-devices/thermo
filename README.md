@@ -6,5 +6,6 @@
 ```bash
 # flutter create --platform=android .
 dart run flutter_native_splash:create
+dart run flutter_launcher_icons
 flutter build apk && flutter build aab
 ```
